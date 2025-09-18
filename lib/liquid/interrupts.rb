@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+module Liquid
+  class Interrupt
+    attr_reader :message
+
+    def initialize(message = nil)
+      @message = message || "interrupt"
+    end
+  end
+end
