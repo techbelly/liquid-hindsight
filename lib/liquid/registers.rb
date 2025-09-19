@@ -2,5 +2,11 @@
 
 module Liquid
   class Registers
+    attr_reader :static
+
+    def initialize(registers = {})
+      @static = registers.is_a?(Registers) ? registers.static : registers
+      @changes = {}
+    end
   end
 end
