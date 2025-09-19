@@ -37,6 +37,7 @@ require 'liquid/block'
 require 'liquid/interrupts'
 require 'liquid/tags'
 require "liquid/environment"
+require 'liquid/i18n'
 require 'liquid/drop'
 require 'liquid/extensions'
 require 'liquid/errors'
