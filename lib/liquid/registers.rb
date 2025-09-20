@@ -13,6 +13,10 @@ module Liquid
       @changes[key] = value
     end
 
+    def [](key)
+      @static[key]
+    end
+
     def key?(key)
       @changes.key?(key) || @static.key?(key)
     end
