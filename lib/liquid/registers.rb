@@ -21,6 +21,10 @@ module Liquid
       end
     end
 
+    def delete(key)
+      @changes.delete(key)
+    end
+
     def key?(key)
       @changes.key?(key) || @static.key?(key)
     end

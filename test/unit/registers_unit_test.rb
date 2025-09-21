@@ -21,6 +21,21 @@ class RegistersUnitTest < Minitest::Test
     assert_nil(static_register[:missing])
   end
 
+  def test_delete
+    static_register = Registers.new(a: 1, b: 2)
+    static_register[:b] = 22
+    static_register[:c] = 33
+
+    assert_nil(static_register.delete(:a))
+
+    assert_equal(22, static_register.delete(:b))
+
+    assert_equal(33, static_register.delete(:c))
+    assert_nil(static_register[:c])
+
+    assert_nil(static_register.delete(:d))
+  end
+
   def test_key
     static_register = Registers.new(a: 1, b: 2)
     static_register[:b] = 22
