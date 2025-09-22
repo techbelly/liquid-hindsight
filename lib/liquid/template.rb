@@ -2,7 +2,7 @@
 
 module Liquid
   class Template
-    attr_writer :name
+    attr_accessor :name
 
     private
   end

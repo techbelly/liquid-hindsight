@@ -4,6 +4,8 @@ module Liquid
   class VariableLookup
     COMMAND_METHODS = ['size', 'first', 'last'].freeze
 
+    attr_reader :name
+
     def self.parse(markup, string_scanner = StringScanner.new(""), cache = nil)
       new(markup, string_scanner, cache)
     end
