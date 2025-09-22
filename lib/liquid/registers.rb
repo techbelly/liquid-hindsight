@@ -25,6 +25,22 @@ module Liquid
       @changes.delete(key)
     end
 
+    UNDEFINED = Object.new
+
+    def fetch(key, default = UNDEFINED, &block)
+      if @changes.key?(key)
+        @changes.fetch(key)
+      elsif default != UNDEFINED
+        if block_given?
+          @static.fetch(key, &block)
+        else
+          @static.fetch(key, default)
+        end
+      else
+        @static.fetch(key, &block)
+      end
+    end
+
     def key?(key)
       @changes.key?(key) || @static.key?(key)
     end

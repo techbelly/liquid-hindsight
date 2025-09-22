@@ -36,6 +36,30 @@ class RegistersUnitTest < Minitest::Test
     assert_nil(static_register.delete(:d))
   end
 
+  def test_fetch
+    static_register = Registers.new(a: 1, b: 2)
+    static_register[:b] = 22
+    static_register[:c] = 33
+
+    assert_equal(1, static_register.fetch(:a))
+    assert_equal(1, static_register.fetch(:a, "default"))
+    assert_equal(22, static_register.fetch(:b))
+    assert_equal(22, static_register.fetch(:b, "default"))
+    assert_equal(33, static_register.fetch(:c))
+    assert_equal(33, static_register.fetch(:c, "default"))
+
+    assert_raises(KeyError) do
+      static_register.fetch(:d)
+    end
+    assert_equal("default", static_register.fetch(:d, "default"))
+
+    result = static_register.fetch(:d) { "default" }
+    assert_equal("default", result)
+
+    result = static_register.fetch(:d, "default 1") { "default 2" }
+    assert_equal("default 2", result)
+  end
+
   def test_key
     static_register = Registers.new(a: 1, b: 2)
     static_register[:b] = 22
