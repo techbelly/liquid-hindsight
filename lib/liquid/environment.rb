@@ -4,9 +4,19 @@ module Liquid
   class Environment
     attr_accessor :error_mode
 
+    attr_reader :tags
+
     class << self
       def default
         @default ||= new
+      end
+
+      def dangerously_override(environment)
+        original_default = @default
+        @default = environment
+        yield
+      ensure
+        @default = original_default
       end
     end
 
@@ -20,6 +30,10 @@ module Liquid
       @file_system = BlankFileSystem.new
       @default_resource_limits = Const::EMPTY_HASH
       @strainer_template_class_cache = {}
+    end
+
+    def register_tag(name, klass)
+      @tags[name] = klass
     end
   end
 end
