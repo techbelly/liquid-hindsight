@@ -2,7 +2,7 @@
 
 module Liquid
   class Template
-    attr_accessor :name
+    attr_accessor :root, :name
 
     class << self
       def tags
