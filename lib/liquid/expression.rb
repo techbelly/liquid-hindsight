@@ -2,5 +2,7 @@
 
 module Liquid
   class Expression
+    DOT = ".".ord
+    DASH = "-".ord
   end
 end
