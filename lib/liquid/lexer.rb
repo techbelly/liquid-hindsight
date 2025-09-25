@@ -156,6 +156,11 @@ module Liquid
         end
         output << EOS
       end
+
+      def raise_syntax_error(start_pos, ss)
+        ss.pos = start_pos
+        raise SyntaxError, "Unexpected character #{ss.getch}"
+      end
     end
   end
 end

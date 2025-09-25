@@ -47,6 +47,20 @@ class LexerUnitTest < Minitest::Test
     )
   end
 
+  def test_raise_for_invalid_comparison
+    assert_raises(SyntaxError) do
+      tokenize('1>!1')
+    end
+
+    assert_raises(SyntaxError) do
+      tokenize('1=<1')
+    end
+
+    assert_raises(SyntaxError) do
+      tokenize('1!!1')
+    end
+  end
+
   def test_specials
     assert_equal(
       [[:pipe, '|'], [:dot, '.'], [:colon, ':'], [:end_of_string]],
@@ -70,6 +84,12 @@ class LexerUnitTest < Minitest::Test
       [[:id, 'five'], [:pipe, '|'], [:comparison, '=='], [:end_of_string]],
       tokenize("five|\n\t =="),
     )
+  end
+
+  def test_unexpected_character
+    assert_raises(SyntaxError) do
+      tokenize("%")
+    end
   end
 
   def test_negative_numbers
