@@ -19,6 +19,13 @@ module Liquid
       token[1]
     end
 
+    def consume?(type)
+      token = @tokens[@p]
+      return false unless token && token[0] == type
+      @p += 1
+      token[1]
+    end
+
     def look(type, ahead = 0)
       tok = @tokens[@p + ahead]
       return false unless tok
