@@ -19,6 +19,12 @@ module Liquid
       token[1]
     end
 
+    def look(type, ahead = 0)
+      tok = @tokens[@p + ahead]
+      return false unless tok
+      tok[0] == type
+    end
+
     def expression
       token = @tokens[@p]
       raise SyntaxError, "#{token} is not a valid expression"
