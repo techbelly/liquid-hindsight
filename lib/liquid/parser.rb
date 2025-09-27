@@ -26,6 +26,14 @@ module Liquid
       token[1]
     end
 
+    def id?(str)
+      token = @tokens[@p]
+      return false unless token && token[0] == :id
+      return false unless token[1] == str
+      @p += 1
+      token[1]
+    end
+
     def look(type, ahead = 0)
       tok = @tokens[@p + ahead]
       return false unless tok
