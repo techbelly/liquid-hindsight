@@ -5,6 +5,7 @@ require 'liquid/tag/disableable'
 
 module Liquid
   class Tag
+    attr_reader :line_number
     include ParserSwitching
 
     class << self

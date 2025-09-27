@@ -2,7 +2,7 @@
 
 module Liquid
   class Variable
-    attr_accessor :name
+    attr_accessor :name, :line_number
 
     include ParserSwitching
 
