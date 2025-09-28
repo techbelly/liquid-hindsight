@@ -2,6 +2,11 @@
 
 module Liquid
   class ResourceLimits
+    attr_accessor :render_length_limit,
+      :render_score_limit,
+      :assign_score_limit,
+      :cumulative_render_score_limit,
+      :cumulative_assign_score_limit
     attr_reader :render_score,
       :assign_score,
       :cumulative_render_score,
