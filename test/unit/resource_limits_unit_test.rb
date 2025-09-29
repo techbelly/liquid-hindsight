@@ -29,4 +29,16 @@ class ResourceLimitsUnitTest < Minitest::Test
     limits.cumulative_render_score_limit = 500
     assert_equal(500, limits.cumulative_render_score_limit)
   end
+
+  def test_cumulative_scores_accumulate_across_resets
+    limits = Liquid::ResourceLimits.new({})
+    limits.increment_render_score(10)
+    limits.reset
+    limits.increment_render_score(20)
+    limits.reset
+    limits.increment_render_score(30)
+
+    assert_equal(30, limits.render_score)
+    assert_equal(60, limits.cumulative_render_score)
+  end
 end

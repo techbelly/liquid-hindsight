@@ -23,6 +23,13 @@ module Liquid
       reset
     end
 
+    def increment_render_score(amount)
+      @render_score += amount
+      @cumulative_render_score += amount
+      raise_limits_reached if @render_score_limit && @render_score > @render_score_limit
+      raise_limits_reached if @cumulative_render_score_limit && @cumulative_render_score > @cumulative_render_score_limit
+    end
+
     def reset
       @reached_limit = false
       @last_capture_length = nil
