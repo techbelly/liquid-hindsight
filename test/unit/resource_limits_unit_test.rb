@@ -30,6 +30,19 @@ class ResourceLimitsUnitTest < Minitest::Test
     assert_equal(500, limits.cumulative_render_score_limit)
   end
 
+  def test_cumulative_scores_survive_reset
+    limits = Liquid::ResourceLimits.new({})
+    limits.increment_render_score(10)
+    limits.increment_assign_score(5)
+
+    limits.reset
+
+    assert_equal(0, limits.render_score)
+    assert_equal(0, limits.assign_score)
+    assert_equal(10, limits.cumulative_render_score)
+    assert_equal(5, limits.cumulative_assign_score)
+  end
+
   def test_cumulative_scores_accumulate_across_resets
     limits = Liquid::ResourceLimits.new({})
     limits.increment_render_score(10)
@@ -51,6 +64,17 @@ class ResourceLimitsUnitTest < Minitest::Test
 
     assert_raises(Liquid::MemoryError) do
       limits.increment_render_score(10)
+    end
+    assert(limits.reached?)
+  end
+
+  def test_cumulative_assign_score_limit_raises
+    limits = Liquid::ResourceLimits.new(cumulative_assign_score_limit: 15)
+    limits.increment_assign_score(8)
+    limits.reset
+
+    assert_raises(Liquid::MemoryError) do
+      limits.increment_assign_score(8)
     end
     assert(limits.reached?)
   end
