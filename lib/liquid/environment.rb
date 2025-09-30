@@ -6,6 +6,8 @@ module Liquid
 
     attr_reader :tags
 
+    attr_reader :default_resource_limits
+
     class << self
       def default
         @default ||= new

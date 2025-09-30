@@ -10,6 +10,12 @@ module Liquid
       end
     end
 
+    def initialize(environment: Environment.default)
+      @environment = environment
+      @rethrow_errors  = false
+      @resource_limits = ResourceLimits.new(environment.default_resource_limits)
+    end
+
     private
   end
 end
