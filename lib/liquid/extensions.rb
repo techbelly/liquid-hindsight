@@ -5,3 +5,9 @@ require 'date'
 
 class Hash
 end
+
+class Range
+  def to_liquid
+    self
+  end
+end

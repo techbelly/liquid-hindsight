@@ -18,6 +18,9 @@ module Liquid
       def empty?
         true
       end
+
+      def each
+      end
     end
   end
 end

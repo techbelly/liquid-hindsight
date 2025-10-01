@@ -5,6 +5,7 @@ require 'minitest/autorun'
 
 $LOAD_PATH.unshift(File.join(File.expand_path(__dir__), '..', 'lib'))
 require 'liquid.rb'
+require 'liquid/profiler'
 
 mode = :strict
 if (env_mode = ENV['LIQUID_PARSER_MODE'])
