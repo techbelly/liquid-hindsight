@@ -10,4 +10,18 @@ class RangeSliceUnitTest < Minitest::Test
       end
     end
   end
+
+  def test_custom_range_to_a_is_sliced_with_a_budget
+    range = Class.new(Range) do
+      def to_a
+        [1, 2, 3]
+      end
+    end.new(nil, 3)
+    limits = Liquid::ResourceLimits.new(render_score_limit: 2)
+
+    assert_raises(Liquid::MemoryError) do
+      Liquid::Utils.slice_collection_for_iteration(range, 1, 3, limits, use_range_to_a: true)
+    end
+    assert_equal(3, limits.render_score)
+  end
 end
