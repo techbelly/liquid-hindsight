@@ -27,6 +27,7 @@ module Liquid
       @length.times do
         @resource_limits.increment_render_score(1)
         yield value
+        value += @direction
       end
     end
   end
