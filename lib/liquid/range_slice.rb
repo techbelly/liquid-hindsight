@@ -2,6 +2,20 @@
 
 module Liquid
   class RangeSlice
+    def initialize(range, from, to, resource_limits)
+      range_length = range.end - range.begin
+      range_length += 1 unless range.exclude_end?
+      range_length = 0 if range_length.negative?
+
+      start = [from, 0].max
+      finish = [to || range_length, range_length].min
+
+      @first = range.begin + start
+      @length = [finish - start, 0].max
+      @direction = 1
+      @resource_limits = resource_limits
+    end
+
     def empty?
       @length.zero?
     end
@@ -10,6 +24,10 @@ module Liquid
       return enum_for(:each) unless block_given?
 
       value = @first
+      @length.times do
+        @resource_limits.increment_render_score(1)
+        yield value
+      end
     end
   end
 end

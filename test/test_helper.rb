@@ -26,6 +26,8 @@ module Minitest
 
     def bounded_integer_range_with_tripwires
       range = (1..1000).dup
+      range.define_singleton_method(:to_a) { raise 'range was materialized' }
+      range.define_singleton_method(:each) { raise 'range was traversed' }
       range
     end
 
