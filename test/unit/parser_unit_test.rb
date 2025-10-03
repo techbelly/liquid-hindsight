@@ -45,6 +45,19 @@ class ParserUnitTest < Minitest::Test
     assert_equal(false, p.look(:number, 1))
   end
 
+  def test_expressions
+    p = new_parser("hi.there hi?[5].there? hi.there.bob")
+    assert_equal('hi.there', p.expression)
+    assert_equal('hi?[5].there?', p.expression)
+    assert_equal('hi.there.bob', p.expression)
+
+    p = new_parser("567 6.0 'lol' \"wut\"")
+    assert_equal('567', p.expression)
+    assert_equal('6.0', p.expression)
+    assert_equal("'lol'", p.expression)
+    assert_equal('"wut"', p.expression)
+  end
+
   def test_invalid_expression
     assert_raises(SyntaxError) do
       p = new_parser("==")
