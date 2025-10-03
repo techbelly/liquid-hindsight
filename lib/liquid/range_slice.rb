@@ -2,6 +2,8 @@
 
 module Liquid
   class RangeSlice
+    attr_reader :length
+
     def initialize(range, from, to, resource_limits)
       range_length = range.end - range.begin
       range_length += 1 unless range.exclude_end?
@@ -29,6 +31,14 @@ module Liquid
         yield value
         value += @direction
       end
+    end
+
+    def reverse!
+      unless empty?
+        @first += @direction * (@length - 1)
+        @direction = -@direction
+      end
+      self
     end
   end
 end
