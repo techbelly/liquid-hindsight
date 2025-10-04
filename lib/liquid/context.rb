@@ -3,7 +3,7 @@
 module Liquid
   class Context
     attr_reader :scopes
-    attr_reader :strict_variables
+    attr_accessor :partial, :strict_variables
 
     protected
 

@@ -5,6 +5,10 @@ module Liquid
     attr_accessor :root, :name
 
     class << self
+      def error_mode
+        Environment.default.error_mode
+      end
+
       def tags
         Environment.default.tags
       end
