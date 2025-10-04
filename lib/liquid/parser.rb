@@ -48,6 +48,13 @@ module Liquid
         str << variable_lookups
       when :string, :number
         consume
+      when :open_round
+        consume
+        first = expression
+        consume(:dotdot)
+        last = expression
+        consume(:close_round)
+        "(#{first}..#{last})"
       else
         raise SyntaxError, "#{token} is not a valid expression"
       end
