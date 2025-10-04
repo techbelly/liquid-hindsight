@@ -58,6 +58,15 @@ class ParserUnitTest < Minitest::Test
     assert_equal('"wut"', p.expression)
   end
 
+  def test_arguments
+    p = new_parser("filter: hi.there[5], keyarg: 7")
+    assert_equal('filter', p.consume(:id))
+    assert_equal(':', p.consume(:colon))
+    assert_equal('hi.there[5]', p.argument)
+    assert_equal(',', p.consume(:comma))
+    assert_equal('keyarg: 7', p.argument)
+  end
+
   def test_invalid_expression
     assert_raises(SyntaxError) do
       p = new_parser("==")
