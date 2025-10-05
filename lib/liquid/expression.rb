@@ -3,6 +3,8 @@
 module Liquid
   class Expression
     DOT = ".".ord
+    ZERO = "0".ord
+    NINE = "9".ord
     DASH = "-".ord
 
     RANGES_REGEX = /\A\(\s*(?>(\S+)\s*\.\.)\s*(\S+)\s*\)\z/
@@ -27,6 +29,8 @@ module Liquid
 
         if (num = parse_number(markup, ss))
           num
+        else
+          VariableLookup.parse(markup, ss, cache)
         end
       end
 
@@ -35,6 +39,11 @@ module Liquid
         when INTEGER_REGEX
           return Integer(markup, 10)
         end
+
+        ss.string = markup
+        byte = ss.scan_byte
+
+        return false if byte != DASH && (byte < ZERO || byte > NINE)
       end
     end
   end

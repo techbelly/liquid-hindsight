@@ -4,6 +4,16 @@ require 'test_helper'
 require 'lru_redux'
 
 class ExpressionTest < Minitest::Test
+  def test_safe_parse_with_variable_lookup
+    parse_context = Liquid::ParseContext.new
+    parser = parse_context.new_parser('product.title')
+    result = Liquid::Expression.safe_parse(parser)
+
+    assert_instance_of(Liquid::VariableLookup, result)
+    assert_equal('product', result.name)
+    assert_equal(['title'], result.lookups)
+  end
+
   def test_safe_parse_with_number
     parse_context = Liquid::ParseContext.new
     parser = parse_context.new_parser('42')
