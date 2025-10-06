@@ -20,6 +20,7 @@ class OtherFileSystem
 end
 
 class CountingFileSystem
+  attr_reader :count
   def read_template_file(_template_path)
     @count ||= 0
     @count  += 1
