@@ -6,6 +6,7 @@ module Liquid
   class Tokenizer
     attr_reader :line_number
 
+    TAG_END = /%\}/
     TAG_OR_VARIABLE_START = /\{[\{\%]/
 
     OPEN_CURLEY = "{".ord
@@ -38,10 +39,6 @@ module Liquid
 
       @offset += 1
 
-      if @line_number
-        @line_number += @for_liquid_tag ? 1 : token.count("\n")
-      end
-
       token
     end
 
@@ -56,6 +53,10 @@ module Liquid
 
     def shift_normal
       token = next_token
+
+      return unless token
+
+      token
     end
 
     def next_token
@@ -69,9 +70,6 @@ module Liquid
         if byte_b == PERCENTAGE
           @ss.scan_byte
           return next_tag_token
-        elsif byte_b == OPEN_CURLEY
-          @ss.scan_byte
-          return next_variable_token
         end
 
         @ss.pos -= 1
@@ -89,9 +87,18 @@ module Liquid
         return token
       end
 
+      pos = @ss.pos -= 2
+      @source.byteslice(start, pos - start)
     rescue ::ArgumentError => e
       if e.message == "invalid byte sequence in #{@ss.string.encoding}"
         raise SyntaxError, "Invalid byte sequence in #{@ss.string.encoding}"
+      end
+    end
+
+    def next_tag_token
+      start = @ss.pos - 2
+      if (len = @ss.skip_until(TAG_END))
+        @source.byteslice(start, len + 2)
       end
     end
   end

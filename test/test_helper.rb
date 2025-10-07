@@ -224,8 +224,6 @@ class StubFileSystem
 end
 
 class StubTemplateFactory
-  attr_reader :count
-
   def initialize
     @count = 0
   end

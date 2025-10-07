@@ -9,6 +9,14 @@ class TokenizerTest < Minitest::Test
     assert_equal(['{}'], tokenize('{}'))
   end
 
+  def test_tokenize_blocks
+    assert_equal(['{%comment%}'], tokenize('{%comment%}'))
+    assert_equal([' ', '{%comment%}', ' '], tokenize(' {%comment%} '))
+
+    assert_equal([' ', '{%comment%}', ' ', '{%endcomment%}', ' '], tokenize(' {%comment%} {%endcomment%} '))
+    assert_equal(['  ', '{% comment %}', ' ', '{% endcomment %}', ' '], tokenize("  {% comment %} {% endcomment %} "))
+  end
+
   def test_tokenize_with_nil_source_returns_empty_array
     assert_equal([], tokenize(nil))
   end
