@@ -40,6 +40,10 @@ module Liquid
     def parse(_tokens)
     end
 
+    def raw
+      "#{@tag_name} #{@markup}"
+    end
+
     def blank?
       false
     end
