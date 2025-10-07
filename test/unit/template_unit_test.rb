@@ -12,4 +12,15 @@ class TemplateUnitTest < Minitest::Test
       assert(result.include?(["fake", TemplateUnitTest::FakeTag]))
     end
   end
+
+  def test_invalid_utf8
+    input = "\xff\x00"
+    error = assert_raises(SyntaxError) do
+      Liquid::Tokenizer.new(source: input, string_scanner: StringScanner.new(input))
+    end
+    assert_equal(
+      'Liquid syntax error: Invalid byte sequence in UTF-8',
+      error.message,
+    )
+  end
 end

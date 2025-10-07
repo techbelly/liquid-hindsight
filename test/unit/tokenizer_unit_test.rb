@@ -3,6 +3,12 @@
 require 'test_helper'
 
 class TokenizerTest < Minitest::Test
+  def test_tokenize_strings
+    assert_equal([' '], tokenize(' '))
+    assert_equal(['hello world'], tokenize('hello world'))
+    assert_equal(['{}'], tokenize('{}'))
+  end
+
   def test_tokenize_with_nil_source_returns_empty_array
     assert_equal([], tokenize(nil))
   end
@@ -17,6 +23,7 @@ class TokenizerTest < Minitest::Test
     tokenizer = new_tokenizer(source)
     tokens    = []
     while (t = tokenizer.send(:shift))
+      tokens << t
     end
     tokens
   end
