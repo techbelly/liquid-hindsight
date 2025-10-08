@@ -10,6 +10,7 @@ module Liquid
     TAG_OR_VARIABLE_START = /\{[\{\%]/
 
     OPEN_CURLEY = "{".ord
+    CLOSE_CURLEY = "}".ord
     PERCENTAGE = "%".ord
 
     def initialize(
@@ -70,6 +71,9 @@ module Liquid
         if byte_b == PERCENTAGE
           @ss.scan_byte
           return next_tag_token
+        elsif byte_b == OPEN_CURLEY
+          @ss.scan_byte
+          return next_variable_token
         end
 
         @ss.pos -= 1
@@ -92,6 +96,26 @@ module Liquid
     rescue ::ArgumentError => e
       if e.message == "invalid byte sequence in #{@ss.string.encoding}"
         raise SyntaxError, "Invalid byte sequence in #{@ss.string.encoding}"
+      end
+    end
+
+    def next_variable_token
+      start = @ss.pos - 2
+
+      byte_a = byte_b = @ss.scan_byte
+
+      while byte_b
+        byte_a = @ss.scan_byte while byte_a && byte_a != CLOSE_CURLEY && byte_a != OPEN_CURLEY
+
+        break unless byte_a
+
+        byte_b = @ss.scan_byte
+
+        if byte_a == CLOSE_CURLEY
+          if byte_b == CLOSE_CURLEY
+            return @source.byteslice(start, @ss.pos - start)
+          end
+        end
       end
     end
 
