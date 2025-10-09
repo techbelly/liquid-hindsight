@@ -35,6 +35,12 @@ class TokenizerTest < Minitest::Test
     assert_equal([], tokenize(nil))
   end
 
+  def test_incomplete_curly_braces
+    assert_equal(["{{.}", " "], tokenize('{{.} '))
+    assert_equal(["{{}", "%}"], tokenize('{{}%}'))
+    assert_equal(["{{}}", "}"], tokenize('{{}}}'))
+  end
+
   def test_unmatching_start_and_end
     assert_equal(["{{%}"], tokenize('{{%}'))
     assert_equal(["{{%%%}}"], tokenize('{{%%%}}'))

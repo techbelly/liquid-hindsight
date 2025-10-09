@@ -122,6 +122,9 @@ module Liquid
         if byte_a == CLOSE_CURLEY
           if byte_b == CLOSE_CURLEY
             return @source.byteslice(start, @ss.pos - start)
+          elsif byte_b != CLOSE_CURLEY
+            @ss.pos -= 1
+            return @source.byteslice(start, @ss.pos - start)
           end
         end
       end
