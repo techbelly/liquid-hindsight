@@ -113,6 +113,10 @@ module Liquid
 
         break unless byte_a
 
+        if @ss.eos?
+          return byte_a == CLOSE_CURLEY ? @source.byteslice(start, @ss.pos - start) : "{{"
+        end
+
         byte_b = @ss.scan_byte
 
         if byte_a == CLOSE_CURLEY
@@ -127,6 +131,8 @@ module Liquid
       start = @ss.pos - 2
       if (len = @ss.skip_until(TAG_END))
         @source.byteslice(start, len + 2)
+      else
+        "{%"
       end
     end
   end

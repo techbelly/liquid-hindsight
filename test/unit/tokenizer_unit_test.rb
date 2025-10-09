@@ -35,6 +35,13 @@ class TokenizerTest < Minitest::Test
     assert_equal([], tokenize(nil))
   end
 
+  def test_unmatching_start_and_end
+    assert_equal(["{{%}"], tokenize('{{%}'))
+    assert_equal(["{{%%%}}"], tokenize('{{%%%}}'))
+    assert_equal(["{%", "}}"], tokenize('{%}}'))
+    assert_equal(["{%%}", "}"], tokenize('{%%}}'))
+  end
+
   private
 
   def new_tokenizer(source, parse_context: Liquid::ParseContext.new, start_line_number: nil)
