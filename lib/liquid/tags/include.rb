@@ -6,5 +6,8 @@ module Liquid
 
     def parse(_tokens)
     end
+
+    alias_method :parse_context, :options
+    private :parse_context
   end
 end
