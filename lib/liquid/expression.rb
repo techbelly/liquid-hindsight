@@ -9,6 +9,7 @@ module Liquid
 
     RANGES_REGEX = /\A\(\s*(?>(\S+)\s*\.\.)\s*(\S+)\s*\)\z/
     INTEGER_REGEX = /\A(-?\d+)\z/
+    FLOAT_REGEX = /\A(-?\d+)\.\d+\z/
 
     class << self
       def safe_parse(parser, ss = StringScanner.new(""), cache = nil)
@@ -25,7 +26,13 @@ module Liquid
           return markup[1..-2]
         end
 
-        inner_parse(markup, ss, nil).freeze
+        if cache
+          return cache[markup] if cache.key?(markup)
+
+          cache[markup] = inner_parse(markup, ss, cache).freeze
+        else
+          inner_parse(markup, ss, nil).freeze
+        end
       end
 
       def inner_parse(markup, ss, cache)
@@ -43,6 +50,8 @@ module Liquid
         case markup
         when INTEGER_REGEX
           return Integer(markup, 10)
+        when FLOAT_REGEX
+          return markup.to_f
         end
 
         ss.string = markup
