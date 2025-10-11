@@ -2,8 +2,8 @@
 
 module Liquid
   class Error < ::StandardError
-    attr_reader :line_number
-    attr_reader :markup_context
+    attr_accessor :line_number
+    attr_accessor :markup_context
 
     def to_s(with_prefix = true)
       str = +""
