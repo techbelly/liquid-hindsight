@@ -5,6 +5,11 @@ require 'test_helper'
 class VariableUnitTest < Minitest::Test
   include Liquid
 
+  def test_variable
+    var = create_variable('hello')
+    assert_equal(VariableLookup.new('hello'), var.name)
+  end
+
   def test_string_single_quoted
     var = create_variable(%( "hello" ))
     assert_equal('hello', var.name)
@@ -28,6 +33,11 @@ class VariableUnitTest < Minitest::Test
   def test_string_with_special_chars
     var = create_variable(%( 'hello! $!@.;"ddasd" ' ))
     assert_equal('hello! $!@.;"ddasd" ', var.name)
+  end
+
+  def test_string_dot
+    var = create_variable(%( test.test ))
+    assert_equal(VariableLookup.new('test.test'), var.name)
   end
 
   def test_variable_lookup_interface
