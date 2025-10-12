@@ -2,6 +2,18 @@
 
 module Liquid
   class Expression
+    LITERALS = {
+      nil => nil,
+      'nil' => nil,
+      'null' => nil,
+      '' => nil,
+      'true' => true,
+      'false' => false,
+      'blank' => '',
+      'empty' => '',
+      '-' => VariableLookup.parse("-", nil).freeze,
+    }.freeze
+
     DOT = ".".ord
     ZERO = "0".ord
     NINE = "9".ord
@@ -24,6 +36,8 @@ module Liquid
         if (markup.start_with?('"') && markup.end_with?('"')) ||
           (markup.start_with?("'") && markup.end_with?("'"))
           return markup[1..-2]
+        elsif LITERALS.key?(markup)
+          return LITERALS[markup]
         end
 
         if cache

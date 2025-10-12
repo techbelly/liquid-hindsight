@@ -10,6 +10,48 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('hello'), var.name)
   end
 
+  def test_filters
+    var = create_variable('hello | textileze')
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['textileze', []]], var.filters)
+
+    var = create_variable('hello | textileze | paragraph')
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['textileze', []], ['paragraph', []]], var.filters)
+
+    var = create_variable(%( hello | strftime: '%Y'))
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['strftime', ['%Y']]], var.filters)
+
+    var = create_variable(%( 'typo' | link_to: 'Typo', true ))
+    assert_equal('typo', var.name)
+    assert_equal([['link_to', ['Typo', true]]], var.filters)
+
+    var = create_variable(%( 'typo' | link_to: 'Typo', false ))
+    assert_equal('typo', var.name)
+    assert_equal([['link_to', ['Typo', false]]], var.filters)
+
+    var = create_variable(%( 'foo' | repeat: 3 ))
+    assert_equal('foo', var.name)
+    assert_equal([['repeat', [3]]], var.filters)
+
+    var = create_variable(%( 'foo' | repeat: 3, 3 ))
+    assert_equal('foo', var.name)
+    assert_equal([['repeat', [3, 3]]], var.filters)
+
+    var = create_variable(%( 'foo' | repeat: 3, 3, 3 ))
+    assert_equal('foo', var.name)
+    assert_equal([['repeat', [3, 3, 3]]], var.filters)
+
+    var = create_variable(%( hello | strftime: '%Y, okay?'))
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['strftime', ['%Y, okay?']]], var.filters)
+
+    var = create_variable(%( hello | things: "%Y, okay?", 'the other one'))
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['things', ['%Y, okay?', 'the other one']]], var.filters)
+  end
+
   def test_filter_with_date_parameter
     var = create_variable(%( '2006-06-06' | date: "%m/%d/%Y"))
     assert_equal('2006-06-06', var.name)
