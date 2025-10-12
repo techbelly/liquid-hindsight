@@ -10,6 +10,32 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('hello'), var.name)
   end
 
+  def test_filter_with_date_parameter
+    var = create_variable(%( '2006-06-06' | date: "%m/%d/%Y"))
+    assert_equal('2006-06-06', var.name)
+    assert_equal([['date', ['%m/%d/%Y']]], var.filters)
+  end
+
+  def test_filters_without_whitespace
+    var = create_variable('hello | textileze | paragraph')
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['textileze', []], ['paragraph', []]], var.filters)
+
+    var = create_variable('hello|textileze|paragraph')
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['textileze', []], ['paragraph', []]], var.filters)
+
+    var = create_variable("hello|replace:'foo','bar'|textileze")
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['replace', ['foo', 'bar']], ['textileze', []]], var.filters)
+  end
+
+  def test_string_to_filter
+    var = create_variable("'http://disney.com/logo.gif' | image: 'med' ")
+    assert_equal('http://disney.com/logo.gif', var.name)
+    assert_equal([['image', ['med']]], var.filters)
+  end
+
   def test_string_single_quoted
     var = create_variable(%( "hello" ))
     assert_equal('hello', var.name)
@@ -49,6 +75,12 @@ class VariableUnitTest < Minitest::Test
   def test_string_dot
     var = create_variable(%( test.test ))
     assert_equal(VariableLookup.new('test.test'), var.name)
+  end
+
+  def test_filter_with_keyword_arguments
+    var = create_variable(%( hello | things: greeting: "world", farewell: 'goodbye'))
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['things', [], { 'greeting' => 'world', 'farewell' => 'goodbye' }]], var.filters)
   end
 
   def test_strict_filter_argument_parsing

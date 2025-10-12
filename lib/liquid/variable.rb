@@ -4,7 +4,7 @@ module Liquid
   class Variable
     JustTagAttributes        = /\A#{TagAttributes}\z/o
 
-    attr_accessor :name, :line_number
+    attr_accessor :filters, :name, :line_number
     attr_reader :parse_context
     alias_method :options, :parse_context
 
