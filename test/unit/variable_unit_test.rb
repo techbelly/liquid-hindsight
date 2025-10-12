@@ -59,6 +59,11 @@ class VariableUnitTest < Minitest::Test
     end
   end
 
+  def test_output_raw_source_of_variable
+    var = create_variable(%( name_of_variable | upcase ))
+    assert_equal(" name_of_variable | upcase ", var.raw)
+  end
+
   def test_variable_lookup_interface
     lookup = VariableLookup.new('a.b.c')
     assert_equal('a', lookup.name)
