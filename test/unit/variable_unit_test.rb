@@ -72,6 +72,12 @@ class VariableUnitTest < Minitest::Test
     assert_equal([['replace', ['foo', 'bar']], ['textileze', []]], var.filters)
   end
 
+  def test_symbol
+    var = create_variable("http://disney.com/logo.gif | image: 'med' ", error_mode: :lax)
+    assert_equal(VariableLookup.new('http://disney.com/logo.gif'), var.name)
+    assert_equal([['image', ['med']]], var.filters)
+  end
+
   def test_string_to_filter
     var = create_variable("'http://disney.com/logo.gif' | image: 'med' ")
     assert_equal('http://disney.com/logo.gif', var.name)
@@ -123,6 +129,24 @@ class VariableUnitTest < Minitest::Test
     var = create_variable(%( hello | things: greeting: "world", farewell: 'goodbye'))
     assert_equal(VariableLookup.new('hello'), var.name)
     assert_equal([['things', [], { 'greeting' => 'world', 'farewell' => 'goodbye' }]], var.filters)
+  end
+
+  def test_lax_filter_argument_parsing
+    var = create_variable(%( number_of_comments | pluralize: 'comment': 'comments' ), error_mode: :lax)
+    assert_equal(VariableLookup.new('number_of_comments'), var.name)
+    assert_equal([['pluralize', ['comment', 'comments']]], var.filters)
+
+    create_variable(%(n | f1: ,), error_mode: :lax)
+    create_variable(%(n | f1: ,| f2), error_mode: :lax)
+
+    var = create_variable(%(n | f1 1 | f2 k1: v1), error_mode: :lax)
+    assert_equal([['f1', []], ['f2', [VariableLookup.new('v1')]]], var.filters)
+
+    var = create_variable(%(n | filter: 1, 2, 3 | filter2: k1: 1, k2: 2), error_mode: :lax)
+    assert_equal([['filter', [1, 2, 3]], ['filter2', [], { "k1" => 1, "k2" => 2 }]], var.filters)
+
+    var = create_variable(%(n | link_to: class: "black", "https://example.com", title: "title"), error_mode: :lax)
+    assert_equal([['link_to', ["https://example.com"], { "class" => "black", "title" => "title" }]], var.filters)
   end
 
   def test_strict_filter_argument_parsing
