@@ -89,6 +89,20 @@ class ContextTest < Minitest::Test
     @context = Liquid::Context.new
   end
 
+  def test_apply_global_filter
+    global_filter_proc = ->(output) { "#{output} filtered" }
+
+    context = Context.new
+    context.global_filter = global_filter_proc
+
+    assert_equal('hi filtered', context.apply_global_filter('hi'))
+  end
+
+  def test_apply_global_filter_when_no_global_filter_exist
+    context = Context.new
+    assert_equal('hi', context.apply_global_filter('hi'))
+  end
+
   def test_context_always_uses_static_registers
     registers = {
       my_register: :my_value,

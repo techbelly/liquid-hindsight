@@ -3,7 +3,7 @@
 module Liquid
   class Context
     attr_reader :scopes, :registers
-    attr_accessor :exception_renderer, :partial, :strict_variables
+    attr_accessor :exception_renderer, :partial, :global_filter, :strict_variables
 
     def initialize(environments = {}, outer_scope = {}, registers = {}, rethrow_errors = false, resource_limits = nil, static_environments = {}, environment = Environment.default)
       @environment = environment
@@ -34,6 +34,10 @@ module Liquid
       yield self if block_given?
 
       squash_instance_assigns_with_environments
+    end
+
+    def apply_global_filter(obj)
+      global_filter.nil? ? obj : global_filter.call(obj)
     end
 
     protected
