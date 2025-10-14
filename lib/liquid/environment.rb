@@ -6,6 +6,10 @@ module Liquid
 
     attr_reader :tags
 
+    attr_accessor :exception_renderer
+
+    attr_reader :file_system
+
     attr_reader :default_resource_limits
 
     class << self

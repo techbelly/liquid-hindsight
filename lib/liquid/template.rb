@@ -10,6 +10,10 @@ module Liquid
         Environment.default.error_mode
       end
 
+      def file_system
+        Environment.default.file_system
+      end
+
       def tags
         Environment.default.tags
       end
