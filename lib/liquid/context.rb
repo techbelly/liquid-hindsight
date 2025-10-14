@@ -40,6 +40,10 @@ module Liquid
       global_filter.nil? ? obj : global_filter.call(obj)
     end
 
+    def interrupt?
+      !@interrupts.empty?
+    end
+
     protected
 
     private

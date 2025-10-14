@@ -89,6 +89,13 @@ class ContextTest < Minitest::Test
     @context = Liquid::Context.new
   end
 
+  def test_interrupt_avoids_object_allocations
+    @context.interrupt?
+    assert_no_object_allocations do
+      @context.interrupt?
+    end
+  end
+
   def test_apply_global_filter
     global_filter_proc = ->(output) { "#{output} filtered" }
 
@@ -120,12 +127,10 @@ class ContextTest < Minitest::Test
   private
 
   def assert_no_object_allocations
-    unless RUBY_ENGINE == 'ruby'
-      skip("stackprof needed to count object allocations")
-    end
     require 'stackprof'
 
     profile = StackProf.run(mode: :object) do
+      yield
     end
     assert_equal(0, profile[:samples])
   end
