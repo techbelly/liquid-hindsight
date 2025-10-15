@@ -76,6 +76,18 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(0, @filters.size(nil))
   end
 
+  def test_first_last_on_strings
+    assert_equal('f', @filters.first('foo'))
+    assert_equal('o', @filters.last('foo'))
+    assert_equal('', @filters.first(''))
+    assert_equal('', @filters.last(''))
+  end
+
+  def test_first_last_on_unicode_strings
+    assert_equal('고', @filters.first('고스트빈'))
+    assert_equal('빈', @filters.last('고스트빈'))
+  end
+
   private
 
   def with_timezone(tz)

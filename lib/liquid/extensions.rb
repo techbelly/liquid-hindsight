@@ -3,6 +3,9 @@
 require 'time'
 require 'date'
 
+class String
+end
+
 class Hash
 end
 

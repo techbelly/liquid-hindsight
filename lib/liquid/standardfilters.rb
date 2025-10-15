@@ -14,6 +14,14 @@ module Liquid
       input.respond_to?(:size) ? input.size : 0
     end
 
+    def first(array)
+      return array[0] || "" if array.is_a?(String)
+    end
+
+    def last(array)
+      return array[-1] || "" if array.is_a?(String)
+    end
+
     private
 
     class InputIterator
