@@ -4,6 +4,10 @@ require 'set'
 
 module Liquid
   class StrainerTemplate
+    def initialize(context)
+      @context = context
+    end
+
     class << self
       def add_filter(filter)
         return if include?(filter)

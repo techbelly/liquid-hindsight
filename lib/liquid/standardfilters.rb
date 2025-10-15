@@ -10,6 +10,10 @@ module Liquid
       true
     end
 
+    def size(input)
+      input.respond_to?(:size) ? input.size : 0
+    end
+
     private
 
     class InputIterator
