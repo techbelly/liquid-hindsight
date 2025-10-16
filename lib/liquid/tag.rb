@@ -53,6 +53,12 @@ module Liquid
       ''
     end
 
+    def render_to_output_buffer(context, output)
+      render_result = render(context)
+      output << render_result if render_result
+      output
+    end
+
     def blank?
       false
     end
