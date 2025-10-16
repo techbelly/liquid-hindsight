@@ -16,10 +16,12 @@ module Liquid
 
     def first(array)
       return array[0] || "" if array.is_a?(String)
+      array.first if array.respond_to?(:first)
     end
 
     def last(array)
       return array[-1] || "" if array.is_a?(String)
+      array.last if array.respond_to?(:last)
     end
 
     private

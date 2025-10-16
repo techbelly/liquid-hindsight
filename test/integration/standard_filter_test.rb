@@ -76,6 +76,13 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(0, @filters.size(nil))
   end
 
+  def test_first_last
+    assert_equal(1, @filters.first([1, 2, 3]))
+    assert_equal(3, @filters.last([1, 2, 3]))
+    assert_nil(@filters.first([]))
+    assert_nil(@filters.last([]))
+  end
+
   def test_first_last_on_strings
     assert_equal('f', @filters.first('foo'))
     assert_equal('o', @filters.last('foo'))
