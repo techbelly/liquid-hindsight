@@ -18,6 +18,10 @@ module Liquid
       Utils.to_s(input).downcase
     end
 
+    def upcase(input)
+      Utils.to_s(input).upcase
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)

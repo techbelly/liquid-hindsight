@@ -81,6 +81,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.downcase(nil))
   end
 
+  def test_upcase
+    assert_equal('TESTING', @filters.upcase("Testing"))
+    assert_equal('', @filters.upcase(nil))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))
