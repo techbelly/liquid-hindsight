@@ -14,3 +14,6 @@ class Range
     self
   end
 end
+
+class Date
+end

@@ -22,6 +22,11 @@ module Liquid
       Utils.to_s(input).upcase
     end
 
+    def escape(input)
+      CGI.escapeHTML(Utils.to_s(input)) unless input.nil?
+    end
+    alias_method :h, :escape
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
