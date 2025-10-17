@@ -50,5 +50,9 @@ module Liquid
       collection.method(method_name).owner != Range.instance_method(method_name).owner
     end
     private_class_method :range_method_overridden?
+
+    def self.to_s(obj, seen = {})
+      obj.to_s
+    end
   end
 end
