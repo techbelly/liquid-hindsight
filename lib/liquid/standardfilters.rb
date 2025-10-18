@@ -40,6 +40,10 @@ module Liquid
       Utils.to_s(input).gsub(HTML_ESCAPE_ONCE_REGEXP, HTML_ESCAPE)
     end
 
+    def base64_encode(input)
+      Base64.strict_encode64(Utils.to_s(input))
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
