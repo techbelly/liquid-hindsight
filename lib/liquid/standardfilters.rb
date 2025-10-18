@@ -40,6 +40,10 @@ module Liquid
       Utils.to_s(input).gsub(HTML_ESCAPE_ONCE_REGEXP, HTML_ESCAPE)
     end
 
+    def url_encode(input)
+      CGI.escape(Utils.to_s(input)) unless input.nil?
+    end
+
     def base64_encode(input)
       Base64.strict_encode64(Utils.to_s(input))
     end
