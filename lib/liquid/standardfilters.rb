@@ -10,6 +10,15 @@ module Liquid
       true
     end
 
+    HTML_ESCAPE = {
+      '&' => '&amp;',
+      '>' => '&gt;',
+      '<' => '&lt;',
+      '"' => '&quot;',
+      "'" => '&#39;',
+    }.freeze
+    HTML_ESCAPE_ONCE_REGEXP = /["><']|&(?!([a-zA-Z]+|(#\d+));)/
+
     def size(input)
       input.respond_to?(:size) ? input.size : 0
     end
@@ -26,6 +35,10 @@ module Liquid
       CGI.escapeHTML(Utils.to_s(input)) unless input.nil?
     end
     alias_method :h, :escape
+
+    def escape_once(input)
+      Utils.to_s(input).gsub(HTML_ESCAPE_ONCE_REGEXP, HTML_ESCAPE)
+    end
 
     def first(array)
       return array[0] || "" if array.is_a?(String)
