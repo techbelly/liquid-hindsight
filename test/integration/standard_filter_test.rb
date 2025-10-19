@@ -86,6 +86,14 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.upcase(nil))
   end
 
+  def test_split
+    assert_equal(['12', '34'], @filters.split('12~34', '~'))
+    assert_equal(['A? ', ' ,Z'], @filters.split('A? ~ ~ ~ ,Z', '~ ~ ~'))
+    assert_equal(['A?Z'], @filters.split('A?Z', '~'))
+    assert_equal([], @filters.split(nil, ' '))
+    assert_equal(['A', 'Z'], @filters.split('A1Z', 1))
+  end
+
   def test_escape
     assert_equal('&lt;strong&gt;', @filters.escape('<strong>'))
     assert_equal('1', @filters.escape(1))

@@ -52,6 +52,12 @@ module Liquid
       Base64.urlsafe_encode64(Utils.to_s(input))
     end
 
+    def split(input, pattern)
+      pattern = Utils.to_s(pattern)
+      input = Utils.to_s(input)
+      input.split(pattern)
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
