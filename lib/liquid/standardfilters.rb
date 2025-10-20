@@ -18,6 +18,12 @@ module Liquid
       "'" => '&#39;',
     }.freeze
     HTML_ESCAPE_ONCE_REGEXP = /["><']|&(?!([a-zA-Z]+|(#\d+));)/
+    STRIP_HTML_BLOCKS       = Regexp.union(
+      %r{<script.*?</script>}m,
+      /<!--.*?-->/m,
+      %r{<style.*?</style>}m,
+    )
+    STRIP_HTML_TAGS = /<.*?>/m
 
     def size(input)
       input.respond_to?(:size) ? input.size : 0
@@ -65,6 +71,14 @@ module Liquid
       pattern = Utils.to_s(pattern)
       input = Utils.to_s(input)
       input.split(pattern)
+    end
+
+    def strip_html(input)
+      input = Utils.to_s(input)
+      empty  = ''
+      result = input.gsub(STRIP_HTML_BLOCKS, empty)
+      result.gsub!(STRIP_HTML_TAGS, empty)
+      result
     end
 
     def first(array)
