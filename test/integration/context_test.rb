@@ -89,6 +89,21 @@ class ContextTest < Minitest::Test
     @context = Liquid::Context.new
   end
 
+  def test_scoping
+    @context.push
+    @context.pop
+
+    assert_raises(Liquid::ContextError) do
+      @context.pop
+    end
+
+    assert_raises(Liquid::ContextError) do
+      @context.push
+      @context.pop
+      @context.pop
+    end
+  end
+
   def test_interrupt_avoids_object_allocations
     @context.interrupt?
     assert_no_object_allocations do
