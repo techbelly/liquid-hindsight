@@ -132,6 +132,19 @@ class StandardFiltersTest < Minitest::Test
     assert_nil(@filters.url_encode(nil))
   end
 
+  def test_url_decode
+    assert_equal('foo bar', @filters.url_decode('foo+bar'))
+    assert_equal('foo bar', @filters.url_decode('foo%20bar'))
+    assert_equal('foo+1@example.com', @filters.url_decode('foo%2B1%40example.com'))
+    assert_equal('1', @filters.url_decode(1))
+    assert_equal('2001-02-03', @filters.url_decode(Date.new(2001, 2, 3)))
+    assert_nil(@filters.url_decode(nil))
+    exception = assert_raises(Liquid::ArgumentError) do
+      @filters.url_decode('%ff')
+    end
+    assert_equal('Liquid error: invalid byte sequence in UTF-8', exception.message)
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))

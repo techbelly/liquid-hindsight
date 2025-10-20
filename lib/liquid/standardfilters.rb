@@ -44,6 +44,15 @@ module Liquid
       CGI.escape(Utils.to_s(input)) unless input.nil?
     end
 
+    def url_decode(input)
+      return if input.nil?
+
+      result = CGI.unescape(Utils.to_s(input))
+      raise Liquid::ArgumentError, "invalid byte sequence in #{result.encoding}" unless result.valid_encoding?
+
+      result
+    end
+
     def base64_encode(input)
       Base64.strict_encode64(Utils.to_s(input))
     end
