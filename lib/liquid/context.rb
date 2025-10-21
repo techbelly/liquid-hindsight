@@ -58,6 +58,21 @@ module Liquid
       @scopes.shift
     end
 
+    def with_disabled_tags(tag_names)
+      tag_names.each do |name|
+        @disabled_tags[name] = @disabled_tags.fetch(name, 0) + 1
+      end
+      yield
+    ensure
+      tag_names.each do |name|
+        @disabled_tags[name] -= 1
+      end
+    end
+
+    def tag_disabled?(tag_name)
+      @disabled_tags.fetch(tag_name, 0) > 0
+    end
+
     protected
 
     private
