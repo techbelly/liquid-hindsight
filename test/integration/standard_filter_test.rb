@@ -157,6 +157,10 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('foo;', @filters.strip_html("<<<script </script>script>foo;</script>"))
   end
 
+  def test_sort_empty_array
+    assert_equal([], @filters.sort([], "a"))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))

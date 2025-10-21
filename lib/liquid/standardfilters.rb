@@ -81,6 +81,12 @@ module Liquid
       result
     end
 
+    def sort(input, property = nil)
+      ary = InputIterator.new(input, context)
+
+      return [] if ary.empty?
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
@@ -93,10 +99,20 @@ module Liquid
 
     private
 
+    attr_reader :context
+
     class InputIterator
       include Enumerable
 
+      def initialize(input, context)
+        @context = context
+        @input   = if input.is_a?(Array)
+          input.flatten
+        end
+      end
+
       def empty?
+        @input.each { return false }
         true
       end
 

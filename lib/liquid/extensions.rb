@@ -6,6 +6,9 @@ require 'date'
 class String
 end
 
+class Array
+end
+
 class Hash
 end
 
