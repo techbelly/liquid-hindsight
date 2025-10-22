@@ -97,6 +97,10 @@ module Liquid
       filter_array(input, property, target_value, false) { |ary, &block| ary.any?(&block) }
     end
 
+    def find_index(input, property, target_value = nil)
+      filter_array(input, property, target_value, nil) { |ary, &block| ary.find_index(&block) }
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)

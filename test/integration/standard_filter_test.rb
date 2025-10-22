@@ -86,6 +86,10 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.upcase(nil))
   end
 
+  def test_find_index_on_empty_array
+    assert_nil(@filters.find_index([], 'foo', 'bar'))
+  end
+
   def test_has_on_empty_array
     refute(@filters.has([], 'foo', 'bar'))
   end
