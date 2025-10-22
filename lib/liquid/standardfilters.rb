@@ -87,6 +87,12 @@ module Liquid
       return [] if ary.empty?
     end
 
+    def sort_natural(input, property = nil)
+      ary = InputIterator.new(input, context)
+
+      return [] if ary.empty?
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
