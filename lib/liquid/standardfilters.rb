@@ -93,6 +93,10 @@ module Liquid
       return [] if ary.empty?
     end
 
+    def has(input, property, target_value = nil)
+      filter_array(input, property, target_value, false) { |ary, &block| ary.any?(&block) }
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
@@ -106,6 +110,12 @@ module Liquid
     private
 
     attr_reader :context
+
+    def filter_array(input, property, target_value, default_value = [], &block)
+      ary = InputIterator.new(input, context)
+
+      return default_value if ary.empty?
+    end
 
     class InputIterator
       include Enumerable
