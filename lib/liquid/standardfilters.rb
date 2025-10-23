@@ -113,6 +113,14 @@ module Liquid
       end
     end
 
+    def compact(input, property = nil)
+      ary = InputIterator.new(input, context)
+
+      if ary.empty?
+        []
+      end
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
