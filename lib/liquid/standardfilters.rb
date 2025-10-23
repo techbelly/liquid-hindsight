@@ -105,6 +105,14 @@ module Liquid
       filter_array(input, property, target_value, nil) { |ary, &block| ary.find_index(&block) }
     end
 
+    def uniq(input, property = nil)
+      ary = InputIterator.new(input, context)
+
+      if ary.empty?
+        []
+      end
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
