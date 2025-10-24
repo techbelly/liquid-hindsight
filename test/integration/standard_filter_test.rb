@@ -177,6 +177,10 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([], @filters.sort_natural([], "a"))
   end
 
+  def test_legacy_sort_hash
+    assert_equal([{ a: 1, b: 2 }], @filters.sort(a: 1, b: 2))
+  end
+
   def test_uniq_empty_array
     assert_equal([], @filters.uniq([], "a"))
   end

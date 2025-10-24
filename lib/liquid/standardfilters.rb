@@ -85,6 +85,12 @@ module Liquid
       ary = InputIterator.new(input, context)
 
       return [] if ary.empty?
+
+      if property.nil?
+        ary.sort do |a, b|
+          nil_safe_compare(a, b)
+        end
+      end
     end
 
     def sort_natural(input, property = nil)
