@@ -113,6 +113,11 @@ module Liquid
       end
     end
 
+    def reverse(input)
+      ary = InputIterator.new(input, context)
+      ary.reverse
+    end
+
     def compact(input, property = nil)
       ary = InputIterator.new(input, context)
 
@@ -151,12 +156,21 @@ module Liquid
         end
       end
 
+      def reverse
+        reverse_each.to_a
+      end
+
       def empty?
         @input.each { return false }
         true
       end
 
       def each
+        @input.each do |e|
+          e = e.respond_to?(:to_liquid) ? e.to_liquid : e
+          e.context = @context if e.respond_to?(:context=)
+          yield(e)
+        end
       end
     end
   end

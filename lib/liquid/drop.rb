@@ -4,6 +4,8 @@ require 'set'
 
 module Liquid
   class Drop
+    attr_writer :context
+
     def initialize
       @context = nil
     end

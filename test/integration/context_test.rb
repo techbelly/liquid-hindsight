@@ -55,7 +55,7 @@ class ProductsDrop < Liquid::Drop
 end
 
 class CategoryDrop < Liquid::Drop
-  attr_reader :context
+  attr_accessor :context
 
   def initialize(category)
     @category = category
