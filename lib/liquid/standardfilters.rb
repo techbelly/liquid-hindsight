@@ -135,6 +135,15 @@ module Liquid
 
       if ary.empty?
         []
+      else
+        ary.reject do |item|
+          item[property].nil?
+        rescue TypeError
+          raise_property_error(property)
+        rescue NoMethodError
+          return nil unless item.respond_to?(:[])
+          raise
+        end
       end
     end
 

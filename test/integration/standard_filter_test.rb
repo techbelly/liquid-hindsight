@@ -201,6 +201,18 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([], @filters.compact([], "a"))
   end
 
+  def test_compact_invalid_property
+    foo = [
+      [1],
+      [2],
+      [3],
+    ]
+
+    assert_raises(Liquid::ArgumentError) do
+      @filters.compact(foo, "bar")
+    end
+  end
+
   def test_reverse
     assert_equal([4, 3, 2, 1], @filters.reverse([1, 2, 3, 4]))
   end
