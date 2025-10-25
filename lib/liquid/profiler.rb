@@ -29,6 +29,10 @@ module Liquid
       children.each(&block)
     end
 
+    def [](idx)
+      children[idx]
+    end
+
     private
   end
 end

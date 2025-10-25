@@ -90,6 +90,12 @@ module Liquid
         ary.sort do |a, b|
           nil_safe_compare(a, b)
         end
+      elsif ary.all? { |el| el.respond_to?(:[]) }
+        begin
+          ary.sort { |a, b| nil_safe_compare(a[property], b[property]) }
+        rescue TypeError
+          raise_property_error(property)
+        end
       end
     end
 
@@ -150,6 +156,10 @@ module Liquid
       ary = InputIterator.new(input, context)
 
       return default_value if ary.empty?
+    end
+
+    def raise_property_error(property)
+      raise Liquid::ArgumentError, "cannot select the property '#{Utils.to_s(property)}'"
     end
 
     class InputIterator

@@ -58,6 +58,10 @@ module Liquid
       @scopes.shift
     end
 
+    def [](expression)
+      evaluate(Expression.parse(expression, @string_scanner))
+    end
+
     def with_disabled_tags(tag_names)
       tag_names.each do |name|
         @disabled_tags[name] = @disabled_tags.fetch(name, 0) + 1
