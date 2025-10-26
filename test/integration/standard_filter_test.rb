@@ -174,6 +174,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "a" => 1 }, { "a" => 2 }, { "a" => 3 }, { "a" => 4 }], @filters.sort([{ "a" => 4 }, { "a" => 3 }, { "a" => 1 }, { "a" => 2 }], "a"))
   end
 
+  def test_sort_natural
+    assert_equal(["a", "B", "c", "D"], @filters.sort_natural(["c", "D", "a", "B"]))
+    assert_equal([{ "a" => "a" }, { "a" => "B" }, { "a" => "c" }, { "a" => "D" }], @filters.sort_natural([{ "a" => "D" }, { "a" => "c" }, { "a" => "a" }, { "a" => "B" }], "a"))
+  end
+
   def test_sort_empty_array
     assert_equal([], @filters.sort([], "a"))
   end

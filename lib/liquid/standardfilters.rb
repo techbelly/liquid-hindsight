@@ -104,7 +104,11 @@ module Liquid
 
       return [] if ary.empty?
 
-      if ary.all? { |el| el.respond_to?(:[]) }
+      if property.nil?
+        ary.sort do |a, b|
+          nil_safe_casecmp(a, b)
+        end
+      elsif ary.all? { |el| el.respond_to?(:[]) }
         begin
           ary.sort { |a, b| nil_safe_casecmp(a[property], b[property]) }
         rescue TypeError
@@ -184,6 +188,12 @@ module Liquid
 
       if result
         result
+      end
+    end
+
+    def nil_safe_casecmp(a, b)
+      if !a.nil? && !b.nil?
+        a.to_s.casecmp(b.to_s)
       end
     end
 
