@@ -159,6 +159,13 @@ module Liquid
       end
     end
 
+    def concat(input, array)
+      unless array.respond_to?(:to_ary)
+        raise ArgumentError, "concat filter requires an array argument"
+      end
+      InputIterator.new(input, context).concat(array)
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)
@@ -215,6 +222,10 @@ module Liquid
         elsif input.is_a?(Hash)
           [input]
         end
+      end
+
+      def concat(args)
+        to_a.concat(args)
       end
 
       def reverse
