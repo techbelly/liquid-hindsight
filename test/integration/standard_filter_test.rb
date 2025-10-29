@@ -360,6 +360,45 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(expectation, @filters.where(input, "be"))
   end
 
+  def test_where_no_key_set
+    input = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta" },
+      { "handle" => "gamma" },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    expectation = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    assert_equal(expectation, @filters.where(input, "ok", true))
+    assert_equal(expectation, @filters.where(input, "ok"))
+  end
+
+  def test_where_non_array_map_input
+    assert_equal([{ "a" => "ok" }], @filters.where({ "a" => "ok" }, "a", "ok"))
+    assert_equal([], @filters.where({ "a" => "not ok" }, "a", "ok"))
+  end
+
+  def test_where_non_boolean_value
+    input = [
+      { "message" => "Bonjour!", "language" => "French" },
+      { "message" => "Hello!", "language" => "English" },
+      { "message" => "Hallo!", "language" => "German" },
+    ]
+
+    assert_equal([{ "message" => "Bonjour!", "language" => "French" }], @filters.where(input, "language", "French"))
+    assert_equal([{ "message" => "Hallo!", "language" => "German" }], @filters.where(input, "language", "German"))
+    assert_equal([{ "message" => "Hello!", "language" => "English" }], @filters.where(input, "language", "English"))
+  end
+
+  def test_where_array_of_only_unindexable_values
+    assert_nil(@filters.where([nil], "ok", true))
+    assert_nil(@filters.where([nil], "ok"))
+  end
+
   def test_where_no_target_value
     input = [
       { "foo" => false },

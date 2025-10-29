@@ -192,6 +192,8 @@ module Liquid
       block.call(ary) do |item|
         if target_value.nil?
           item[property]
+        else
+          item[property] == target_value
         end
       rescue TypeError
         raise_property_error(property)
