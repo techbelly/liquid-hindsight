@@ -146,6 +146,18 @@ module Liquid
       ary.reverse
     end
 
+    def map(input, property)
+      InputIterator.new(input, context).map do |e|
+        e = e.call if e.is_a?(Proc)
+
+        if e.respond_to?(:[])
+          r = e[property]
+        end
+      end
+    rescue TypeError
+      raise_property_error(property)
+    end
+
     def compact(input, property = nil)
       ary = InputIterator.new(input, context)
 
