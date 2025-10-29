@@ -238,6 +238,10 @@ module Liquid
           input.flatten
         elsif input.is_a?(Hash)
           [input]
+        elsif input.is_a?(Enumerable)
+          input
+        else
+          Array(input)
         end
       end
 

@@ -382,6 +382,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([], @filters.where({ "a" => "not ok" }, "a", "ok"))
   end
 
+  def test_where_indexable_but_non_map_value
+    assert_raises(Liquid::ArgumentError) { @filters.where(1, "ok", true) }
+    assert_raises(Liquid::ArgumentError) { @filters.where(1, "ok") }
+  end
+
   def test_where_non_boolean_value
     input = [
       { "message" => "Bonjour!", "language" => "French" },
