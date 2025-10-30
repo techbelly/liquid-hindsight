@@ -67,6 +67,19 @@ module Liquid
       Base64.urlsafe_encode64(Utils.to_s(input))
     end
 
+    def truncate(input, length = 50, truncate_string = "...")
+      return if input.nil?
+      input_str = Utils.to_s(input)
+      length    = Utils.to_integer(length)
+
+      truncate_string_str = Utils.to_s(truncate_string)
+
+      l = length - truncate_string_str.length
+      l = 0 if l < 0
+
+      input_str.length > length ? input_str[0...l].concat(truncate_string_str) : input_str
+    end
+
     def split(input, pattern)
       pattern = Utils.to_s(pattern)
       input = Utils.to_s(input)
