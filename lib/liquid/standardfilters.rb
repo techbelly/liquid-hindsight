@@ -136,7 +136,9 @@ module Liquid
     def uniq(input, property = nil)
       ary = InputIterator.new(input, context)
 
-      if ary.empty?
+      if property.nil?
+        ary.uniq
+      elsif ary.empty?
         []
       else
         ary.uniq do |item|
