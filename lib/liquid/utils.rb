@@ -51,6 +51,12 @@ module Liquid
     end
     private_class_method :range_method_overridden?
 
+    def self.to_liquid_value(obj)
+      return obj.to_liquid_value if obj.respond_to?(:to_liquid_value)
+
+      obj
+    end
+
     def self.to_s(obj, seen = {})
       obj.to_s
     end

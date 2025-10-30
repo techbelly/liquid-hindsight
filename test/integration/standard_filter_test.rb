@@ -295,6 +295,18 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([], @filters.uniq([], "a"))
   end
 
+  def test_uniq_invalid_property
+    foo = [
+      [1],
+      [2],
+      [3],
+    ]
+
+    assert_raises(Liquid::ArgumentError) do
+      @filters.uniq(foo, "bar")
+    end
+  end
+
   def test_compact_empty_array
     assert_equal([], @filters.compact([], "a"))
   end
