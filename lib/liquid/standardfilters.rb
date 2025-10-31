@@ -81,6 +81,8 @@ module Liquid
       begin
         if input.is_a?(Array)
           input.slice(offset, length) || []
+        else
+          Utils.to_s(input).slice(offset, length) || ''
         end
       rescue RangeError
         offset = offset.clamp(INDEX_RANGE)
