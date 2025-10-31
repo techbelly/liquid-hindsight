@@ -86,6 +86,24 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.upcase(nil))
   end
 
+  def test_slice_on_arrays
+    input = 'foobar'.split('')
+    assert_equal(%w(o o b), @filters.slice(input, 1, 3))
+    assert_equal(%w(o o b a r), @filters.slice(input, 1, 1000))
+    assert_equal(%w(), @filters.slice(input, 1, 0))
+    assert_equal(%w(o), @filters.slice(input, 1, 1))
+    assert_equal(%w(b a r), @filters.slice(input, 3, 3))
+    assert_equal(%w(a r), @filters.slice(input, -2, 2))
+    assert_equal(%w(a r), @filters.slice(input, -2, 1000))
+    assert_equal(%w(r), @filters.slice(input, -1))
+    assert_equal(%w(), @filters.slice(input, 100, 10))
+    assert_equal(%w(), @filters.slice(input, -100, 10))
+    assert_equal([], @filters.slice(input, 0, -(1 << 64)))
+    assert_equal(input, @filters.slice(input, 0, 1 << 63))
+    assert_equal([], @filters.slice(input, 1 << 63, 6))
+    assert_equal([], @filters.slice(input, -(1 << 63), 6))
+  end
+
   def test_find_on_empty_array
     assert_nil(@filters.find([], 'foo', 'bar'))
   end

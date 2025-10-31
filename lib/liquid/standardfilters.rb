@@ -10,6 +10,13 @@ module Liquid
       true
     end
 
+    INDEX_RANGE = if supports_64bit_indices
+      (-(1 << 63))..((1 << 63) - 1)
+    else
+      (-(1 << 31))..((1 << 31) - 1)
+    end
+    private_constant :INDEX_RANGE
+
     HTML_ESCAPE = {
       '&' => '&amp;',
       '>' => '&gt;',
@@ -65,6 +72,21 @@ module Liquid
 
     def base64_url_safe_encode(input)
       Base64.urlsafe_encode64(Utils.to_s(input))
+    end
+
+    def slice(input, offset, length = nil)
+      offset = Utils.to_integer(offset)
+      length = length ? Utils.to_integer(length) : 1
+
+      begin
+        if input.is_a?(Array)
+          input.slice(offset, length) || []
+        end
+      rescue RangeError
+        offset = offset.clamp(INDEX_RANGE)
+        length = length.clamp(INDEX_RANGE)
+        retry
+      end
     end
 
     def truncate(input, length = 50, truncate_string = "...")
