@@ -94,6 +94,13 @@ module Liquid
       Base64.urlsafe_encode64(Utils.to_s(input))
     end
 
+    def base64_url_safe_decode(input)
+      input = Utils.to_s(input)
+      StandardFilters.try_coerce_encoding(Base64.urlsafe_decode64(input), encoding: input.encoding)
+    rescue ::ArgumentError
+      raise Liquid::ArgumentError, "invalid base64 provided to base64_url_safe_decode"
+    end
+
     def slice(input, offset, length = nil)
       offset = Utils.to_integer(offset)
       length = length ? Utils.to_integer(length) : 1
