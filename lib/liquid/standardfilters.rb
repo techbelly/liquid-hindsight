@@ -32,6 +32,19 @@ module Liquid
     )
     STRIP_HTML_TAGS = /<.*?>/m
 
+    class << self
+      def try_coerce_encoding(input, encoding:)
+        original_encoding = input.encoding
+        if input.encoding != encoding
+          input.force_encoding(encoding)
+          unless input.valid_encoding?
+            input.force_encoding(original_encoding)
+          end
+        end
+        input
+      end
+    end
+
     def size(input)
       input.respond_to?(:size) ? input.size : 0
     end
@@ -68,6 +81,13 @@ module Liquid
 
     def base64_encode(input)
       Base64.strict_encode64(Utils.to_s(input))
+    end
+
+    def base64_decode(input)
+      input = Utils.to_s(input)
+      StandardFilters.try_coerce_encoding(Base64.strict_decode64(input), encoding: input.encoding)
+    rescue ::ArgumentError
+      raise Liquid::ArgumentError, "invalid base64 provided to base64_decode"
     end
 
     def base64_url_safe_encode(input)
