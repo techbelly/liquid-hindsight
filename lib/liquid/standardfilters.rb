@@ -5,6 +5,9 @@ require 'base64'
 require 'bigdecimal'
 module Liquid
   module StandardFilters
+    MAX_I32 = (1 << 31) - 1
+    private_constant :MAX_I32
+
     supports_64bit_indices = begin
       [][1 << 33, 1 << 33]
       true
@@ -129,6 +132,24 @@ module Liquid
       l = 0 if l < 0
 
       input_str.length > length ? input_str[0...l].concat(truncate_string_str) : input_str
+    end
+
+    def truncatewords(input, words = 15, truncate_string = "...")
+      return if input.nil?
+      input = Utils.to_s(input)
+      words = Utils.to_integer(words)
+      words = 1 if words <= 0
+
+      wordlist = begin
+        input.split(" ", words + 1)
+      rescue RangeError
+        return input if words + 1 > MAX_I32
+      end
+      return input if wordlist.length <= words
+
+      wordlist.pop
+      truncate_string = Utils.to_s(truncate_string)
+      wordlist.join(" ").concat(truncate_string)
     end
 
     def split(input, pattern)
