@@ -166,6 +166,11 @@ module Liquid
       result
     end
 
+    def join(input, glue = ' ')
+      glue = Utils.to_s(glue)
+      InputIterator.new(input, context).join(glue)
+    end
+
     def sort(input, property = nil)
       ary = InputIterator.new(input, context)
 
@@ -351,6 +356,21 @@ module Liquid
         else
           Array(input)
         end
+      end
+
+      def join(glue)
+        first = true
+        output = +""
+        each do |item|
+          if first
+            first = false
+          else
+            output << glue
+          end
+
+          output << Liquid::Utils.to_s(item)
+        end
+        output
       end
 
       def concat(args)
