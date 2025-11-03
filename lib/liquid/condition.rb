@@ -28,6 +28,12 @@ module Liquid
       'empty' => MethodLiteral.new(:empty?, '').freeze,
     }
 
+    def evaluate(context = deprecated_default_context)
+      condition = self
+      result = nil
+      result
+    end
+
     protected
 
     private
@@ -42,6 +48,12 @@ module Liquid
       end
 
       left == right
+    end
+  end
+
+  class ElseCondition < Condition
+    def evaluate(_context)
+      true
     end
   end
 end

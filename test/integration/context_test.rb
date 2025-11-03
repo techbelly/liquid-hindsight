@@ -156,6 +156,14 @@ class ContextTest < Minitest::Test
     end
   end
 
+  def test_key_lookup_will_raise_for_missing_keys_when_strict_variables_is_enabled
+    context = Context.new
+    context.strict_variables = true
+    assert_raises(Liquid::UndefinedVariable) do
+      context['unknown']
+    end
+  end
+
   def test_context_always_uses_static_registers
     registers = {
       my_register: :my_value,

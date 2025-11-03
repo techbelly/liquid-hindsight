@@ -8,6 +8,10 @@ module Liquid
       nil
     end
 
+    def key?(key)
+      @self_context.variable_defined?(key)
+    end
+
     def to_liquid
       self
     end
