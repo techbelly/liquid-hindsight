@@ -2,6 +2,8 @@
 
 module Liquid
   module Utils
+    UNIX_TIMESTAMP_REGEX = /\A\d+\z/
+
     def self.slice_collection_for_iteration(
       collection, from, to, resource_limits, allow_endless: false, use_range_to_a: false
     )
@@ -58,6 +60,24 @@ module Liquid
         Integer(num)
       rescue ::ArgumentError
         raise Liquid::ArgumentError, "invalid integer"
+      end
+    end
+
+    def self.to_date(obj)
+      return obj if obj.respond_to?(:strftime)
+
+      if obj.is_a?(String)
+        return if obj.empty?
+        obj = obj.downcase
+      end
+
+      case obj
+      when 'now', 'today'
+        Time.now
+      when UNIX_TIMESTAMP_REGEX, Integer
+        Time.at(obj.to_i)
+      when String
+        Time.parse(obj)
       end
     end
 

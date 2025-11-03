@@ -283,6 +283,15 @@ module Liquid
       InputIterator.new(input, context).concat(array)
     end
 
+    def date(input, format)
+      str_format = Utils.to_s(format)
+      return input if str_format.empty?
+
+      return input unless (date = Utils.to_date(input))
+
+      date.strftime(str_format)
+    end
+
     def first(array)
       return array[0] || "" if array.is_a?(String)
       array.first if array.respond_to?(:first)

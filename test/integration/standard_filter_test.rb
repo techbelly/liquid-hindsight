@@ -487,6 +487,37 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_date
+    assert_equal('May', @filters.date(Time.parse("2006-05-05 10:00:00"), "%B"))
+    assert_equal('June', @filters.date(Time.parse("2006-06-05 10:00:00"), "%B"))
+    assert_equal('July', @filters.date(Time.parse("2006-07-05 10:00:00"), "%B"))
+
+    assert_equal('May', @filters.date("2006-05-05 10:00:00", "%B"))
+    assert_equal('June', @filters.date("2006-06-05 10:00:00", "%B"))
+    assert_equal('July', @filters.date("2006-07-05 10:00:00", "%B"))
+
+    assert_equal('2006-07-05 10:00:00', @filters.date("2006-07-05 10:00:00", ""))
+    assert_equal('2006-07-05 10:00:00', @filters.date("2006-07-05 10:00:00", ""))
+    assert_equal('2006-07-05 10:00:00', @filters.date("2006-07-05 10:00:00", ""))
+    assert_equal('2006-07-05 10:00:00', @filters.date("2006-07-05 10:00:00", nil))
+
+    assert_equal('07/05/2006', @filters.date("2006-07-05 10:00:00", "%m/%d/%Y"))
+
+    assert_equal("07/16/2004", @filters.date("Fri Jul 16 01:00:00 2004", "%m/%d/%Y"))
+    assert_equal(Date.today.year.to_s, @filters.date('now', '%Y'))
+    assert_equal(Date.today.year.to_s, @filters.date('today', '%Y'))
+    assert_equal(Date.today.year.to_s, @filters.date('Today', '%Y'))
+
+    assert_nil(@filters.date(nil, "%B"))
+
+    assert_equal('', @filters.date('', "%B"))
+
+    with_timezone("UTC") do
+      assert_equal("07/05/2006", @filters.date(1152098955, "%m/%d/%Y"))
+      assert_equal("07/05/2006", @filters.date("1152098955", "%m/%d/%Y"))
+    end
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))
