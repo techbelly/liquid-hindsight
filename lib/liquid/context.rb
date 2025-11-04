@@ -58,6 +58,10 @@ module Liquid
       @scopes.shift
     end
 
+    def []=(key, value)
+      @scopes[0][key] = value
+    end
+
     def [](expression)
       evaluate(Expression.parse(expression, @string_scanner))
     end
@@ -83,12 +87,26 @@ module Liquid
           raise_on_not_found: raise_on_not_found && !fallback_to_self_drop,
         )
       end
+
+      return @self_drop ||= SelfDrop.new(self) if fallback_to_self_drop && variable.nil?
+
+      variable.context = self if variable.respond_to?(:context=)
+
+      liquid_variable = variable.to_liquid
+
+      liquid_variable.context = self if variable != liquid_variable && liquid_variable.respond_to?(:context=)
+
+      liquid_variable
     end
 
     def lookup_and_evaluate(obj, key, raise_on_not_found: true)
       if @strict_variables && raise_on_not_found && obj.respond_to?(:key?) && !obj.key?(key)
         raise Liquid::UndefinedVariable, "undefined variable #{key}"
       end
+
+      value = obj[key]
+
+      value
     end
 
     def with_disabled_tags(tag_names)

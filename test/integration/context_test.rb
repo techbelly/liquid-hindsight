@@ -91,6 +91,34 @@ class ContextTest < Minitest::Test
     @context = Liquid::Context.new
   end
 
+  def test_variables
+    @context['string'] = 'string'
+    assert_equal('string', @context['string'])
+
+    @context['num'] = 5
+    assert_equal(5, @context['num'])
+
+    @context['time'] = Time.parse('2006-06-06 12:00:00')
+    assert_equal(Time.parse('2006-06-06 12:00:00'), @context['time'])
+
+    @context['date'] = Date.today
+    assert_equal(Date.today, @context['date'])
+
+    now = Time.now
+    @context['datetime'] = now
+    assert_equal(now, @context['datetime'])
+
+    @context['bool'] = true
+    assert_equal(true, @context['bool'])
+
+    @context['bool'] = false
+    assert_equal(false, @context['bool'])
+
+    @context['nil'] = nil
+    assert_nil(@context['nil'])
+    assert_nil(@context['nil'])
+  end
+
   def test_scoping
     @context.push
     @context.pop
@@ -104,6 +132,28 @@ class ContextTest < Minitest::Test
       @context.pop
       @context.pop
     end
+  end
+
+  def test_add_item_in_outer_scope
+    @context['test'] = 'test'
+    @context.push
+    assert_equal('test', @context['test'])
+    @context.pop
+    assert_equal('test', @context['test'])
+  end
+
+  def test_drop_with_variable_called_only_once
+    @context['counter'] = CounterDrop.new
+
+    assert_equal(1, @context['counter.count'])
+    assert_equal(2, @context['counter.count'])
+    assert_equal(3, @context['counter.count'])
+  end
+
+  def test_to_liquid_and_context_at_first_level
+    @context['category'] = Category.new("foobar")
+    assert_kind_of(CategoryDrop, @context['category'])
+    assert_equal(@context, @context['category'].context)
   end
 
   def test_interrupt_avoids_object_allocations

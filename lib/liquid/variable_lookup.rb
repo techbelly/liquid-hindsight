@@ -33,6 +33,32 @@ module Liquid
       name   = context.evaluate(@name)
       object = context.find_variable(name)
 
+      @lookups.each_index do |i|
+        key = context.evaluate(@lookups[i])
+
+        key = Liquid::Utils.to_liquid_value(key)
+
+        if object.respond_to?(:[]) &&
+            ((object.respond_to?(:key?) && object.key?(key)) ||
+             (object.respond_to?(:fetch) && key.is_a?(Integer)))
+
+          res    = context.lookup_and_evaluate(object, key)
+          object = res.to_liquid
+
+        elsif lookup_command?(i) && object.respond_to?(key)
+          object = object.send(key).to_liquid
+
+        elsif lookup_command?(i) && object.is_a?(String) && (key == "first" || key == "last")
+          object = key == "first" ? (object[0] || "") : (object[-1] || "")
+
+        else
+          return nil unless context.strict_variables
+          raise Liquid::UndefinedVariable, "undefined variable #{key}"
+        end
+
+        object.context = context if object.respond_to?(:context=)
+      end
+
       object
     end
 
