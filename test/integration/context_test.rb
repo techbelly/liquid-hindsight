@@ -142,6 +142,60 @@ class ContextTest < Minitest::Test
     assert_equal('test', @context['test'])
   end
 
+  def test_merge
+    @context.merge("test" => "test")
+    assert_equal('test', @context['test'])
+    @context.merge("test" => "newvalue", "foo" => "bar")
+    assert_equal('newvalue', @context['test'])
+    assert_equal('bar', @context['foo'])
+  end
+
+  def test_cents
+    @context.merge("cents" => HundredCentes.new)
+    assert_equal(100, @context['cents'])
+  end
+
+  def test_nested_cents
+    @context.merge("cents" => { 'amount' => HundredCentes.new })
+    assert_equal(100, @context['cents.amount'])
+
+    @context.merge("cents" => { 'cents' => { 'amount' => HundredCentes.new } })
+    assert_equal(100, @context['cents.cents.amount'])
+  end
+
+  def test_cents_through_drop
+    @context.merge("cents" => CentsDrop.new)
+    assert_equal(100, @context['cents.amount'])
+  end
+
+  def test_nested_cents_through_drop
+    @context.merge("vars" => { "cents" => CentsDrop.new })
+    assert_equal(100, @context['vars.cents.amount'])
+  end
+
+  def test_drop_methods_with_question_marks
+    @context.merge("cents" => CentsDrop.new)
+    assert(@context['cents.non_zero?'])
+  end
+
+  def test_context_from_within_drop
+    @context.merge("test" => '123', "vars" => ContextSensitiveDrop.new)
+    assert_equal('123', @context['vars.test'])
+  end
+
+  def test_nested_context_from_within_drop
+    @context.merge("test" => '123', "vars" => { "local" => ContextSensitiveDrop.new })
+    assert_equal('123', @context['vars.local.test'])
+  end
+
+  def test_cents_through_drop_nestedly
+    @context.merge("cents" => { "cents" => CentsDrop.new })
+    assert_equal(100, @context['cents.cents.amount'])
+
+    @context.merge("cents" => { "cents" => { "cents" => CentsDrop.new } })
+    assert_equal(100, @context['cents.cents.cents.amount'])
+  end
+
   def test_drop_with_variable_called_only_once
     @context['counter'] = CounterDrop.new
 

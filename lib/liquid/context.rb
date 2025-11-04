@@ -53,6 +53,10 @@ module Liquid
       check_overflow
     end
 
+    def merge(new_scopes)
+      @scopes[0].merge!(new_scopes)
+    end
+
     def pop
       raise ContextError if @scopes.size == 1
       @scopes.shift
