@@ -142,6 +142,10 @@ module Liquid
       @environments.each do |environment|
         found_variable = lookup_and_evaluate(environment, key, raise_on_not_found: raise_on_not_found)
       end
+      @static_environments.each do |environment|
+        found_variable = lookup_and_evaluate(environment, key, raise_on_not_found: raise_on_not_found)
+      end
+      nil
     end
 
     def check_overflow

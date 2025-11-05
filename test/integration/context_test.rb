@@ -142,6 +142,14 @@ class ContextTest < Minitest::Test
     assert_equal('test', @context['test'])
   end
 
+  def test_add_item_in_inner_scope
+    @context.push
+    @context['test'] = 'test'
+    assert_equal('test', @context['test'])
+    @context.pop
+    assert_nil(@context['test'])
+  end
+
   def test_merge
     @context.merge("test" => "test")
     assert_equal('test', @context['test'])
@@ -269,6 +277,13 @@ class ContextTest < Minitest::Test
     assert_no_object_allocations do
       @context.interrupt?
     end
+  end
+
+  def test_context_initialization_with_a_proc_in_environment
+    contx = Context.new([test: ->(c) { c['poutine'] }], test: :foo)
+
+    assert(contx)
+    assert_nil(contx['poutine'])
   end
 
   def test_apply_global_filter
