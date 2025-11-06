@@ -212,6 +212,14 @@ class ContextTest < Minitest::Test
     assert_equal(3, @context['counter.count'])
   end
 
+  def test_drop_with_key_called_only_once
+    @context['counter'] = CounterDrop.new
+
+    assert_equal(1, @context['counter["count"]'])
+    assert_equal(2, @context['counter["count"]'])
+    assert_equal(3, @context['counter["count"]'])
+  end
+
   def test_proc_as_variable
     @context['dynamic'] = proc { 'Hello' }
 
@@ -228,6 +236,12 @@ class ContextTest < Minitest::Test
     @context['dynamic'] = { "lambda" => proc { 'Hello' } }
 
     assert_equal('Hello', @context['dynamic.lambda'])
+  end
+
+  def test_array_containing_lambda_as_variable
+    @context['dynamic'] = [1, 2, proc { 'Hello' }, 4, 5]
+
+    assert_equal('Hello', @context['dynamic[2]'])
   end
 
   def test_lambda_is_called_once
@@ -256,6 +270,20 @@ class ContextTest < Minitest::Test
     assert_equal('1', @context['callcount.lambda'])
     assert_equal('1', @context['callcount.lambda'])
     assert_equal('1', @context['callcount.lambda'])
+  end
+
+  def test_lambda_in_array_is_called_once
+    @global = 0
+
+    p = proc {
+      @global += 1
+      @global.to_s
+    }
+    @context['callcount'] = [1, 2, p, 4, 5]
+
+    assert_equal('1', @context['callcount[2]'])
+    assert_equal('1', @context['callcount[2]'])
+    assert_equal('1', @context['callcount[2]'])
   end
 
   def test_access_to_context_from_proc
