@@ -2,7 +2,7 @@
 
 module Liquid
   class Context
-    attr_reader :scopes, :registers
+    attr_reader :scopes, :errors, :registers
     attr_accessor :exception_renderer, :partial, :global_filter, :strict_variables
 
     def initialize(environments = {}, outer_scope = {}, registers = {}, rethrow_errors = false, resource_limits = nil, static_environments = {}, environment = Environment.default)
