@@ -338,6 +338,51 @@ class ContextTest < Minitest::Test
     assert_equal('hi', context.apply_global_filter('hi'))
   end
 
+  def test_new_isolated_subcontext_does_not_inherit_variables
+    super_context = Context.new
+    super_context['my_variable'] = 'some value'
+    subcontext = super_context.new_isolated_subcontext
+
+    assert_nil(subcontext['my_variable'])
+  end
+
+  def test_new_isolated_subcontext_inherits_static_environment
+    super_context = Context.build(static_environments: { 'my_environment_value' => 'my value' })
+    subcontext    = super_context.new_isolated_subcontext
+
+    assert_equal('my value', subcontext['my_environment_value'])
+  end
+
+  def test_new_isolated_subcontext_inherits_resource_limits
+    resource_limits = ResourceLimits.new({})
+    super_context   = Context.new({}, {}, {}, false, resource_limits)
+    subcontext      = super_context.new_isolated_subcontext
+    assert_equal(resource_limits, subcontext.resource_limits)
+  end
+
+  def test_new_isolated_subcontext_does_not_inherit_non_static_registers
+    registers = {
+      my_register: :my_value,
+    }
+    super_context = Context.new({}, {}, Registers.new(registers))
+    super_context.registers[:my_register] = :my_alt_value
+    subcontext                            = super_context.new_isolated_subcontext
+    assert_equal(:my_value, subcontext.registers[:my_register])
+  end
+
+  def test_new_isolated_subcontext_inherits_static_registers
+    super_context = Context.build(registers: { my_register: :my_value })
+    subcontext    = super_context.new_isolated_subcontext
+    assert_equal(:my_value, subcontext.registers[:my_register])
+  end
+
+  def test_new_isolated_subcontext_registers_do_not_pollute_context
+    super_context                      = Context.build(registers: { my_register: :my_value })
+    subcontext                         = super_context.new_isolated_subcontext
+    subcontext.registers[:my_register] = :my_alt_value
+    assert_equal(:my_value, super_context.registers[:my_register])
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do

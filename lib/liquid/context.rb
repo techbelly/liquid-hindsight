@@ -2,7 +2,7 @@
 
 module Liquid
   class Context
-    attr_reader :scopes, :errors, :registers
+    attr_reader :scopes, :errors, :registers, :resource_limits, :static_environments
     attr_accessor :exception_renderer, :partial, :global_filter, :strict_variables
 
     def self.build(environment: Environment.default, environments: {}, outer_scope: {}, registers: {}, rethrow_errors: false, resource_limits: nil, static_environments: {}, &block)
@@ -40,6 +40,10 @@ module Liquid
       squash_instance_assigns_with_environments
     end
 
+    def warnings
+      @warnings ||= []
+    end
+
     def strainer
       @strainer ||= @environment.create_strainer(self, @filters)
     end
@@ -64,6 +68,25 @@ module Liquid
     def pop
       raise ContextError if @scopes.size == 1
       @scopes.shift
+    end
+
+    def new_isolated_subcontext
+      check_overflow
+
+      self.class.build(
+        environment: @environment,
+        resource_limits: resource_limits,
+        static_environments: static_environments,
+        registers: Registers.new(registers),
+      ).tap do |subcontext|
+        subcontext.base_scope_depth   = base_scope_depth + 1
+        subcontext.exception_renderer = exception_renderer
+        subcontext.filters  = @filters
+        subcontext.strainer = nil
+        subcontext.errors   = errors
+        subcontext.warnings = warnings
+        subcontext.disabled_tags = @disabled_tags
+      end
     end
 
     def []=(key, value)
@@ -137,6 +160,8 @@ module Liquid
     end
 
     protected
+
+    attr_writer :base_scope_depth, :warnings, :errors, :strainer, :filters, :disabled_tags
 
     private
 

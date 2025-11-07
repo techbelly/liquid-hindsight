@@ -6,6 +6,13 @@ module Liquid
   class Profiler
     include Enumerable
 
+    class Timing
+      attr_reader :code, :template_name, :line_number, :children
+      attr_accessor :total_time
+      alias_method :render_time, :total_time
+      alias_method :partial, :template_name
+    end
+
     attr_reader :total_time
     alias_method :total_render_time, :total_time
 

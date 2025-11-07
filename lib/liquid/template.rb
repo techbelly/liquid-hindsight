@@ -3,7 +3,9 @@
 module Liquid
   class Template
     attr_accessor :root, :name
-    attr_reader :warnings
+    attr_reader :resource_limits, :warnings
+
+    attr_reader :profiler
 
     class << self
       def error_mode
