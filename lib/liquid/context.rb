@@ -3,7 +3,7 @@
 module Liquid
   class Context
     attr_reader :scopes, :errors, :registers, :resource_limits, :static_environments
-    attr_accessor :exception_renderer, :partial, :global_filter, :strict_variables
+    attr_accessor :exception_renderer, :template_name, :partial, :global_filter, :strict_variables
 
     def self.build(environment: Environment.default, environments: {}, outer_scope: {}, registers: {}, rethrow_errors: false, resource_limits: nil, static_environments: {}, &block)
       new(environments, outer_scope, registers, rethrow_errors, resource_limits, static_environments, environment, &block)
@@ -54,6 +54,14 @@ module Liquid
 
     def interrupt?
       !@interrupts.empty?
+    end
+
+    def handle_error(e, line_number = nil)
+      e = internal_error unless e.is_a?(Liquid::Error)
+      e.template_name ||= template_name
+      e.line_number   ||= line_number
+      errors.push(e)
+      exception_renderer.call(e).to_s
     end
 
     def push(new_scope = {})

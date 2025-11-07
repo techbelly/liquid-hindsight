@@ -3,6 +3,7 @@
 module Liquid
   class Error < ::StandardError
     attr_accessor :line_number
+    attr_accessor :template_name
     attr_accessor :markup_context
 
     def to_s(with_prefix = true)

@@ -360,6 +360,13 @@ class ContextTest < Minitest::Test
     assert_equal(resource_limits, subcontext.resource_limits)
   end
 
+  def test_new_isolated_subcontext_inherits_exception_renderer
+    super_context = Context.new
+    super_context.exception_renderer = ->(_e) { 'my exception message' }
+    subcontext = super_context.new_isolated_subcontext
+    assert_equal('my exception message', subcontext.handle_error(Liquid::Error.new))
+  end
+
   def test_new_isolated_subcontext_does_not_inherit_non_static_registers
     registers = {
       my_register: :my_value,
