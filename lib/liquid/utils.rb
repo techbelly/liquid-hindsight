@@ -2,6 +2,7 @@
 
 module Liquid
   module Utils
+    DECIMAL_REGEX = /\A-?\d+\.\d+\z/
     UNIX_TIMESTAMP_REGEX = /\A\d+\z/
 
     def self.slice_collection_for_iteration(
@@ -67,6 +68,8 @@ module Liquid
       case obj
       when Numeric
         obj
+      when String
+        DECIMAL_REGEX.match?(obj.strip) ? BigDecimal(obj) : obj.to_i
       end
     end
 
