@@ -302,6 +302,27 @@ module Liquid
       array.last if array.respond_to?(:last)
     end
 
+    def sum(input, property = nil)
+      ary = InputIterator.new(input, context)
+      return 0 if ary.empty?
+
+      values_for_sum = ary.map do |item|
+        if property.nil?
+          item
+        elsif item.respond_to?(:[])
+          item[property]
+        end
+      rescue TypeError
+        raise_property_error(property)
+      end
+
+      result = InputIterator.new(values_for_sum, context).sum do |item|
+        Utils.to_number(item)
+      end
+
+      result.is_a?(BigDecimal) ? result.to_f : result
+    end
+
     private
 
     attr_reader :context

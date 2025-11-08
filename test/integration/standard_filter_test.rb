@@ -614,6 +614,24 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "foo" => true }, { "foo" => "for sure" }], @filters.where(input, "foo"))
   end
 
+  def test_sum_with_all_numbers
+    input = [1, 2]
+
+    assert_equal(3, @filters.sum(input))
+    assert_raises(Liquid::ArgumentError, "cannot select the property 'quantity'") do
+      @filters.sum(input, "quantity")
+    end
+  end
+
+  def test_sum_with_nested_arrays
+    input = [1, [2, [3, 4]]]
+
+    assert_equal(10, @filters.sum(input))
+    assert_raises(Liquid::ArgumentError, "cannot select the property 'quantity'") do
+      @filters.sum(input, "quantity")
+    end
+  end
+
   def test_uniq_with_to_liquid_value
     input = [StringDrop.new("foo"), StringDrop.new("bar"), "foo"]
     expected = [StringDrop.new("foo"), StringDrop.new("bar")]
