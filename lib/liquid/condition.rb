@@ -75,6 +75,14 @@ module Liquid
       right = Liquid::Utils.to_liquid_value(context.evaluate(right))
 
       operation = self.class.operators[op] || raise(Liquid::ArgumentError, "Unknown operator #{op}")
+
+      if left.respond_to?(operation) && right.respond_to?(operation) && !left.is_a?(Hash) && !right.is_a?(Hash)
+        begin
+          left.send(operation, right)
+        rescue ::ArgumentError => e
+          raise Liquid::ArgumentError, e.message
+        end
+      end
     end
   end
 

@@ -13,6 +13,13 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_argument_error(1, '~~', 0)
   end
 
+  def test_comparation_of_int_and_str
+    assert_evaluates_argument_error('1', '>', 0)
+    assert_evaluates_argument_error('1', '<', 0)
+    assert_evaluates_argument_error('1', '>=', 0)
+    assert_evaluates_argument_error('1', '<=', 0)
+  end
+
   private
 
   def assert_evaluates_true(left, op, right)
