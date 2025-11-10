@@ -11,6 +11,14 @@ module Liquid
       '>=' => :>=,
       '<=' => :<=,
       'contains' => lambda do |_cond, left, right|
+        if left && right && left.respond_to?(:include?)
+          right = right.to_s if left.is_a?(String)
+          left.include?(right)
+        else
+          false
+        end
+      rescue Encoding::CompatibilityError
+        left.b.include?(right.b)
       end,
     }
 
