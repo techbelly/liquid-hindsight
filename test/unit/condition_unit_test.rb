@@ -20,6 +20,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_argument_error('1', '<=', 0)
   end
 
+  def test_should_allow_custom_proc_operator
+    Condition.operators['starts_with'] = proc { |_cond, left, right| left =~ /^#{right}/ }
+
+    assert_evaluates_true('bob', 'starts_with', 'b')
+    assert_evaluates_false('bob', 'starts_with', 'o')
+  ensure
+    Condition.operators.delete('starts_with')
+  end
+
   private
 
   def assert_evaluates_true(left, op, right)
