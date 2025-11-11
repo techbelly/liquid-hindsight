@@ -124,6 +124,68 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new("one"), '==', VariableLookup.new("another"))
   end
 
+  def test_default_context_is_deprecated
+    if Gem::Version.new(Liquid::VERSION) >= Gem::Version.new('6.0.0')
+    end
+
+    _out, err = capture_io do
+      assert_equal(true, Condition.new(1, '==', 1).evaluate)
+    end
+
+    expected = "DEPRECATION WARNING: Condition#evaluate without a context argument is deprecated " \
+      "and will be removed from Liquid 6.0.0."
+    assert_includes(err.lines.map(&:strip), expected)
+  end
+
+  def test_not_blank_with_true
+    @context['true_value'] = true
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('true_value'), '==', blank_literal)
+  end
+
+  def test_not_blank_with_number
+    @context['number'] = 42
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('number'), '==', blank_literal)
+  end
+
+  def test_not_blank_with_string_content
+    @context['string'] = 'hello'
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('string'), '==', blank_literal)
+  end
+
+  def test_not_blank_with_non_empty_array
+    @context['array'] = [1, 2, 3]
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('array'), '==', blank_literal)
+  end
+
+  def test_not_blank_with_non_empty_hash
+    @context['hash'] = { 'a' => 1 }
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('hash'), '==', blank_literal)
+  end
+
+  def test_empty_with_whitespace_string_not_empty
+    @context['whitespace'] = '   '
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_false(VariableLookup.new('whitespace'), '==', empty_literal)
+  end
+
+  def test_nil_is_not_empty
+    @context['nil_value'] = nil
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_false(VariableLookup.new('nil_value'), '==', empty_literal)
+  end
+
   private
 
   def assert_evaluates_true(left, op, right)

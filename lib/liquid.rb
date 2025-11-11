@@ -28,6 +28,7 @@ module Liquid
   HAS_STRING_SCANNER_SCAN_BYTE = StringScanner.instance_methods.include?(:scan_byte)
 end
 
+require "liquid/version"
 require "liquid/const"
 require 'liquid/standardfilters'
 require 'liquid/file_system'
