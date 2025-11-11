@@ -40,6 +40,7 @@ module Liquid
       @@operators
     end
 
+    attr_reader :child_condition
     attr_reader :left, :operator, :right
 
     def initialize(left = nil, operator = nil, right = nil)
@@ -57,12 +58,25 @@ module Liquid
       loop do
         result = interpret_condition(condition.left, condition.right, condition.operator, context)
 
-        break
+        case condition.child_relation
+        when :or
+          break if Liquid::Utils.to_liquid_value(result)
+        else
+          break
+        end
+        condition = condition.child_condition
       end
       result
     end
 
+    def or(condition)
+      @child_relation  = :or
+      @child_condition = condition
+    end
+
     protected
+
+    attr_reader :child_relation
 
     private
 
