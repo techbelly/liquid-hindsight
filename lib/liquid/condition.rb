@@ -61,6 +61,8 @@ module Liquid
         case condition.child_relation
         when :or
           break if Liquid::Utils.to_liquid_value(result)
+        when :and
+          break unless Liquid::Utils.to_liquid_value(result)
         else
           break
         end
@@ -71,6 +73,11 @@ module Liquid
 
     def or(condition)
       @child_relation  = :or
+      @child_condition = condition
+    end
+
+    def and(condition)
+      @child_relation  = :and
       @child_condition = condition
     end
 

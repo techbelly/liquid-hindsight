@@ -121,6 +121,20 @@ class ConditionUnitTest < Minitest::Test
     assert_equal(true, condition.evaluate(Context.new))
   end
 
+  def test_and_condition
+    condition = Condition.new(1, '==', 1)
+
+    assert_equal(true, condition.evaluate(Context.new))
+
+    condition.and(Condition.new(2, '==', 2))
+
+    assert_equal(true, condition.evaluate(Context.new))
+
+    condition.and(Condition.new(2, '==', 1))
+
+    assert_equal(false, condition.evaluate(Context.new))
+  end
+
   def test_should_allow_custom_proc_operator
     Condition.operators['starts_with'] = proc { |_cond, left, right| left =~ /^#{right}/ }
 
