@@ -100,6 +100,18 @@ module Liquid
 
       if value.respond_to?(method_name)
         value.send(method_name)
+      else
+        case method_name
+        when :blank?
+          liquid_blank?(value)
+        end
+      end
+    end
+
+    def liquid_blank?(value)
+      case value
+      when Array, Hash
+        value.empty?
       end
     end
 

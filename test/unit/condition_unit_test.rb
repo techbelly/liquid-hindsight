@@ -164,6 +164,20 @@ class ConditionUnitTest < Minitest::Test
     assert_includes(err.lines.map(&:strip), expected)
   end
 
+  def test_blank_with_empty_array
+    @context['empty_array'] = []
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('empty_array'), '==', blank_literal)
+  end
+
+  def test_blank_with_empty_hash
+    @context['empty_hash'] = {}
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('empty_hash'), '==', blank_literal)
+  end
+
   def test_not_blank_with_true
     @context['true_value'] = true
     blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
