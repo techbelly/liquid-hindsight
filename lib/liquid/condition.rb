@@ -23,7 +23,7 @@ module Liquid
     }
 
     class MethodLiteral
-      attr_reader :to_s
+      attr_reader :method_name, :to_s
 
       def initialize(method_name, to_s)
         @method_name = method_name
@@ -88,7 +88,19 @@ module Liquid
     private
 
     def equal_variables(left, right)
+      if right.is_a?(MethodLiteral)
+        return call_method_literal(right, left)
+      end
+
       left == right
+    end
+
+    def call_method_literal(literal, value)
+      method_name = literal.method_name
+
+      if value.respond_to?(method_name)
+        value.send(method_name)
+      end
     end
 
     def interpret_condition(left, right, op, context)

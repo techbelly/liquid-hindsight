@@ -199,11 +199,32 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_false(VariableLookup.new('hash'), '==', blank_literal)
   end
 
+  def test_empty_with_empty_string
+    @context['empty_string'] = ''
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_true(VariableLookup.new('empty_string'), '==', empty_literal)
+  end
+
   def test_empty_with_whitespace_string_not_empty
     @context['whitespace'] = '   '
     empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
 
     assert_evaluates_false(VariableLookup.new('whitespace'), '==', empty_literal)
+  end
+
+  def test_empty_with_empty_array
+    @context['empty_array'] = []
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_true(VariableLookup.new('empty_array'), '==', empty_literal)
+  end
+
+  def test_empty_with_empty_hash
+    @context['empty_hash'] = {}
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_true(VariableLookup.new('empty_hash'), '==', empty_literal)
   end
 
   def test_nil_is_not_empty
