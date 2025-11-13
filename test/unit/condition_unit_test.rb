@@ -192,6 +192,20 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new('empty_hash'), '==', blank_literal)
   end
 
+  def test_blank_with_nil
+    @context['nil_value'] = nil
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('nil_value'), '==', blank_literal)
+  end
+
+  def test_blank_with_false
+    @context['false_value'] = false
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('false_value'), '==', blank_literal)
+  end
+
   def test_not_blank_with_true
     @context['true_value'] = true
     blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
