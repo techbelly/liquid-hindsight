@@ -134,6 +134,38 @@ class ContextTest < Minitest::Test
     end
   end
 
+  def test_add_filter
+    filter = Module.new do
+      def hi(output)
+        output + ' hi!'
+      end
+    end
+
+    context = Context.new
+    context.add_filters(filter)
+    assert_equal('hi? hi!', context.invoke(:hi, 'hi?'))
+
+    context = Context.new
+    assert_equal('hi?', context.invoke(:hi, 'hi?'))
+
+    context.add_filters(filter)
+    assert_equal('hi? hi!', context.invoke(:hi, 'hi?'))
+  end
+
+  def test_only_intended_filters_make_it_there
+    filter = Module.new do
+      def hi(output)
+        output + ' hi!'
+      end
+    end
+
+    context = Context.new
+    assert_equal("Wookie", context.invoke("hi", "Wookie"))
+
+    context.add_filters(filter)
+    assert_equal("Wookie hi!", context.invoke("hi", "Wookie"))
+  end
+
   def test_add_item_in_outer_scope
     @context['test'] = 'test'
     @context.push

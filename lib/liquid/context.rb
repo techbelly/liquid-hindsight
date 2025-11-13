@@ -48,6 +48,12 @@ module Liquid
       @strainer ||= @environment.create_strainer(self, @filters)
     end
 
+    def add_filters(filters)
+      filters = [filters].flatten.compact
+      @filters += filters
+      @strainer = nil
+    end
+
     def apply_global_filter(obj)
       global_filter.nil? ? obj : global_filter.call(obj)
     end
@@ -62,6 +68,10 @@ module Liquid
       e.line_number   ||= line_number
       errors.push(e)
       exception_renderer.call(e).to_s
+    end
+
+    def invoke(method, *args)
+      strainer.invoke(method, *args).to_liquid
     end
 
     def push(new_scope = {})
