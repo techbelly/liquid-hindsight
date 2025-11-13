@@ -164,6 +164,20 @@ class ConditionUnitTest < Minitest::Test
     assert_includes(err.lines.map(&:strip), expected)
   end
 
+  def test_blank_with_whitespace_string
+    @context['whitespace'] = '   '
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('whitespace'), '==', blank_literal)
+  end
+
+  def test_blank_with_empty_string
+    @context['empty_string'] = ''
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('empty_string'), '==', blank_literal)
+  end
+
   def test_blank_with_empty_array
     @context['empty_array'] = []
     blank_literal = Condition.class_variable_get(:@@method_literals)['blank']

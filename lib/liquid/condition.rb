@@ -110,6 +110,8 @@ module Liquid
 
     def liquid_blank?(value)
       case value
+      when String
+        value.empty? || value.match?(/\A\s*\z/)
       when Array, Hash
         value.empty?
       end
