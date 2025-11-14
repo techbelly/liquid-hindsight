@@ -45,6 +45,10 @@ module Liquid
     end
 
     def parse_expression(markup, safe: false)
+      if !safe && @error_mode == :strict2
+        raise Liquid::InternalError, "unsafe parse_expression cannot be used in strict2 mode"
+      end
+
       Expression.parse(markup, @string_scanner, @expression_cache)
     end
 
