@@ -488,6 +488,21 @@ class ContextTest < Minitest::Test
     assert_equal(:my_value, c.registers[:my_register])
   end
 
+  def test_new_isolated_context_inherits_parent_environment
+    global_environment = Liquid::Environment.build(tags: {})
+    context = Context.build(environment: global_environment)
+
+    subcontext = context.new_isolated_subcontext
+    assert_equal(global_environment, subcontext.environment)
+  end
+
+  def test_newly_built_context_inherits_parent_environment
+    global_environment = Liquid::Environment.build(tags: {})
+    context = Context.build(environment: global_environment)
+    assert_equal(global_environment, context.environment)
+    assert(context.environment.tags.each.to_a.empty?)
+  end
+
   private
 
   def assert_no_object_allocations

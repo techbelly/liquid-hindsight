@@ -4,7 +4,7 @@ module Liquid
   class Environment
     attr_accessor :error_mode
 
-    attr_reader :tags
+    attr_accessor :tags
 
     attr_accessor :exception_renderer
 
@@ -13,6 +13,16 @@ module Liquid
     attr_reader :default_resource_limits
 
     class << self
+      def build(tags: nil, file_system: nil, error_mode: nil, exception_renderer: nil)
+        ret = new
+        ret.tags = tags if tags
+        ret.file_system = file_system if file_system
+        ret.error_mode = error_mode if error_mode
+        ret.exception_renderer = exception_renderer if exception_renderer
+        yield ret if block_given?
+        ret.freeze
+      end
+
       def default
         @default ||= new
       end
@@ -52,6 +62,11 @@ module Liquid
       end
 
       strainer_template.new(context)
+    end
+
+    def freeze
+      @tags.freeze
+      super
     end
   end
 end

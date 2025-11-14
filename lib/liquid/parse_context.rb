@@ -3,7 +3,7 @@
 module Liquid
   class ParseContext
     attr_accessor :locale, :line_number, :depth
-    attr_reader :warnings, :error_mode
+    attr_reader :warnings, :error_mode, :environment
 
     def initialize(options = Const::EMPTY_HASH)
       @environment = options.fetch(:environment, Environment.default)

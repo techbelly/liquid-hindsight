@@ -3,7 +3,7 @@
 module Liquid
   class Context
     attr_reader :scopes, :errors, :registers, :resource_limits, :static_environments
-    attr_accessor :exception_renderer, :template_name, :partial, :global_filter, :strict_variables
+    attr_accessor :exception_renderer, :template_name, :partial, :global_filter, :strict_variables, :environment
 
     def self.build(environment: Environment.default, environments: {}, outer_scope: {}, registers: {}, rethrow_errors: false, resource_limits: nil, static_environments: {}, &block)
       new(environments, outer_scope, registers, rethrow_errors, resource_limits, static_environments, environment, &block)
