@@ -40,6 +40,10 @@ module Liquid
       @@operators
     end
 
+    def self.parse_expression(parse_context, markup, safe: false)
+      @@method_literals[markup] || parse_context.parse_expression(markup, safe: safe)
+    end
+
     attr_reader :child_condition
     attr_reader :left, :operator, :right
 
