@@ -52,6 +52,11 @@ module Liquid
       @tags[name] = klass
     end
 
+    def register_filter(filter)
+      @strainer_template_class_cache.clear
+      @strainer_template.add_filter(filter)
+    end
+
     def create_strainer(context, filters = Const::EMPTY_ARRAY)
       return @strainer_template.new(context) if filters.empty?
 
