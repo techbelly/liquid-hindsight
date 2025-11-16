@@ -57,6 +57,12 @@ module Liquid
       @strainer_template.add_filter(filter)
     end
 
+    def register_filters(filters)
+      @strainer_template_class_cache.clear
+      filters.each { |f| @strainer_template.add_filter(f) }
+      self
+    end
+
     def create_strainer(context, filters = Const::EMPTY_ARRAY)
       return @strainer_template.new(context) if filters.empty?
 
