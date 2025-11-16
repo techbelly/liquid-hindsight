@@ -41,6 +41,8 @@ module Liquid
       else
         args.first
       end
+    rescue ::ArgumentError => e
+      raise Liquid::ArgumentError, e.message, e.backtrace
     end
   end
 end
