@@ -8,6 +8,8 @@ module Liquid
       strict_parse_with_error_context(markup)
     rescue SyntaxError => e
       case parse_context.error_mode
+      when :strict2
+        raise
       when :strict
         raise
       end
@@ -19,6 +21,14 @@ module Liquid
     end
 
     private
+
+    def strict2_parse_with_error_context(markup)
+      strict2_parse(markup)
+    rescue SyntaxError => e
+      e.line_number    = line_number
+      e.markup_context = markup_context(markup)
+      raise e
+    end
 
     def strict_parse_with_error_context(markup)
       strict_parse(markup)

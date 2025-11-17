@@ -64,6 +64,17 @@ module Liquid
       p.consume(:end_of_string)
     end
 
+    def strict2_parse(markup)
+      @filters = []
+      p = @parse_context.new_parser(markup)
+
+      return if p.look(:end_of_string)
+
+      @name = parse_context.safe_parse_expression(p)
+      @filters << strict2_parse_filter_expressions(p) while p.consume?(:pipe)
+      p.consume(:end_of_string)
+    end
+
     def parse_filterargs(p)
       filterargs = [p.argument]
       filterargs << p.argument while p.consume?(:comma)
@@ -90,6 +101,37 @@ module Liquid
       result = [filter_name, filter_args]
       result << keyword_args if keyword_args
       result
+    end
+
+    def strict2_parse_filter_expressions(p)
+      filtername = p.consume(:id)
+      filter_args = []
+      keyword_args = {}
+
+      if p.consume?(:colon)
+        argument(p, filter_args, keyword_args) unless end_of_arguments?(p)
+
+        argument(p, filter_args, keyword_args) while p.consume?(:comma) && !end_of_arguments?(p)
+      end
+
+      result = [filtername, filter_args]
+      result << keyword_args unless keyword_args.empty?
+      result
+    end
+
+    def argument(p, positional_arguments, keyword_arguments)
+      if p.look(:id) && p.look(:colon, 1)
+        key = p.consume(:id)
+        p.consume(:colon)
+        value = parse_context.safe_parse_expression(p)
+        keyword_arguments[key] = value
+      else
+        positional_arguments << parse_context.safe_parse_expression(p)
+      end
+    end
+
+    def end_of_arguments?(p)
+      p.look(:pipe) || p.look(:end_of_string)
     end
   end
 end
