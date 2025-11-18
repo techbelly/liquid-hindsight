@@ -2,7 +2,7 @@
 
 module Liquid
   class ParseContext
-    attr_accessor :locale, :line_number, :depth
+    attr_accessor :locale, :line_number, :trim_whitespace, :depth
     attr_reader :warnings, :error_mode, :environment
 
     def initialize(options = Const::EMPTY_HASH)
@@ -24,6 +24,10 @@ module Liquid
 
     def [](option_key)
       @options[option_key]
+    end
+
+    def new_block_body
+      Liquid::BlockBody.new
     end
 
     def new_parser(input)
