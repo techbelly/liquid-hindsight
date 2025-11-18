@@ -10,4 +10,10 @@ class ParsingQuirksTest < Minitest::Test
       Template.parse("text {{method} oh nos!")
     end
   end
+
+  def test_raise_on_label_and_no_close_bracets
+    assert_raises(SyntaxError) do
+      Template.parse("TEST {{ ")
+    end
+  end
 end
