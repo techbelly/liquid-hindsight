@@ -5,6 +5,14 @@ require 'test_helper'
 class ErrorHandlingTest < Minitest::Test
   include Liquid
 
+  def test_unrecognized_operator
+    with_error_modes(:strict) do
+      assert_raises(SyntaxError) do
+        Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ')
+      end
+    end
+  end
+
   def test_with_line_numbers_adds_numbers_to_parser_errors
     source = <<~LIQUID
       foobar
@@ -26,6 +34,20 @@ class ErrorHandlingTest < Minitest::Test
     LIQUID
 
     assert_match_syntax_error(/Liquid syntax error \(line 3\)/, source)
+  end
+
+  def test_syntax_errors_in_nested_blocks_have_correct_line_number
+    source = <<~LIQUID
+      foobar
+
+      {% if 1 != 2 %}
+        {% foo %}
+      {% endif %}
+
+      bla
+    LIQUID
+
+    assert_match_syntax_error("Liquid syntax error (line 4): Unknown tag 'foo'", source)
   end
 
   def test_exceptions_propagate

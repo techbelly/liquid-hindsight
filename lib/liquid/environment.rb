@@ -75,6 +75,10 @@ module Liquid
       strainer_template.new(context)
     end
 
+    def tag_for_name(name)
+      @tags[name]
+    end
+
     def freeze
       @tags.freeze
       super
