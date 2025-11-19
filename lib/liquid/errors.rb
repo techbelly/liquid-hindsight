@@ -28,6 +28,9 @@ module Liquid
       end
 
       if line_number
+        str << " ("
+        str << template_name << " " if template_name
+        str << "line " << line_number.to_s << ")"
       end
 
       str << ": "

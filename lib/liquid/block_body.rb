@@ -31,7 +31,11 @@ module Liquid
     end
 
     private def handle_invalid_tag_token(token, parse_context)
-      BlockBody.raise_missing_tag_terminator(token, parse_context)
+      if token.end_with?('%}')
+        yield token, token
+      else
+        BlockBody.raise_missing_tag_terminator(token, parse_context)
+      end
     end
 
     private def parse_for_document(tokenizer, parse_context, &block)

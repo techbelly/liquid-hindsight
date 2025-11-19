@@ -22,6 +22,10 @@ module Liquid
       raise
     end
 
+    def unknown_tag(tag, _markup, _tokenizer)
+      raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
+    end
+
     private
 
     def new_body
@@ -32,9 +36,6 @@ module Liquid
       @body.parse(tokenizer, parse_context) do |unknown_tag_name, unknown_tag_markup|
         if unknown_tag_name
           unknown_tag(unknown_tag_name, unknown_tag_markup, tokenizer)
-          true
-        else
-          false
         end
       end
     end
