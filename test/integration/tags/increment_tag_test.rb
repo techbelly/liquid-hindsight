@@ -17,9 +17,21 @@ class IncrementTagTest < Minitest::Test
     end
   end
 
+  def test_decrement_strict2_rejects_variable_starting_with_number
+    assert_raises(Liquid::SyntaxError) do
+      Template.parse('{% decrement 11aa %}', error_mode: :strict2)
+    end
+  end
+
   def test_increment_strict2_rejects_empty_variable_name
     assert_raises(Liquid::SyntaxError) do
       Template.parse('{% increment %}', error_mode: :strict2)
+    end
+  end
+
+  def test_decrement_strict2_rejects_empty_variable_name
+    assert_raises(Liquid::SyntaxError) do
+      Template.parse('{% decrement %}', error_mode: :strict2)
     end
   end
 end
