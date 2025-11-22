@@ -12,6 +12,8 @@ module Liquid
       str << super()
 
       if markup_context
+        str << " "
+        str << markup_context
       end
 
       str
