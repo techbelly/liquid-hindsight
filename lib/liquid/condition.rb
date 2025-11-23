@@ -44,7 +44,7 @@ module Liquid
       @@method_literals[markup] || parse_context.parse_expression(markup, safe: safe)
     end
 
-    attr_reader :child_condition
+    attr_reader :attachment, :child_condition
     attr_reader :left, :operator, :right
 
     def initialize(left = nil, operator = nil, right = nil)
@@ -83,6 +83,10 @@ module Liquid
     def and(condition)
       @child_relation  = :and
       @child_condition = condition
+    end
+
+    def attach(attachment)
+      @attachment = attachment
     end
 
     protected

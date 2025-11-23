@@ -10,6 +10,15 @@ module Liquid
       push_block('if', markup)
     end
 
+    def parse(tokens)
+      while parse_body(@blocks.last.attachment, tokens)
+      end
+    end
+
+    def unknown_tag(tag, markup, tokens)
+      super
+    end
+
     private
 
     def push_block(tag, markup)
@@ -18,10 +27,41 @@ module Liquid
       else
         parse_with_selected_parser(markup)
       end
+
+      @blocks.push(block)
+      block.attach(new_body)
+    end
+
+    def parse_expression(markup, safe: false)
+      Condition.parse_expression(parse_context, markup, safe: safe)
     end
 
     def strict_parse(markup)
       p = @parse_context.new_parser(markup)
+      condition = parse_binary_comparisons(p)
+      p.consume(:end_of_string)
+      condition
+    end
+
+    def parse_binary_comparisons(p)
+      condition = parse_comparison(p)
+      first_condition = condition
+      while (op = p.id?('and') || p.id?('or'))
+        child_condition = parse_comparison(p)
+        condition.send(op, child_condition)
+        condition = child_condition
+      end
+      first_condition
+    end
+
+    def parse_comparison(p)
+      a = parse_expression(p.expression, safe: true)
+      if (op = p.consume?(:comparison))
+        b = parse_expression(p.expression, safe: true)
+        Condition.new(a, op, b)
+      else
+        Condition.new(a)
+      end
     end
   end
 end
