@@ -23,6 +23,19 @@ class ParsingQuirksTest < Minitest::Test
     end
   end
 
+  def test_error_on_empty_filter
+    assert(Template.parse("{{test}}"))
+
+    with_error_modes(:lax) do
+      assert(Template.parse("{{|test}}"))
+    end
+
+    with_error_modes(:strict) do
+      assert_raises(SyntaxError) { Template.parse("{{|test}}") }
+      assert_raises(SyntaxError) { Template.parse("{{test |a|b|}}") }
+    end
+  end
+
   def test_meaningless_parens_error
     with_error_modes(:strict) do
       assert_raises(SyntaxError) do
@@ -43,6 +56,12 @@ class ParsingQuirksTest < Minitest::Test
         Template.parse("{% if #{markup} %} YES {% endif %}")
       end
     end
+  end
+
+  def test_no_error_on_lax_empty_filter
+    assert(Template.parse("{{test |a|b|}}", error_mode: :lax))
+    assert(Template.parse("{{test}}", error_mode: :lax))
+    assert(Template.parse("{{|test|}}", error_mode: :lax))
   end
 
   def test_raise_on_invalid_tag_delimiter

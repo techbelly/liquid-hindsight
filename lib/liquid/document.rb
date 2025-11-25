@@ -5,6 +5,7 @@ module Liquid
     def self.parse(tokens, parse_context)
       doc = new(parse_context)
       doc.parse(tokens, parse_context)
+      doc
     end
 
     attr_reader :parse_context
@@ -17,6 +18,7 @@ module Liquid
     def parse(tokenizer, parse_context)
       while parse_body(tokenizer)
       end
+      @body.freeze
     rescue SyntaxError => e
       e.line_number ||= parse_context.line_number
       raise
@@ -41,6 +43,8 @@ module Liquid
       @body.parse(tokenizer, parse_context) do |unknown_tag_name, unknown_tag_markup|
         if unknown_tag_name
           unknown_tag(unknown_tag_name, unknown_tag_markup, tokenizer)
+        else
+          false
         end
       end
     end
