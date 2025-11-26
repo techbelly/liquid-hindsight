@@ -9,6 +9,8 @@ module Liquid
     TAGSTART            = "{%"
     VARSTART            = "{{"
 
+    attr_reader :nodelist
+
     def initialize
       @nodelist = []
       @blank    = true

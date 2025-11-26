@@ -15,6 +15,10 @@ module Liquid
       @body = new_body
     end
 
+    def nodelist
+      @body.nodelist
+    end
+
     def parse(tokenizer, parse_context)
       while parse_body(tokenizer)
       end
