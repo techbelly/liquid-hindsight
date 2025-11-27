@@ -18,6 +18,9 @@ module Liquid
         raise_nested_doc_error if tag_name == @tag_name
 
         if tag_name == block_delimiter
+          parse_context.trim_whitespace = (token[-3] == WhitespaceControl)
+          @body << Regexp.last_match(1) if Regexp.last_match(1) != ""
+          return
         end
         @body << token unless token.empty?
       end
