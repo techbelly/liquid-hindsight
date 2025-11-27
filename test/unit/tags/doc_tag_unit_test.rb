@@ -19,6 +19,12 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(exp_error, act_error)
   end
 
+  def test_doc_tag_must_support_valid_tags
+    assert_match_syntax_error("Liquid syntax error (line 1): 'doc' tag was never closed", '{% doc %} foo')
+    assert_match_syntax_error("Liquid syntax error (line 1): Syntax Error in 'doc' - Valid syntax: {% doc %}{% enddoc %}", '{% doc } foo {% enddoc %}')
+    assert_match_syntax_error("Liquid syntax error (line 1): Syntax Error in 'doc' - Valid syntax: {% doc %}{% enddoc %}", '{% doc } foo %}{% enddoc %}')
+  end
+
   def test_doc_tag_does_not_allow_nested_docs
     error = assert_raises(Liquid::SyntaxError) do
       template = <<~LIQUID.chomp

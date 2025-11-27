@@ -21,6 +21,10 @@ module Liquid
       raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
     end
 
+    def raise_tag_never_closed(block_name)
+      raise SyntaxError, parse_context.locale.t("errors.syntax.tag_never_closed", block_name: block_name)
+    end
+
     def block_name
       @tag_name
     end
