@@ -9,6 +9,13 @@ module Liquid
       @blank = true
     end
 
+    def parse(tokens)
+      @body = new_body
+      while parse_body(@body, tokens)
+      end
+      @body.freeze
+    end
+
     def blank?
       @blank
     end
