@@ -41,6 +41,7 @@ module Liquid
 
     def parse_body(body, tokens)
       if parse_context.depth >= MAX_DEPTH
+        raise StackLevelError, "Nesting too deep"
       end
       parse_context.depth += 1
       begin
