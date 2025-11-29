@@ -6,13 +6,19 @@ module Liquid
 
     Syntax = /(#{VariableSignature}+)/o
 
+    attr_reader :to
+
     def initialize(tag_name, markup, options)
       super
       parse_with_selected_parser(markup)
     end
 
     def lax_parse(markup)
-      raise SyntaxError, options[:locale].t("errors.syntax.capture")
+      if markup =~ Syntax
+        @to = Regexp.last_match(1)
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.capture")
+      end
     end
 
     def strict_parse(markup)

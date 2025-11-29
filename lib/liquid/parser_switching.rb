@@ -20,6 +20,7 @@ module Liquid
       case parse_context.error_mode
       when :strict2 then strict2_parse_with_error_context(markup)
       when :strict  then strict_parse_with_error_context(markup)
+      when :lax     then lax_parse(markup)
       end
     end
 
