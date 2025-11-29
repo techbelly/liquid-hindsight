@@ -25,7 +25,16 @@ module Liquid
     end
 
     def self.raise_unknown_tag(tag, block_name, block_delimiter, parse_context)
-      raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
+      if tag.start_with?('end')
+        raise SyntaxError, parse_context.locale.t(
+          "errors.syntax.invalid_delimiter",
+          tag: tag,
+          block_name: block_name,
+          block_delimiter: block_delimiter,
+        )
+      else
+        raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
+      end
     end
 
     def raise_tag_never_closed(block_name)
