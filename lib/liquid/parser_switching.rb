@@ -12,6 +12,8 @@ module Liquid
         raise
       when :strict
         raise
+      when :warn
+        parse_context.warnings << e
       end
       lax_parse(markup)
     end
