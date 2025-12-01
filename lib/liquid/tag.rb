@@ -64,5 +64,9 @@ module Liquid
     end
 
     private
+
+    def parse_expression(markup, safe: false)
+      parse_context.parse_expression(markup, safe: safe)
+    end
   end
 end
