@@ -45,3 +45,46 @@ class CustomInclude < Liquid::Tag
     output
   end
 end
+
+class IncludeTagTest < Minitest::Test
+  include Liquid
+
+  def test_include_template_with_invalid_expression
+    template = "{% include foo=>bar %}"
+
+    with_error_modes(:lax, :strict) do
+      refute_nil(Template.parse(template))
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
+
+  def test_include_with_invalid_expression
+    template = '{% include "snippet" with foo=>bar %}'
+
+    with_error_modes(:lax, :strict) do
+      refute_nil(Template.parse(template))
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
+
+  def test_include_attribute_with_invalid_expression
+    template = '{% include "snippet", key: foo=>bar %}'
+
+    with_error_modes(:lax, :strict) do
+      refute_nil(Template.parse(template))
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
+end
