@@ -19,8 +19,26 @@ module Liquid
     alias_method :parse_context, :options
     private :parse_context
 
+    def for_loop?
+      @is_for_loop
+    end
+
     def strict2_parse(markup)
       p = @parse_context.new_parser(markup)
+
+      @template_name_expr = safe_parse_expression(p)
+      with_or_for         = p.id?("for") || p.id?("with")
+      @variable_name_expr = safe_parse_expression(p) if with_or_for
+      @alias_name         = p.consume(:id) if p.id?("as")
+      @is_for_loop        = (with_or_for == FOR)
+
+      p.consume?(:comma)
+
+      @attributes = {}
+      while p.look(:id)
+      end
+
+      p.consume(:end_of_string)
     end
 
     def strict_parse(markup)
