@@ -4,6 +4,7 @@ require 'English'
 
 module Liquid
   class BlockBody
+    LiquidTagToken      = /\A\s*(#{TagName})\s*(.*?)\z/o
     FullToken           = /\A#{TagStart}#{WhitespaceControl}?(\s*)(#{TagName})(\s*)(.*?)#{WhitespaceControl}?#{TagEnd}\z/om
     FullTokenPossiblyInvalid = /\A(.*)#{TagStart}#{WhitespaceControl}?\s*(\w+)\s*(.*)?#{WhitespaceControl}?#{TagEnd}\z/om
     WhitespaceOrNothing = /\A\s*\z/
@@ -22,12 +23,33 @@ module Liquid
 
       parse_context.line_number = tokenizer.line_number
 
-      parse_for_document(tokenizer, parse_context, &block)
+      if tokenizer.for_liquid_tag
+        parse_for_liquid_tag(tokenizer, parse_context, &block)
+      else
+        parse_for_document(tokenizer, parse_context, &block)
+      end
     end
 
     def freeze
       @nodelist.freeze
       super
+    end
+
+    private def parse_for_liquid_tag(tokenizer, parse_context)
+      while (token = tokenizer.shift)
+        unless token.empty? || token.match?(WhitespaceOrNothing)
+          unless token =~ LiquidTagToken
+          end
+          tag_name = Regexp.last_match(1)
+          markup   = Regexp.last_match(2)
+
+          unless (tag = parse_context.environment.tag_for_name(tag_name))
+          end
+          new_tag = tag.parse(tag_name, markup, tokenizer, parse_context)
+        end
+      end
+
+      yield nil, nil
     end
 
     def self.raise_missing_tag_terminator(token, parse_context)
@@ -36,6 +58,17 @@ module Liquid
 
     def self.raise_missing_variable_terminator(token, parse_context)
       raise SyntaxError, parse_context.locale.t("errors.syntax.variable_termination", token: token, tag_end: VariableEnd.inspect)
+    end
+
+    private def parse_liquid_tag(markup, parse_context)
+      liquid_tag_tokenizer = parse_context.new_tokenizer(
+        markup, start_line_number: parse_context.line_number, for_liquid_tag: true
+      )
+      parse_for_liquid_tag(liquid_tag_tokenizer, parse_context) do |end_tag_name, _end_tag_markup|
+        if end_tag_name
+          BlockBody.unknown_tag_in_liquid_tag(end_tag_name, parse_context)
+        end
+      end
     end
 
     private def handle_invalid_tag_token(token, parse_context)
@@ -60,6 +93,10 @@ module Liquid
 
           if parse_context.line_number
             parse_context.line_number += Regexp.last_match(1).count("\n") + Regexp.last_match(3).count("\n")
+          end
+
+          if tag_name == 'liquid'
+            parse_liquid_tag(markup, parse_context)
           end
 
           unless (tag = parse_context.environment.tag_for_name(tag_name))
