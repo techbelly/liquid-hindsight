@@ -49,12 +49,17 @@ module Liquid
           end
 
           unless (tag = parse_context.environment.tag_for_name(tag_name))
+            return yield tag_name, markup
           end
           new_tag = tag.parse(tag_name, markup, tokenizer, parse_context)
         end
       end
 
       yield nil, nil
+    end
+
+    def self.unknown_tag_in_liquid_tag(tag, parse_context)
+      Block.raise_unknown_tag(tag, 'liquid', '%}', parse_context)
     end
 
     def self.raise_missing_tag_terminator(token, parse_context)
@@ -116,6 +121,7 @@ module Liquid
           @blank = false
         else
           if parse_context.trim_whitespace
+            token.lstrip!
           end
           parse_context.trim_whitespace = false
           @nodelist << token
@@ -133,9 +139,6 @@ module Liquid
         if previous_token.is_a?(String)
           first_byte = previous_token.getbyte(0)
           previous_token.rstrip!
-          if previous_token.empty? && parse_context[:bug_compatible_whitespace_trimming] && first_byte
-            previous_token << first_byte
-          end
         end
       end
       parse_context.trim_whitespace = (token[-3] == WhitespaceControl)
