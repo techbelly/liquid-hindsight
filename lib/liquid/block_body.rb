@@ -43,6 +43,11 @@ module Liquid
           tag_name = Regexp.last_match(1)
           markup   = Regexp.last_match(2)
 
+          if tag_name == 'liquid'
+            parse_context.line_number -= 1
+            next parse_liquid_tag(markup, parse_context)
+          end
+
           unless (tag = parse_context.environment.tag_for_name(tag_name))
           end
           new_tag = tag.parse(tag_name, markup, tokenizer, parse_context)
