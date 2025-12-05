@@ -5,6 +5,37 @@ require 'test_helper'
 class LiquidTagTest < Minitest::Test
   include Liquid
 
+  def test_liquid_tag_errors
+    assert_match_syntax_error("syntax error (line 1): Unknown tag 'error'", <<~LIQUID)
+      {%- liquid error no such tag -%}
+    LIQUID
+
+    assert_match_syntax_error("syntax error (line 7): Unknown tag 'error'", <<~LIQUID)
+      {{ test }}
+
+      {%-
+      liquid
+        for value in array
+
+          error no such tag
+        endfor
+      -%}
+    LIQUID
+
+    assert_match_syntax_error("syntax error (line 2): Unknown tag '!!! the guards are vigilant'", <<~LIQUID)
+      {%- liquid
+        !!! the guards are vigilant
+      -%}
+    LIQUID
+
+    assert_match_syntax_error("syntax error (line 4): 'for' tag was never closed", <<~LIQUID)
+      {%- liquid
+        for value in array
+          echo 'forgot to close the for tag'
+      -%}
+    LIQUID
+  end
+
   def test_line_number_is_correct_after_a_blank_token
     assert_match_syntax_error("syntax error (line 3): Unknown tag 'error'", "{% liquid echo ''\n\n error %}")
     assert_match_syntax_error("syntax error (line 3): Unknown tag 'error'", "{% liquid echo ''\n  \n error %}")
