@@ -35,6 +35,7 @@ require 'liquid/file_system'
 require 'liquid/parser_switching'
 require 'liquid/tag'
 require 'liquid/block'
+require 'liquid/parse_tree_visitor'
 require 'liquid/interrupts'
 require 'liquid/tags'
 require "liquid/environment"

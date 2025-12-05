@@ -21,6 +21,10 @@ module Liquid
       raise_tag_never_closed(block_name)
     end
 
+    def nodelist
+      [@body]
+    end
+
     def blank?
       @body.empty?
     end

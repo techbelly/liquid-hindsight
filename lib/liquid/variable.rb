@@ -133,5 +133,8 @@ module Liquid
     def end_of_arguments?(p)
       p.look(:pipe) || p.look(:end_of_string)
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

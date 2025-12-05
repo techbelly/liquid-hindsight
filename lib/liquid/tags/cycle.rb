@@ -16,5 +16,8 @@ module Liquid
     def lax_parse(markup)
       raise SyntaxError, options[:locale].t("errors.syntax.cycle")
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

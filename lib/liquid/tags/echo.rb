@@ -6,5 +6,8 @@ module Liquid
       super
       @variable = Variable.new(markup, parse_context)
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

@@ -78,5 +78,8 @@ module Liquid
     def state
       [@name, @lookups, @command_flags]
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

@@ -32,6 +32,9 @@ module Liquid
       end
     end
 
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
+
     private
   end
 end

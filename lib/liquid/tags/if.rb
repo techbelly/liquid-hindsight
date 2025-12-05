@@ -95,5 +95,8 @@ module Liquid
         Condition.new(a)
       end
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

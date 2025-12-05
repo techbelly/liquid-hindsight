@@ -3,6 +3,21 @@
 require 'test_helper'
 
 class DocTagUnitTest < Minitest::Test
+  def test_doc_tag_body_content
+    doc_content = "  Documentation content\n  @param {string} foo - test\n"
+    template_source = "{% doc %}#{doc_content}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal(doc_content, doc_tag.nodelist.first.to_s)
+  end
+
   def test_doc_tag_does_not_support_extra_arguments
     error = assert_raises(Liquid::SyntaxError) do
       template = <<~LIQUID.chomp
@@ -43,9 +58,98 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(exp_error, act_error)
   end
 
+  def test_doc_tag_visitor
+    template_source = '{% doc %}{% enddoc %}'
+
+    assert_equal(
+      [Liquid::Doc],
+      visit(template_source),
+    )
+  end
+
+  def test_doc_tag_blank_with_empty_content
+    template_source = "{% doc %}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal(true, doc_tag.blank?)
+  end
+
+  def test_doc_tag_blank_with_content
+    template_source = "{% doc %}Some documentation{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal(false, doc_tag.blank?)
+  end
+
+  def test_doc_tag_blank_with_whitespace_only
+    template_source = "{% doc %}    {% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal(false, doc_tag.blank?)
+  end
+
+  def test_doc_tag_nodelist_returns_array_with_body
+    doc_content = "Documentation content\n@param {string} foo"
+    template_source = "{% doc %}#{doc_content}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal([doc_content], doc_tag.nodelist)
+    assert_equal(1, doc_tag.nodelist.length)
+    assert_equal(doc_content, doc_tag.nodelist.first)
+  end
+
+  def test_doc_tag_nodelist_with_empty_content
+    template_source = "{% doc %}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal([""], doc_tag.nodelist)
+    assert_equal(1, doc_tag.nodelist.length)
+  end
+
   private
 
   def traversal(template)
+    ParseTreeVisitor
+      .for(Template.parse(template).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        tag_class = tag.class
+        tag_class
+      end
   end
 
   def visit(template)

@@ -151,6 +151,9 @@ module Liquid
         "and will be removed from Liquid 6.0.0.")
       Context.new
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 
   class ElseCondition < Condition
