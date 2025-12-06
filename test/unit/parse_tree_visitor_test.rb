@@ -12,6 +12,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_varible_with_filter
+    assert_equal(
+      ["test", "infilter"],
+      visit(%({{ test | split: infilter }})),
+    )
+  end
+
   private
 
   def traversal(template)
