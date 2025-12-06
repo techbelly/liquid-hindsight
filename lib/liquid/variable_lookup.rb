@@ -80,6 +80,9 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        @node.lookups
+      end
     end
   end
 end

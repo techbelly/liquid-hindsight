@@ -135,6 +135,9 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [@node.name] + @node.filters.flatten
+      end
     end
   end
 end
