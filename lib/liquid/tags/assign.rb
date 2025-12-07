@@ -18,7 +18,12 @@ module Liquid
     end
 
     def lax_parse(markup)
-      self.class.raise_syntax_error(parse_context)
+      if markup =~ Syntax
+        @to   = Regexp.last_match(1)
+        @from = Variable.new(Regexp.last_match(2), parse_context)
+      else
+        self.class.raise_syntax_error(parse_context)
+      end
     end
 
     def strict_parse(markup)
@@ -44,6 +49,9 @@ module Liquid
     private
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [@node.from]
+      end
     end
   end
 end
