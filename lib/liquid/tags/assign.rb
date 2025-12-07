@@ -10,7 +10,7 @@ module Liquid
       raise Liquid::SyntaxError, parse_context.locale.t('errors.syntax.assign')
     end
 
-    attr_reader :to
+    attr_reader :to, :from
 
     def initialize(tag_name, markup, parse_context)
       super
