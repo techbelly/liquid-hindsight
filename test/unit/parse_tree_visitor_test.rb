@@ -47,6 +47,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_capture
+    assert_equal(
+      ["test"],
+      visit(%({% capture x %}{{ test }}{% endcapture %})),
+    )
+  end
+
   private
 
   def traversal(template)
