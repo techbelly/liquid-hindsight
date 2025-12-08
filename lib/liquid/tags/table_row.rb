@@ -5,7 +5,7 @@ module Liquid
     Syntax = /(\w+)\s+in\s+(#{QuotedFragment}+)/o
     ALLOWED_ATTRIBUTES = ['cols', 'limit', 'offset', 'range'].freeze
 
-    attr_reader :collection_name
+    attr_reader :collection_name, :attributes
 
     def initialize(tag_name, markup, options)
       super

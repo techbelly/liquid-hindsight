@@ -8,6 +8,8 @@ module Liquid
     SYNTAX = /(#{QuotedFragment}+)(\s+(with|#{FOR})\s+(#{QuotedFragment}+))?(\s+(?:as)\s+(#{VariableSegment}+))?/o
     Syntax = SYNTAX
 
+    attr_reader :template_name_expr, :variable_name_expr, :attributes
+
     def initialize(tag_name, markup, options)
       super
       parse_with_selected_parser(markup)
@@ -64,6 +66,12 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [
+          @node.template_name_expr,
+          @node.variable_name_expr,
+        ] + @node.attributes.values
+      end
     end
   end
 end
