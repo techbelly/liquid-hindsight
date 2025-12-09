@@ -5,6 +5,8 @@ module Liquid
     Syntax                  = /(#{QuotedFragment})\s*([=!<>a-z_]+)?\s*(#{QuotedFragment})?/o
     ExpressionsAndOperators = /(?:\b(?:\s?and\s?|\s?or\s?)\b|(?:\s*(?!\b(?:\s?and\s?|\s?or\s?)\b)(?:#{QuotedFragment}|\S+)\s*)+)/o
 
+    attr_reader :blocks
+
     def initialize(tag_name, markup, options)
       super
       @blocks = []
@@ -97,6 +99,9 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        @node.blocks
+      end
     end
   end
 end

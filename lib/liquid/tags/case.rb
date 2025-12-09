@@ -4,7 +4,7 @@ module Liquid
   class Case < Block
     Syntax     = /(#{QuotedFragment})/o
 
-    attr_reader :left
+    attr_reader :blocks, :left
 
     def nodelist
       @blocks.map(&:attachment)
