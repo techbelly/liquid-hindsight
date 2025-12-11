@@ -152,6 +152,11 @@ module Liquid
       @blank
     end
 
+    def remove_blank_strings
+      raise "remove_blank_strings only support being called on a blank block body" unless @blank
+      @nodelist.reject! { |node| node.instance_of?(String) }
+    end
+
     private
 
     def create_variable(token, parse_context)
