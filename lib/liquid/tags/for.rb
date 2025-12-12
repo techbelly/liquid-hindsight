@@ -18,6 +18,10 @@ module Liquid
       if parse_body(@for_block, tokens)
         parse_body(@else_block, tokens)
       end
+      if blank?
+        @else_block&.remove_blank_strings
+        @for_block.remove_blank_strings
+      end
       @else_block&.freeze
       @for_block.freeze
     end

@@ -103,6 +103,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_for_in
+    assert_equal(
+      ["test"],
+      visit(%({% for x in test %}{% endfor %})),
+    )
+  end
+
   def test_for_body
     assert_equal(
       ["test"],
