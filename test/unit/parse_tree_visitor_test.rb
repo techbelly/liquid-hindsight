@@ -75,6 +75,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_elsif_condition
+    assert_equal(
+      ["test"],
+      visit(%({% if 1 == 1 %}{% elsif test %}{% endif %})),
+    )
+  end
+
   def test_elsif_body
     assert_equal(
       ["test"],
