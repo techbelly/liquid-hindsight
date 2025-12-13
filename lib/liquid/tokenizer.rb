@@ -130,6 +130,8 @@ module Liquid
             @ss.pos -= 1
             return @source.byteslice(start, @ss.pos - start)
           end
+        elsif byte_a == OPEN_CURLEY && byte_b == PERCENTAGE
+          return next_tag_token_with_start(start)
         end
       end
 
@@ -143,6 +145,11 @@ module Liquid
       else
         "{%"
       end
+    end
+
+    def next_tag_token_with_start(start)
+      @ss.skip_until(TAG_END)
+      @source.byteslice(start, @ss.pos - start)
     end
   end
 end
