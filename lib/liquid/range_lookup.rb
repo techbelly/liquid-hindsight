@@ -5,9 +5,20 @@ module Liquid
     def self.parse(start_markup, end_markup, string_scanner, cache = nil)
       start_obj = Expression.parse(start_markup, string_scanner, cache)
       end_obj   = Expression.parse(end_markup, string_scanner, cache)
-      begin
-        start_obj.to_i..end_obj.to_i
+      if start_obj.respond_to?(:evaluate) || end_obj.respond_to?(:evaluate)
+        new(start_obj, end_obj)
+      else
+        begin
+          start_obj.to_i..end_obj.to_i
+        end
       end
+    end
+
+    attr_reader :start_obj, :end_obj
+
+    def initialize(start_obj, end_obj)
+      @start_obj = start_obj
+      @end_obj   = end_obj
     end
 
     def evaluate(context)
@@ -19,6 +30,9 @@ module Liquid
     private
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [@node.start_obj, @node.end_obj]
+      end
     end
   end
 end
