@@ -138,6 +138,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_tablerow_in
+    assert_equal(
+      ["test"],
+      visit(%({% tablerow x in test %}{% endtablerow %})),
+    )
+  end
+
   def test_tablerow_body
     assert_equal(
       ["test"],
