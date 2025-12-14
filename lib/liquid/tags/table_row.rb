@@ -34,7 +34,25 @@ module Liquid
       end
     end
 
+    def strict_parse(markup)
+      lax_parse(markup)
+    end
+
+    def lax_parse(markup)
+      if markup =~ Syntax
+        @variable_name   = Regexp.last_match(1)
+        @collection_name = parse_expression(Regexp.last_match(2))
+        @attributes      = {}
+        markup.scan(TagAttributes) do |key, value|
+          @attributes[key] = parse_expression(value)
+        end
+      end
+    end
+
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        super + @node.attributes.values + [@node.collection_name]
+      end
     end
 
     private
