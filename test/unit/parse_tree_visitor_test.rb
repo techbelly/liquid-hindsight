@@ -117,6 +117,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_for_offset
+    assert_equal(
+      ["test"],
+      visit(%({% for x in (1..5) offset: test %}{% endfor %})),
+    )
+  end
+
   def test_for_body
     assert_equal(
       ["test"],

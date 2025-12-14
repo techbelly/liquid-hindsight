@@ -62,6 +62,12 @@ module Liquid
 
     def set_attribute(key, expr, safe: false)
       case key
+      when 'offset'
+        @from = if expr == 'continue'
+          :continue
+        else
+          parse_expression(expr, safe: safe)
+        end
       when 'limit'
         @limit = parse_expression(expr, safe: safe)
       end
