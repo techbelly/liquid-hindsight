@@ -145,6 +145,20 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_tablerow_limit
+    assert_equal(
+      ["test"],
+      visit(%({% tablerow x in (1..5) limit: test %}{% endtablerow %})),
+    )
+  end
+
+  def test_tablerow_offset
+    assert_equal(
+      ["test"],
+      visit(%({% tablerow x in (1..5) offset: test %}{% endtablerow %})),
+    )
+  end
+
   def test_tablerow_body
     assert_equal(
       ["test"],
