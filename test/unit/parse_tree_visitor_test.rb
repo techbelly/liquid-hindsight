@@ -166,6 +166,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_cycle
+    assert_equal(
+      ["test"],
+      visit(%({% cycle test %})),
+    )
+  end
+
   def test_assign
     assert_equal(
       ["test"],
