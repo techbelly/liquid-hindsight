@@ -103,6 +103,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_case_left
+    assert_equal(
+      ["test"],
+      visit(%({% case test %}{% endcase %})),
+    )
+  end
+
   def test_for_in
     assert_equal(
       ["test"],
