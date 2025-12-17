@@ -34,6 +34,8 @@ module Liquid
       case tag
       when 'when'
         record_when_condition(markup)
+      when 'else'
+        record_else_condition(markup)
       else
         super
       end
@@ -69,6 +71,15 @@ module Liquid
         block.attach(body)
         @blocks << block
       end
+    end
+
+    def record_else_condition(markup)
+      unless markup.strip.empty?
+      end
+
+      block = ElseCondition.new
+      block.attach(new_body)
+      @blocks << block
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
