@@ -62,5 +62,12 @@ module Liquid
 
       @error_mode = @options[:error_mode] || @environment.error_mode
     end
+
+    def partial_options
+      @partial_options ||= begin
+        dont_pass = @template_options[:include_options_blacklist]
+        @template_options
+      end
+    end
   end
 end

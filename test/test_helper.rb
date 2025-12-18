@@ -216,6 +216,8 @@ class HashWithCustomToS < Hash
 end
 
 class StubFileSystem
+  attr_reader :file_read_count
+
   def initialize(values)
     @file_read_count = 0
     @values          = values
