@@ -157,6 +157,24 @@ module Liquid
       @nodelist.reject! { |node| node.instance_of?(String) }
     end
 
+    def render_to_output_buffer(context, output)
+      freeze unless frozen?
+
+      context.resource_limits.increment_render_score(@nodelist.length)
+
+      idx = 0
+      while (node = @nodelist[idx])
+        if node.instance_of?(String)
+          output << node
+        end
+        idx += 1
+
+        context.resource_limits.increment_write_score(output)
+      end
+
+      output
+    end
+
     private
 
     def create_variable(token, parse_context)

@@ -4,6 +4,23 @@ require 'test_helper'
 require 'lru_redux'
 
 class ExpressionTest < Minitest::Test
+  def test_disable_expression_cache
+    skip("Liquid-C does not support Expression caching") if defined?(Liquid::C) && Liquid::C.enabled
+
+    template = <<~LIQUID
+      {% assign x = 1 %}
+      {{ x }}
+      {% assign x = 2 %}
+      {{ x }}
+      {% assign y = 1 %}
+      {{ y }}
+    LIQUID
+
+    parse_context = Liquid::ParseContext.new(expression_cache: false)
+    Liquid::Template.parse(template, parse_context).render
+    assert(parse_context.instance_variable_get(:@expression_cache).nil?)
+  end
+
   def test_safe_parse_with_variable_lookup
     parse_context = Liquid::ParseContext.new
     parser = parse_context.new_parser('product.title')

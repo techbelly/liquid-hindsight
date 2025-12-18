@@ -37,6 +37,10 @@ module Liquid
       end
     end
 
+    def render_to_output_buffer(context, output)
+      @body.render_to_output_buffer(context, output)
+    end
+
     private
 
     def new_body
