@@ -48,6 +48,12 @@ class TemplateTest < Minitest::Test
     assert_equal([], Timeout.timeout(1) { t.warnings })
   end
 
+  def test_resource_limits_works_with_custom_length_method
+    t = Template.parse("{% assign foo = bar %}")
+    t.resource_limits.render_length_limit = 42
+    assert_equal("", t.render!("bar" => SomethingWithLength.new))
+  end
+
   def test_raises_error_with_invalid_utf8
     e = assert_raises(TemplateEncodingError) do
       Template.parse(<<~LIQUID)

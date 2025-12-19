@@ -65,6 +65,7 @@ module Liquid
 
       when Liquid::Drop
       when Hash
+        Context.new([args.shift, assigns], instance_assigns, registers, @rethrow_errors, @resource_limits, {}, @environment)
       when nil
         Context.new(assigns, instance_assigns, registers, @rethrow_errors, @resource_limits, {}, @environment)
       else

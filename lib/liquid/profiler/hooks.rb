@@ -2,6 +2,9 @@
 
 module Liquid
   module BlockBodyProfilingHook
+    def render_node(context, output, node)
+      super
+    end
   end
   BlockBody.prepend(BlockBodyProfilingHook)
 

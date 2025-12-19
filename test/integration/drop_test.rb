@@ -105,6 +105,40 @@ end
 class DropsTest < Minitest::Test
   include Liquid
 
+  def test_product_drop
+    tpl = Liquid::Template.parse('  ')
+    assert_equal('  ', tpl.render!('product' => ProductDrop.new))
+  end
+
+  def test_drop_does_only_respond_to_whitelisted_methods
+    assert_equal("", Liquid::Template.parse("{{ product.inspect }}").render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse("{{ product.pretty_inspect }}").render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse("{{ product.whatever }}").render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse('{{ product | map: "inspect" }}').render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse('{{ product | map: "pretty_inspect" }}').render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse('{{ product | map: "whatever" }}').render!('product' => ProductDrop.new))
+  end
+
+  def test_protected
+    output = Liquid::Template.parse(' {{ product.callmenot }} ').render!('product' => ProductDrop.new)
+    assert_equal('  ', output)
+  end
+
+  def test_object_methods_not_allowed
+    [:dup, :clone, :singleton_class, :eval, :class_eval, :inspect].each do |method|
+      output = Liquid::Template.parse(" {{ product.#{method} }} ").render!('product' => ProductDrop.new)
+      assert_equal('  ', output)
+    end
+  end
+
+  def test_empty_string_value_access
+    assert_equal('', Liquid::Template.parse('{{ product[value] }}').render!('product' => ProductDrop.new, 'value' => ''))
+  end
+
+  def test_nil_value_access
+    assert_equal('', Liquid::Template.parse('{{ product[value] }}').render!('product' => ProductDrop.new, 'value' => nil))
+  end
+
   def test_invokable_methods
     assert_equal(%w(to_liquid catchall context texts).to_set, ProductDrop.invokable_methods)
     assert_equal(%w(to_liquid scopes_as_array loop_pos scopes).to_set, ContextDrop.invokable_methods)

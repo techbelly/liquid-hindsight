@@ -74,6 +74,10 @@ module Liquid
       raise SyntaxError, parse_context.locale.t("errors.syntax.variable_termination", token: token, tag_end: VariableEnd.inspect)
     end
 
+    def self.render_node(context, output, node)
+      node.render_to_output_buffer(context, output)
+    end
+
     private def parse_liquid_tag(markup, parse_context)
       liquid_tag_tokenizer = parse_context.new_tokenizer(
         markup, start_line_number: parse_context.line_number, for_liquid_tag: true
@@ -166,6 +170,8 @@ module Liquid
       while (node = @nodelist[idx])
         if node.instance_of?(String)
           output << node
+        else
+          render_node(context, output, node)
         end
         idx += 1
 
@@ -176,6 +182,10 @@ module Liquid
     end
 
     private
+
+    def render_node(context, output, node)
+      BlockBody.render_node(context, output, node)
+    end
 
     def create_variable(token, parse_context)
       if token.end_with?("}}")

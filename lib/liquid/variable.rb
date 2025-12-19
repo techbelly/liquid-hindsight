@@ -81,6 +81,14 @@ module Liquid
       filterargs
     end
 
+    def render(context)
+      obj = context.evaluate(@name)
+    end
+
+    def render_to_output_buffer(context, output)
+      obj = render(context)
+    end
+
     def disabled_tags
       []
     end

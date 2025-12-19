@@ -49,6 +49,19 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_custom_include_tag
+    original_tag = Liquid::Template.tags['include']
+    Liquid::Template.tags['include'] = CustomInclude
+    begin
+      assert_equal(
+        "custom_foo",
+        Template.parse("{% include 'custom_foo' %}").render!,
+      )
+    ensure
+      Liquid::Template.tags['include'] = original_tag
+    end
+  end
+
   def test_include_template_with_invalid_expression
     template = "{% include foo=>bar %}"
 
