@@ -34,6 +34,13 @@ class ProfilerTest < Minitest::Test
     Liquid::Environment.default.file_system = ProfilingFileSystem.new
   end
 
+  def test_template_allows_flagging_profiling
+    t = Template.parse("{{ 'a string' | upcase }}")
+    t.render!
+
+    assert_nil(t.profiler)
+  end
+
   class SleepTag < Liquid::Tag
     def initialize(tag_name, markup, parse_context)
       super

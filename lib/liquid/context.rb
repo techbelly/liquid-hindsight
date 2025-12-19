@@ -34,6 +34,9 @@ module Liquid
       @registers.static[:template_factory] ||= Liquid::TemplateFactory.new
 
       self.exception_renderer = environment.exception_renderer
+      if rethrow_errors
+        self.exception_renderer = Liquid::RAISE_EXCEPTION_LAMBDA
+      end
 
       yield self if block_given?
 

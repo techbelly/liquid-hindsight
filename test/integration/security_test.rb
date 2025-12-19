@@ -15,6 +15,18 @@ class SecurityTest < Minitest::Test
     @assigns = {}
   end
 
+  def test_does_not_permanently_add_filters_to_symbol_table
+    assert_no_new_symbols do
+      Thread.new do
+        test = %( {{ "some_string" | a_bad_filter }} )
+        Template.parse(test).render!
+        nil
+      end.join
+
+      GC.start
+    end
+  end
+
   def assert_no_new_symbols
     yield
 
