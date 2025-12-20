@@ -172,6 +172,7 @@ module Liquid
           output << node
         else
           render_node(context, output, node)
+          break if context.interrupt?
         end
         idx += 1
 
