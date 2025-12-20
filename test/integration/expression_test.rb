@@ -4,6 +4,18 @@ require 'test_helper'
 require 'lru_redux'
 
 class ExpressionTest < Minitest::Test
+  def test_quirky_negative_sign_expression_markup
+    result = Expression.parse("-", nil)
+    assert(result.is_a?(VariableLookup))
+    assert_equal("-", result.name)
+
+    assert_template_result(
+      "",
+      "{{ - 'theme.css' - }}",
+      error_mode: :lax,
+    )
+  end
+
   def test_disable_expression_cache
     skip("Liquid-C does not support Expression caching") if defined?(Liquid::C) && Liquid::C.enabled
 

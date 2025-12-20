@@ -5,6 +5,22 @@ require 'test_helper'
 class StandardTagTest < Minitest::Test
   include Liquid
 
+  def test_no_transform
+    assert_template_result(
+      'this text should come out of the template without change...',
+      'this text should come out of the template without change...',
+    )
+
+    assert_template_result('blah', 'blah')
+    assert_template_result('<blah>', '<blah>')
+    assert_template_result('|,.:', '|,.:')
+    assert_template_result('', '')
+
+    text = %(this shouldnt see any transformation either but has multiple lines
+              as you can clearly see here ...)
+    assert_template_result(text, text)
+  end
+
   def test_capture_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result(
@@ -15,6 +31,10 @@ class StandardTagTest < Minitest::Test
     end
   end
 
+  def test_assign_an_empty_string
+    assert_template_result('', '{% assign a = ""%}{{a}}')
+  end
+
   def test_case_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result('',  '{% case false %}{% when %}true{% endcase %}', {})
@@ -23,5 +43,12 @@ class StandardTagTest < Minitest::Test
     assert_raises(SyntaxError) do
       assert_template_result('',  '{% case false %}{% huh %}true{% endcase %}', {})
     end
+  end
+
+  def test_illegal_symbols
+    assert_template_result('', '{% if true == empty %}?{% endif %}', {})
+    assert_template_result('', '{% if true == null %}?{% endif %}', {})
+    assert_template_result('', '{% if empty == true %}?{% endif %}', {})
+    assert_template_result('', '{% if null == true %}?{% endif %}', {})
   end
 end

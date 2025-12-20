@@ -463,6 +463,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ a: 1, b: 2 }], @filters.reverse(a: 1, b: 2))
   end
 
+  def test_map_doesnt_call_arbitrary_stuff
+    assert_template_result("", '{{ "foo" | map: "__id__" }}')
+    assert_template_result("", '{{ "foo" | map: "inspect" }}')
+  end
+
   def test_map_returns_empty_on_2d_input_array
     foo = [
       [1],
