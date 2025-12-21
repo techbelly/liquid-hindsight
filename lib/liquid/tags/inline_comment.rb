@@ -10,6 +10,10 @@ module Liquid
       end
     end
 
+    def render_to_output_buffer(_context, output)
+      output
+    end
+
     def blank?
       true
     end
