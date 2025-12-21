@@ -65,6 +65,10 @@ module Liquid
       !@interrupts.empty?
     end
 
+    def push_interrupt(e)
+      @interrupts.push(e)
+    end
+
     def handle_error(e, line_number = nil)
       e = internal_error unless e.is_a?(Liquid::Error)
       e.template_name ||= template_name

@@ -8,4 +8,7 @@ module Liquid
       @message = message || "interrupt"
     end
   end
+
+  class BreakInterrupt < Interrupt; end
+  class ContinueInterrupt < Interrupt; end
 end
