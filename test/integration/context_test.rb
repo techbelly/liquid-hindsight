@@ -119,6 +119,10 @@ class ContextTest < Minitest::Test
     assert_nil(@context['nil'])
   end
 
+  def test_variables_not_existing
+    assert_template_result("true", "{% if does_not_exist == nil %}true{% endif %}")
+  end
+
   def test_scoping
     @context.push
     @context.pop
@@ -180,6 +184,16 @@ class ContextTest < Minitest::Test
     assert_equal('test', @context['test'])
     @context.pop
     assert_nil(@context['test'])
+  end
+
+  def test_keywords
+    assert_template_result("pass", "{% if true == expect %}pass{% endif %}", { "expect" => true })
+    assert_template_result("pass", "{% if false == expect %}pass{% endif %}", { "expect" => false })
+  end
+
+  def test_digits
+    assert_template_result("pass", "{% if 100 == expect %}pass{% endif %}", { "expect" => 100 })
+    assert_template_result("pass", "{% if 100.00 == expect %}pass{% endif %}", { "expect" => 100.00 })
   end
 
   def test_merge

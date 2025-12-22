@@ -36,6 +36,10 @@ module Liquid
       end
     end
 
+    def lookup_command?(lookup_index)
+      @command_flags & (1 << lookup_index) != 0
+    end
+
     def evaluate(context)
       name   = context.evaluate(@name)
       object = context.find_variable(name)

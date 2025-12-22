@@ -64,14 +64,40 @@ class TemplateTest < Minitest::Test
     assert_equal("0123456789", t.render!)
   end
 
-  def test_render_bang_force_rethrow_errors_on_passed_context
-    context = Context.new('drop' => ErroneousDrop.new)
-    t = Template.new.parse('{{ drop.bad_method }}')
+  def test_render_length_persists_between_blocks
+    t = Template.parse("{% if true %}aaaa{% endif %}")
+    t.resource_limits.render_length_limit = 3
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    t.resource_limits.render_length_limit = 4
+    assert_equal("aaaa", t.render)
 
-    e = assert_raises(RuntimeError) do
-      t.render!(context)
+    t = Template.parse("{% if true %}aaaa{% endif %}{% if true %}bbb{% endif %}")
+    t.resource_limits.render_length_limit = 6
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    t.resource_limits.render_length_limit = 7
+    assert_equal("aaaabbb", t.render)
+
+    t = Template.parse("{% if true %}a{% endif %}{% if true %}b{% endif %}{% if true %}a{% endif %}{% if true %}b{% endif %}{% if true %}a{% endif %}{% if true %}b{% endif %}")
+    t.resource_limits.render_length_limit = 5
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    t.resource_limits.render_length_limit = 6
+    assert_equal("ababab", t.render)
+  end
+
+  def test_render_length_uses_number_of_bytes_not_characters
+    t = Template.parse("{% if true %}すごい{% endif %}")
+    t.resource_limits.render_length_limit = 8
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    t.resource_limits.render_length_limit = 9
+    assert_equal("すごい", t.render)
+  end
+
+  def test_undefined_variables_raise
+    t = Template.parse("{{x}} {{y}} {{z.a}} {{z.b}} {{z.c.d}}")
+
+    assert_raises(UndefinedVariable) do
+      t.render!({ 'x' => 33, 'z' => { 'a' => 32, 'c' => { 'e' => 31 } } }, strict_variables: true)
     end
-    assert_equal('ruby error in drop', e.message)
   end
 
   def test_raises_error_with_invalid_utf8

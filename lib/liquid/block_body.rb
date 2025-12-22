@@ -76,6 +76,15 @@ module Liquid
 
     def self.render_node(context, output, node)
       node.render_to_output_buffer(context, output)
+    rescue => exc
+      blank_tag = !node.instance_of?(Variable) && node.blank?
+      rescue_render_node(context, output, node.line_number, exc, blank_tag)
+    end
+
+    def self.rescue_render_node(context, output, line_number, exc, blank_tag)
+      error_message = context.handle_error(exc, line_number)
+      error_mode = context.registers.static[:template_error_mode]
+      suppress_error_text = blank_tag && error_mode != :strict2 && error_mode != :rigid
     end
 
     private def parse_liquid_tag(markup, parse_context)

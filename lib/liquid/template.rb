@@ -76,6 +76,19 @@ module Liquid
 
       output = nil
 
+      case args.last
+      when Hash
+        options = args.pop
+        output  = options[:output] if options[:output]
+        static_registers = context.registers.static
+
+        options[:registers]&.each do |key, register|
+          static_registers[key] = register
+        end
+
+        apply_options_to_context(context, options)
+      end
+
       context.resource_limits.reset
 
       if @profiling && context.profiler.nil?
@@ -120,6 +133,14 @@ module Liquid
       @warnings = parse_context.warnings
       @error_mode = parse_context.error_mode
       parse_context
+    end
+
+    def apply_options_to_context(context, options)
+      context.add_filters(options[:filters]) if options[:filters]
+      context.global_filter      = options[:global_filter] if options[:global_filter]
+      context.exception_renderer = options[:exception_renderer] if options[:exception_renderer]
+      context.strict_variables   = options[:strict_variables] if options[:strict_variables]
+      context.strict_filters     = options[:strict_filters] if options[:strict_filters]
     end
   end
 end

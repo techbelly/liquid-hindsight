@@ -37,6 +37,20 @@ module Liquid
       end
     end
 
+    def render_to_output_buffer(context, output)
+      @blocks.each do |block|
+        result = Liquid::Utils.to_liquid_value(
+          block.evaluate(context),
+        )
+
+        if result
+          return block.attachment.render_to_output_buffer(context, output)
+        end
+      end
+
+      output
+    end
+
     private
 
     def strict2_parse(markup)
