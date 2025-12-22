@@ -79,6 +79,25 @@ class CommentTagUnitTest < Minitest::Test
     end
   end
 
+  def test_child_raw_tags_need_to_be_closed
+    assert_template_result("", <<~LIQUID.chomp)
+      {% comment %}
+        {% raw %}
+          {% endcomment %}
+        {% endraw %}
+      {% endcomment %}
+    LIQUID
+
+    assert_raises(Liquid::SyntaxError) do
+      Liquid::Template.parse(<<~LIQUID.chomp)
+        {% comment %}
+          {% raw %}
+          {% endcomment %}
+        {% endcomment %}
+      LIQUID
+    end
+  end
+
   def test_comment_tag_delimiter_with_extra_strings
     assert_template_result(
       '',

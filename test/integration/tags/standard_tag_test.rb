@@ -21,6 +21,41 @@ class StandardTagTest < Minitest::Test
     assert_template_result(text, text)
   end
 
+  def test_has_a_block_which_does_nothing
+    assert_template_result(
+      %(the comment block should be removed  .. right?),
+      %(the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?),
+    )
+
+    assert_template_result('', '{%comment%}{%endcomment%}')
+    assert_template_result('', '{%comment%}{% endcomment %}')
+    assert_template_result('', '{% comment %}{%endcomment%}')
+    assert_template_result('', '{% comment %}{% endcomment %}')
+    assert_template_result('', '{%comment%}comment{%endcomment%}')
+    assert_template_result('', '{% comment %}comment{% endcomment %}')
+    assert_template_result('', '{% comment %} 1 {% comment %} 2 {% endcomment %} 3 {% endcomment %}')
+
+    assert_template_result('', '{%comment%}{%blabla%}{%endcomment%}')
+    assert_template_result('', '{% comment %}{% blabla %}{% endcomment %}')
+    assert_template_result('', '{%comment%}{% endif %}{%endcomment%}')
+    assert_template_result('', '{% comment %}{% endwhatever %}{% endcomment %}')
+    assert_template_result('', '{% comment %}{% raw %} {{%%%%}}  }} { {% endcomment %} {% comment {% endraw %} {% endcomment %}')
+    assert_template_result('', '{% comment %}{% " %}{% endcomment %}')
+    assert_template_result('', '{% comment %}{%%}{% endcomment %}')
+
+    assert_template_result('foobar', 'foo{%comment%}comment{%endcomment%}bar')
+    assert_template_result('foobar', 'foo{% comment %}comment{% endcomment %}bar')
+    assert_template_result('foobar', 'foo{%comment%} comment {%endcomment%}bar')
+    assert_template_result('foobar', 'foo{% comment %} comment {% endcomment %}bar')
+
+    assert_template_result('foo  bar', 'foo {%comment%} {%endcomment%} bar')
+    assert_template_result('foo  bar', 'foo {%comment%}comment{%endcomment%} bar')
+    assert_template_result('foo  bar', 'foo {%comment%} comment {%endcomment%} bar')
+
+    assert_template_result('foobar', 'foo{%comment%}
+                                     {%endcomment%}bar')
+  end
+
   def test_capture_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result(
