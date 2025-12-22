@@ -74,4 +74,8 @@ class ParsingQuirksTest < Minitest::Test
       Template.new.parse('{% end %}')
     end
   end
+
+  def test_contains_in_id
+    assert_template_result(' YES ', '{% if containsallshipments == true %} YES {% endif %}', { 'containsallshipments' => true })
+  end
 end
