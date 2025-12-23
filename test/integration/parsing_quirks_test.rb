@@ -69,6 +69,15 @@ class ParsingQuirksTest < Minitest::Test
     assert(Template.parse("{{|test|}}", error_mode: :lax))
   end
 
+  def test_unexpected_characters_silently_eat_logic_lax
+    with_error_modes(:lax) do
+      markup = "true && false"
+      assert_template_result(' YES ', "{% if #{markup} %} YES {% endif %}")
+      markup = "false || true"
+      assert_template_result('', "{% if #{markup} %} YES {% endif %}")
+    end
+  end
+
   def test_raise_on_invalid_tag_delimiter
     assert_raises(Liquid::SyntaxError) do
       Template.new.parse('{% end %}')
