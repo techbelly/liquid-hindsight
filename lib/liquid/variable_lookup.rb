@@ -2,6 +2,8 @@
 
 module Liquid
   class VariableLookup
+    COMMAND_METHODS = ['size', 'first', 'last'].freeze
+
     attr_reader :name, :lookups
 
     def self.parse(markup, string_scanner = StringScanner.new(""), cache = nil)
@@ -32,6 +34,8 @@ module Liquid
             string_scanner,
             cache,
           )
+        elsif COMMAND_METHODS.include?(lookup)
+          @command_flags |= 1 << i
         end
       end
     end
