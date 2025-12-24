@@ -75,6 +75,25 @@ class IncludeTagTest < Minitest::Test
     end
   end
 
+  def test_does_not_add_error_in_strict_mode_for_missing_variable
+    env = Liquid::Environment.build(file_system: TestFileSystem.new)
+
+    a = Liquid::Template.parse(' {% include "nested_template" %}', environment: env)
+    a.render!
+    assert_empty(a.errors)
+  end
+
+  def test_including_with_strict_variables
+    env = Liquid::Environment.build(
+      file_system: StubFileSystem.new('simple' => 'simple'),
+    )
+
+    template = Liquid::Template.parse("{% include 'simple' %}", error_mode: :warn, environment: env)
+    template.render(nil, strict_variables: true)
+
+    assert_equal([], template.errors)
+  end
+
   def test_include_template_with_invalid_expression
     template = "{% include foo=>bar %}"
 

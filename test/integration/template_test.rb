@@ -92,6 +92,14 @@ class TemplateTest < Minitest::Test
     assert_equal("すごい", t.render)
   end
 
+  def test_nil_value_does_not_raise
+    t      = Template.parse("some{{x}}thing", error_mode: :strict)
+    result = t.render!({ 'x' => nil }, strict_variables: true)
+
+    assert_equal(0, t.errors.count)
+    assert_equal('something', result)
+  end
+
   def test_undefined_variables_raise
     t = Template.parse("{{x}} {{y}} {{z.a}} {{z.b}} {{z.c.d}}")
 

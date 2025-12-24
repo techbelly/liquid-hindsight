@@ -38,6 +38,30 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal(expected, output)
   end
 
+  def test_standard_error
+    template = Liquid::Template.parse(' {{ errors.standard_error }} ')
+    assert_equal(' Liquid error: standard error ', template.render('errors' => ErrorDrop.new))
+
+    assert_equal(1, template.errors.size)
+    assert_equal(StandardError, template.errors.first.class)
+  end
+
+  def test_syntax
+    template = Liquid::Template.parse(' {{ errors.syntax_error }} ')
+    assert_equal(' Liquid syntax error: syntax error ', template.render('errors' => ErrorDrop.new))
+
+    assert_equal(1, template.errors.size)
+    assert_equal(SyntaxError, template.errors.first.class)
+  end
+
+  def test_argument
+    template = Liquid::Template.parse(' {{ errors.argument_error }} ')
+    assert_equal(' Liquid error: argument error ', template.render('errors' => ErrorDrop.new))
+
+    assert_equal(1, template.errors.size)
+    assert_equal(ArgumentError, template.errors.first.class)
+  end
+
   def test_missing_endtag_parse_time_error
     assert_match_syntax_error(/: 'for' tag was never closed\z/, ' {% for a in b %} ... ')
   end
@@ -48,6 +72,13 @@ class ErrorHandlingTest < Minitest::Test
         Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ')
       end
     end
+  end
+
+  def test_lax_unrecognized_operator
+    template = Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ', error_mode: :lax)
+    assert_equal(' Liquid error: Unknown operator =! ', template.render)
+    assert_equal(1, template.errors.size)
+    assert_equal(Liquid::ArgumentError, template.errors.first.class)
   end
 
   def test_with_line_numbers_adds_numbers_to_parser_errors
@@ -159,6 +190,37 @@ class ErrorHandlingTest < Minitest::Test
       template = Liquid::Template.parse('{{ errors.exception }}')
       template.render('errors' => ErrorDrop.new)
     end
+  end
+
+  def test_setting_default_exception_renderer
+    exceptions = []
+    default_exception_renderer = ->(e) {
+      exceptions << e
+      ''
+    }
+
+    env = Liquid::Environment.build(exception_renderer: default_exception_renderer)
+    template = Liquid::Template.parse('This is a runtime error: {{ errors.argument_error }}', environment: env)
+
+    output = template.render('errors' => ErrorDrop.new)
+
+    assert_equal('This is a runtime error: ', output)
+    assert_equal([Liquid::ArgumentError], template.errors.map(&:class))
+  end
+
+  def test_setting_exception_renderer_on_environment
+    exceptions = []
+    exception_renderer = ->(e) do
+      exceptions << e
+      ''
+    end
+
+    environment = Liquid::Environment.build(exception_renderer: exception_renderer)
+    template = Liquid::Template.parse('This is a runtime error: {{ errors.argument_error }}', environment: environment)
+    output = template.render('errors' => ErrorDrop.new)
+
+    assert_equal('This is a runtime error: ', output)
+    assert_equal([Liquid::ArgumentError], template.errors.map(&:class))
   end
 
   class TestFileSystem
