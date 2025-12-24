@@ -85,6 +85,9 @@ module Liquid
       error_message = context.handle_error(exc, line_number)
       error_mode = context.registers.static[:template_error_mode]
       suppress_error_text = blank_tag && error_mode != :strict2 && error_mode != :rigid
+      unless suppress_error_text
+        output << error_message
+      end
     end
 
     private def parse_liquid_tag(markup, parse_context)
