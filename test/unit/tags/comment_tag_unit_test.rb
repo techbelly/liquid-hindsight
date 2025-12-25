@@ -3,6 +3,19 @@
 require 'test_helper'
 
 class CommentTagUnitTest < Minitest::Test
+  def test_comment_inside_liquid_tag
+    assert_template_result("", <<~LIQUID.chomp)
+      {% liquid
+        if 1 != 1
+        comment
+        else
+          echo 123
+        endcomment
+        endif
+      %}
+    LIQUID
+  end
+
   def test_does_not_parse_nodes_inside_a_comment
     assert_template_result("", <<~LIQUID.chomp)
       {% comment %}
@@ -172,6 +185,18 @@ class CommentTagUnitTest < Minitest::Test
     assert_template_result("Hello!", <<~LIQUID.chomp)
       {%- comment %}Whitespace control!{% endcomment -%}
       Hello!
+    LIQUID
+  end
+
+  def test_dont_override_liquid_tag_whitespace_control
+    assert_template_result("Hello!World!", <<~LIQUID.chomp)
+      Hello!
+      {%- liquid
+        comment
+         this is inside a liquid tag
+        endcomment
+      -%}
+      World!
     LIQUID
   end
 end
