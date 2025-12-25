@@ -216,6 +216,12 @@ module Liquid
       base_scope_depth + @scopes.length > Block::MAX_DEPTH
     end
 
+    def internal_error
+      raise Liquid::InternalError, 'internal'
+    rescue Liquid::InternalError => exc
+      exc
+    end
+
     def squash_instance_assigns_with_environments
       @scopes.last.each_key do |k|
       end
