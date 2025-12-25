@@ -18,6 +18,11 @@ module Liquid
     def parse(_tokens)
     end
 
+    def render_to_output_buffer(context, output)
+      template_name = context.evaluate(@template_name_expr)
+      raise ArgumentError, options[:locale].t("errors.argument.include") unless template_name.is_a?(String)
+    end
+
     alias_method :parse_context, :options
     private :parse_context
 

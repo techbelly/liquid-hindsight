@@ -83,6 +83,28 @@ class IncludeTagTest < Minitest::Test
     assert_empty(a.errors)
   end
 
+  def test_render_raise_argument_error_when_template_is_undefined
+    assert_template_result(
+      "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
+      "{% include undefined_variable %}",
+      render_errors: true,
+    )
+
+    assert_template_result(
+      "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
+      "{% include nil %}",
+      render_errors: true,
+    )
+  end
+
+  def test_render_raise_argument_error_when_template_is_not_a_string
+    assert_template_result(
+      "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
+      "{% include 123 %}",
+      render_errors: true,
+    )
+  end
+
   def test_including_with_strict_variables
     env = Liquid::Environment.build(
       file_system: StubFileSystem.new('simple' => 'simple'),
