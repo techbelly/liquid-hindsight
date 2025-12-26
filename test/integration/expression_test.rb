@@ -4,6 +4,25 @@ require 'test_helper'
 require 'lru_redux'
 
 class ExpressionTest < Minitest::Test
+  def test_keyword_literals
+    assert_template_result("true", "{{ true }}")
+    assert_expression_result(true, "true")
+  end
+
+  def test_string
+    assert_template_result("single quoted", "{{'single quoted'}}")
+    assert_template_result("double quoted", '{{"double quoted"}}')
+    assert_template_result("spaced", "{{ 'spaced' }}")
+    assert_template_result("spaced2", "{{ 'spaced2' }}")
+    assert_template_result("emoji🔥", "{{ 'emoji🔥' }}")
+  end
+
+  def test_int
+    assert_template_result("456", "{{ 456 }}")
+    assert_expression_result(123, "123")
+    assert_expression_result(12, "012")
+  end
+
   def test_quirky_negative_sign_expression_markup
     result = Expression.parse("-", nil)
     assert(result.is_a?(VariableLookup))

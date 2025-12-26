@@ -48,6 +48,38 @@ class TemplateTest < Minitest::Test
     assert_equal([], Timeout.timeout(1) { t.warnings })
   end
 
+  def test_custom_assigns_do_not_persist_on_same_template
+    t = Template.new
+    assert_equal('from custom assigns', t.parse("{{ foo }}").render!('foo' => 'from custom assigns'))
+    assert_equal('', t.parse("{{ foo }}").render!)
+  end
+
+  def test_lambda_is_called_once_from_persistent_assigns_over_multiple_parses_and_renders
+    t = Template.new
+    t.assigns['number'] = -> {
+      @global ||= 0
+      @global  += 1
+    }
+    assert_equal('1', t.parse("{{number}}").render!)
+    assert_equal('1', t.parse("{{number}}").render!)
+    assert_equal('1', t.render!)
+    @global = nil
+  end
+
+  def test_lambda_is_called_once_from_custom_assigns_over_multiple_parses_and_renders
+    t = Template.new
+    assigns = {
+      'number' => -> {
+        @global ||= 0
+        @global += 1
+      },
+    }
+    assert_equal('1', t.parse("{{number}}").render!(assigns))
+    assert_equal('1', t.parse("{{number}}").render!(assigns))
+    assert_equal('1', t.render!(assigns))
+    @global = nil
+  end
+
   def test_resource_limits_works_with_custom_length_method
     t = Template.parse("{% assign foo = bar %}")
     t.resource_limits.render_length_limit = 42
@@ -90,6 +122,20 @@ class TemplateTest < Minitest::Test
     assert_equal("Liquid error: Memory limits exceeded", t.render)
     t.resource_limits.render_length_limit = 9
     assert_equal("すごい", t.render)
+  end
+
+  def test_global_filter_option_on_render
+    global_filter_proc = ->(output) { "#{output} filtered" }
+    rendered_template  = Template.parse("{{name}}").render({ "name" => "bob" }, global_filter: global_filter_proc)
+
+    assert_equal('bob filtered', rendered_template)
+  end
+
+  def test_global_filter_option_when_native_filters_exist
+    global_filter_proc = ->(output) { "#{output} filtered" }
+    rendered_template  = Template.parse("{{name | upcase}}").render({ "name" => "bob" }, global_filter: global_filter_proc)
+
+    assert_equal('BOB filtered', rendered_template)
   end
 
   def test_nil_value_does_not_raise

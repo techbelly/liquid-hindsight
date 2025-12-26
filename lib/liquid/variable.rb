@@ -83,10 +83,30 @@ module Liquid
 
     def render(context)
       obj = context.evaluate(@name)
+
+      @filters.each do |filter_name, filter_args, filter_kwargs|
+        filter_args = evaluate_filter_expressions(context, filter_args, filter_kwargs)
+        obj = context.invoke(filter_name, obj, *filter_args)
+      end
+
+      context.apply_global_filter(obj)
     end
 
     def render_to_output_buffer(context, output)
       obj = render(context)
+      render_obj_to_output(obj, output)
+      output
+    end
+
+    def render_obj_to_output(obj, output)
+      case obj
+      when Array
+        obj.each do |o|
+          render_obj_to_output(o, output)
+        end
+      else
+        output << Liquid::Utils.to_s(obj)
+      end
     end
 
     def disabled_tags
@@ -140,6 +160,18 @@ module Liquid
 
     def end_of_arguments?(p)
       p.look(:pipe) || p.look(:end_of_string)
+    end
+
+    def evaluate_filter_expressions(context, filter_args, filter_kwargs)
+      parsed_args = filter_args.map { |expr| context.evaluate(expr) }
+      if filter_kwargs
+        parsed_kwargs = {}
+        filter_kwargs.each do |key, expr|
+          parsed_kwargs[key] = context.evaluate(expr)
+        end
+        parsed_args << parsed_kwargs
+      end
+      parsed_args
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor

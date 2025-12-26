@@ -119,6 +119,41 @@ class DropsTest < Minitest::Test
     assert_equal("", Liquid::Template.parse('{{ product | map: "whatever" }}').render!('product' => ProductDrop.new))
   end
 
+  def test_drops_respond_to_to_liquid
+    assert_equal("text1", Liquid::Template.parse("{{ product.to_liquid.texts.text }}").render!('product' => ProductDrop.new))
+    assert_equal("text1", Liquid::Template.parse('{{ product | map: "to_liquid" | map: "texts" | map: "text" }}').render!('product' => ProductDrop.new))
+  end
+
+  def test_text_drop
+    output = Liquid::Template.parse(' {{ product.texts.text }} ').render!('product' => ProductDrop.new)
+    assert_equal(' text1 ', output)
+  end
+
+  def test_catchall_unknown_method
+    output = Liquid::Template.parse(' {{ product.catchall.unknown }} ').render!('product' => ProductDrop.new)
+    assert_equal(' catchall_method: unknown ', output)
+  end
+
+  def test_catchall_integer_argument_drop
+    output = Liquid::Template.parse(' {{ product.catchall[8] }} ').render!('product' => ProductDrop.new)
+    assert_equal(' catchall_method: 8 ', output)
+  end
+
+  def test_context_drop
+    output = Liquid::Template.parse(' {{ context.bar }} ').render!('context' => ContextDrop.new, 'bar' => "carrot")
+    assert_equal(' carrot ', output)
+  end
+
+  def test_context_drop_array_with_map
+    output = Liquid::Template.parse(' {{ contexts | map: "bar" }} ').render!('contexts' => [ContextDrop.new, ContextDrop.new], 'bar' => "carrot")
+    assert_equal(' carrotcarrot ', output)
+  end
+
+  def test_nested_context_drop
+    output = Liquid::Template.parse(' {{ product.context.foo }} ').render!('product' => ProductDrop.new, 'foo' => "monkey")
+    assert_equal(' monkey ', output)
+  end
+
   def test_protected
     output = Liquid::Template.parse(' {{ product.callmenot }} ').render!('product' => ProductDrop.new)
     assert_equal('  ', output)
@@ -131,12 +166,48 @@ class DropsTest < Minitest::Test
     end
   end
 
+  def test_enumerable_drop_size
+    assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
+  end
+
+  def test_enumerable_drop_will_invoke_liquid_method_missing_for_clashing_method_names
+    ["select", "each", "map", "cycle"].each do |method|
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => EnumerableDrop.new))
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => EnumerableDrop.new))
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => RealEnumerableDrop.new))
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => RealEnumerableDrop.new))
+    end
+  end
+
+  def test_some_enumerable_methods_still_get_invoked
+    [:count, :max].each do |method|
+      assert_equal("3", Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => RealEnumerableDrop.new))
+      assert_equal("3", Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => RealEnumerableDrop.new))
+      assert_equal("3", Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => EnumerableDrop.new))
+      assert_equal("3", Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => EnumerableDrop.new))
+    end
+
+    assert_equal("yes", Liquid::Template.parse("{% if collection contains 3 %}yes{% endif %}").render!('collection' => RealEnumerableDrop.new))
+
+    [:min, :first].each do |method|
+      assert_equal("1", Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => RealEnumerableDrop.new))
+      assert_equal("1", Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => RealEnumerableDrop.new))
+      assert_equal("1", Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => EnumerableDrop.new))
+      assert_equal("1", Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => EnumerableDrop.new))
+    end
+  end
+
   def test_empty_string_value_access
     assert_equal('', Liquid::Template.parse('{{ product[value] }}').render!('product' => ProductDrop.new, 'value' => ''))
   end
 
   def test_nil_value_access
     assert_equal('', Liquid::Template.parse('{{ product[value] }}').render!('product' => ProductDrop.new, 'value' => nil))
+  end
+
+  def test_default_to_s_on_drops
+    assert_equal('ProductDrop', Liquid::Template.parse("{{ product }}").render!('product' => ProductDrop.new))
+    assert_equal('EnumerableDrop', Liquid::Template.parse('{{ collection }}').render!('collection' => EnumerableDrop.new))
   end
 
   def test_invokable_methods

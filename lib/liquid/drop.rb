@@ -18,6 +18,8 @@ module Liquid
     def invoke_drop(method_or_key)
       if self.class.invokable?(method_or_key)
         send(method_or_key)
+      else
+        liquid_method_missing(method_or_key)
       end
     end
 

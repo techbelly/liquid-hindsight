@@ -4,6 +4,8 @@
 require 'test_helper'
 
 class TestThing
+  attr_reader :foo
+
   def initialize
     @foo = 0
   end
@@ -463,9 +465,65 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ a: 1, b: 2 }], @filters.reverse(a: 1, b: 2))
   end
 
+  def test_map
+    assert_equal([1, 2, 3, 4], @filters.map([{ "a" => 1 }, { "a" => 2 }, { "a" => 3 }, { "a" => 4 }], 'a'))
+    assert_template_result(
+      'abc',
+      "{{ ary | map:'foo' | map:'bar' }}",
+      { 'ary' => [{ 'foo' => { 'bar' => 'a' } }, { 'foo' => { 'bar' => 'b' } }, { 'foo' => { 'bar' => 'c' } }] },
+    )
+  end
+
   def test_map_doesnt_call_arbitrary_stuff
     assert_template_result("", '{{ "foo" | map: "__id__" }}')
     assert_template_result("", '{{ "foo" | map: "inspect" }}')
+  end
+
+  def test_map_calls_to_liquid
+    t = TestThing.new
+    assert_template_result("woot: 1", '{{ foo | map: "whatever" }}', { "foo" => [t] })
+  end
+
+  def test_map_calls_context=
+    model = TestModel.new(value: :test)
+
+    template = Template.parse('{{ foo | map: "registers" }}')
+    template.registers[:test] = 1234
+    template.assigns['foo'] = [model]
+
+    assert_template_result("{:test=>1234}", template.render!)
+  end
+
+  def test_map_on_hashes
+    assert_template_result(
+      "4217",
+      '{{ thing | map: "foo" | map: "bar" }}',
+      { "thing" => { "foo" => [{ "bar" => 42 }, { "bar" => 17 }] } },
+    )
+  end
+
+  def test_sort_calls_to_liquid
+    t = TestThing.new
+    Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
+    assert(t.foo > 0)
+  end
+
+  def test_map_over_drops_returning_procs
+    drops = [
+      {
+        "proc" => -> { "foo" },
+      },
+      {
+        "proc" => -> { "bar" },
+      },
+    ]
+    output = Liquid::Template.parse('{{ drops | map: "proc" }}').render!({ "drops" => drops })
+    assert_equal("foobar", output)
+  end
+
+  def test_map_works_on_enumerables
+    output = Liquid::Template.parse('{{ foo | map: "foo" }}').render!({ "foo" => TestEnumerable.new })
+    assert_equal("123", output)
   end
 
   def test_map_returns_empty_on_2d_input_array
@@ -480,6 +538,16 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_map_with_value_property
+    array = [
+      { "handle" => "alpha", "value" => "A" },
+      { "handle" => "beta", "value" => "B" },
+      { "handle" => "gamma", "value" => "C" }
+    ]
+
+    assert_template_result("A B C", "{{ array | map: 'value' | join: ' ' }}", { "array" => array })
+  end
+
   def test_map_returns_input_with_no_property
     foo = [
       [1],
@@ -490,6 +558,19 @@ class StandardFiltersTest < Minitest::Test
     assert_raises(Liquid::ArgumentError) do
       @filters.map(foo, nil)
     end
+  end
+
+  def test_sort_works_on_enumerables
+    assert_template_result("213", '{{ foo | sort: "bar" | map: "foo" }}', { "foo" => TestEnumerable.new })
+  end
+
+  def test_first_and_last_call_to_liquid
+    assert_template_result('foobar', '{{ foo | first }}', { 'foo' => [ThingWithToLiquid.new] })
+    assert_template_result('foobar', '{{ foo | last }}', { 'foo' => [ThingWithToLiquid.new] })
+  end
+
+  def test_truncate_calls_to_liquid
+    assert_template_result("wo...", '{{ foo | truncate: 5 }}', { "foo" => TestThing.new })
   end
 
   def test_date
@@ -542,6 +623,13 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('빈', @filters.last('고스트빈'))
   end
 
+  def test_first_last_on_strings_via_template
+    assert_template_result('f', '{{ name | first }}', { 'name' => 'foo' })
+    assert_template_result('o', '{{ name | last }}', { 'name' => 'foo' })
+    assert_template_result('', '{{ name | first }}', { 'name' => '' })
+    assert_template_result('', '{{ name | last }}', { 'name' => '' })
+  end
+
   def test_concat
     assert_equal([1, 2, 3, 4], @filters.concat([1, 2], [3, 4]))
     assert_equal([1, 2, 'a'],  @filters.concat([1, 2], ['a']))
@@ -550,6 +638,125 @@ class StandardFiltersTest < Minitest::Test
     assert_raises(Liquid::ArgumentError, "concat filter requires an array argument") do
       @filters.concat([1, 2], 10)
     end
+  end
+
+  def test_cannot_access_private_methods
+    assert_template_result('a', "{{ 'a' | to_number }}")
+  end
+
+  def test_has
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => false },
+    ]
+
+    expected_output = "true"
+
+    assert_template_result(expected_output, "{{ array | has: 'ok' }}", { "array" => array })
+    assert_template_result(expected_output, "{{ array | has: 'ok', true }}", { "array" => array })
+  end
+
+  def test_has_when_does_not_have_it
+    array = [
+      { "handle" => "alpha", "ok" => false },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => false },
+    ]
+
+    expected_output = "false"
+
+    assert_template_result(expected_output, "{{ array | has: 'ok' }}", { "array" => array })
+    assert_template_result(expected_output, "{{ array | has: 'ok', true }}", { "array" => array })
+  end
+
+  def test_has_with_false_value
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    template = "{{ array | has: 'ok', false }}"
+    expected_output = "true"
+
+    assert_template_result(expected_output, template, { "array" => array })
+  end
+
+  def test_has_with_false_value_when_does_not_have_it
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => true },
+      { "handle" => "gamma", "ok" => true },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    template = "{{ array | has: 'ok', false }}"
+    expected_output = "false"
+
+    assert_template_result(expected_output, template, { "array" => array })
+  end
+
+  def test_where
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    template = "{{ array | where: 'ok' | map: 'handle' | join: ' ' }}"
+    expected_output = "alpha delta"
+
+    assert_template_result(expected_output, template, { "array" => array })
+  end
+
+  def test_where_with_empty_string_is_a_no_op
+    environment = { "array" => ["alpha", "beta", "gamma"] }
+    expected_output = "alpha beta gamma"
+    template = "{{ array | where: '' | join: ' ' }}"
+
+    assert_template_result(expected_output, template, environment)
+  end
+
+  def test_where_with_nil_is_a_no_op
+    environment = { "array" => ["alpha", "beta", "gamma"] }
+    template = "{{ array | where: nil | join: ' ' }}"
+
+    assert_raises(Liquid::ArgumentError) do
+      assert_template_result("alpha beta gamma", template, environment)
+    end
+  end
+
+  def test_where_with_value
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    template = "{{ array | where: 'ok', true | map: 'handle' | join: ' ' }}"
+    expected_output = "alpha delta"
+
+    assert_template_result(expected_output, template, { "array" => array })
+  end
+
+  def test_where_with_false_value
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    template = "{{ array | where: 'ok', false | map: 'handle' | join: ' ' }}"
+    expected_output = "beta gamma"
+
+    assert_template_result(expected_output, template, { "array" => array })
   end
 
   def test_where_string_keys
@@ -671,6 +878,36 @@ class StandardFiltersTest < Minitest::Test
     assert_raises(Liquid::ArgumentError, "cannot select the property 'quantity'") do
       @filters.sum(input, "quantity")
     end
+  end
+
+  def test_sum_without_property_calls_to_liquid
+    t = TestThing.new
+    Liquid::Template.parse('{{ foo | sum }}').render("foo" => [t])
+    assert(t.foo > 0)
+  end
+
+  def test_sum_with_property_calls_to_liquid_on_property_values
+    t = TestThing.new
+    Liquid::Template.parse('{{ foo | sum: "quantity" }}').render("foo" => [{ "quantity" => t }])
+    assert(t.foo > 0)
+  end
+
+  def test_sum_of_floats
+    input = [0.1, 0.2, 0.3]
+    assert_equal(0.6, @filters.sum(input))
+    assert_template_result("0.6", "{{ input | sum }}", { "input" => input })
+  end
+
+  def test_sum_with_float_strings
+    input = [0.1, "0.2", "0.3"]
+    assert_equal(0.6, @filters.sum(input))
+    assert_template_result("0.6", "{{ input | sum }}", { "input" => input })
+  end
+
+  def test_sum_resulting_in_negative_float
+    input = [0.1, -0.2, -0.3]
+    assert_equal(-0.4, @filters.sum(input))
+    assert_template_result("-0.4", "{{ input | sum }}", { "input" => input })
   end
 
   def test_sum_with_non_string_property

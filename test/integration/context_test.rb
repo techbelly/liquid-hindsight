@@ -158,6 +158,10 @@ class ContextTest < Minitest::Test
     )
   end
 
+  def test_hyphenated_variable
+    assert_template_result("godz", "{{ oh-my }}", { "oh-my" => 'godz' })
+  end
+
   def test_add_filter
     filter = Module.new do
       def hi(output)
@@ -206,6 +210,12 @@ class ContextTest < Minitest::Test
     assert_nil(@context['test'])
   end
 
+  def test_hierachical_data
+    assigns = { 'hash' => { "name" => 'tobi' } }
+    assert_template_result("tobi", "{{ hash.name }}", assigns)
+    assert_template_result("tobi", '{{ hash["name"] }}', assigns)
+  end
+
   def test_keywords
     assert_template_result("pass", "{% if true == expect %}pass{% endif %}", { "expect" => true })
     assert_template_result("pass", "{% if false == expect %}pass{% endif %}", { "expect" => false })
@@ -216,12 +226,101 @@ class ContextTest < Minitest::Test
     assert_template_result("pass", "{% if 100.00 == expect %}pass{% endif %}", { "expect" => 100.00 })
   end
 
+  def test_strings
+    assert_template_result("hello!", '{{ "hello!" }}')
+    assert_template_result("hello!", "{{ 'hello!' }}")
+  end
+
   def test_merge
     @context.merge("test" => "test")
     assert_equal('test', @context['test'])
     @context.merge("test" => "newvalue", "foo" => "bar")
     assert_equal('newvalue', @context['test'])
     assert_equal('bar', @context['foo'])
+  end
+
+  def test_array_notation
+    assigns = { "test" => ["a", "b"] }
+    assert_template_result("a", "{{ test[0] }}", assigns)
+    assert_template_result("b", "{{ test[1] }}", assigns)
+    assert_template_result("pass", "{% if test[2] == nil %}pass{% endif %}", assigns)
+  end
+
+  def test_recoursive_array_notation
+    assigns = { "test" => { 'test' => [1, 2, 3, 4, 5] } }
+    assert_template_result("1", "{{ test.test[0] }}", assigns)
+
+    assigns = { "test" => [{ 'test' => 'worked' }] }
+    assert_template_result("worked", "{{ test[0].test }}", assigns)
+  end
+
+  def test_hash_to_array_transition
+    assigns = {
+      'colors' => {
+        'Blue' => ['003366', '336699', '6699CC', '99CCFF'],
+        'Green' => ['003300', '336633', '669966', '99CC99'],
+        'Yellow' => ['CC9900', 'FFCC00', 'FFFF99', 'FFFFCC'],
+        'Red' => ['660000', '993333', 'CC6666', 'FF9999'],
+      },
+    }
+
+    assert_template_result("003366", "{{ colors.Blue[0] }}", assigns)
+    assert_template_result("FF9999", "{{ colors.Red[3] }}", assigns)
+  end
+
+  def test_try_first
+    assigns = { 'test' => [1, 2, 3, 4, 5] }
+    assert_template_result("1", "{{ test.first }}", assigns)
+    assert_template_result("pass", "{% if test.last == 5 %}pass{% endif %}", assigns)
+
+    assigns = { "test" => { "test" => [1, 2, 3, 4, 5] } }
+    assert_template_result("1", "{{ test.test.first }}", assigns)
+    assert_template_result("5", "{{ test.test.last }}", assigns)
+
+    assigns = { "test" => [1] }
+    assert_template_result("1", "{{ test.first }}", assigns)
+    assert_template_result("1", "{{ test.last }}", assigns)
+  end
+
+  def test_access_hashes_with_hash_notation
+    assigns = { 'products' => { 'count' => 5, 'tags' => ['deepsnow', 'freestyle'] } }
+    assert_template_result("5", '{{ products["count"] }}', assigns)
+    assert_template_result("deepsnow", '{{ products["tags"][0] }}', assigns)
+    assert_template_result("deepsnow", '{{ products["tags"].first }}', assigns)
+
+    assigns = { 'product' => { 'variants' => [{ 'title' => 'draft151cm' }, { 'title' => 'element151cm' }] } }
+    assert_template_result("draft151cm", '{{ product["variants"][0]["title"] }}', assigns)
+    assert_template_result("element151cm", '{{ product["variants"][1]["title"] }}', assigns)
+    assert_template_result("draft151cm", '{{ product["variants"].first["title"] }}', assigns)
+    assert_template_result("element151cm", '{{ product["variants"].last["title"] }}', assigns)
+  end
+
+  def test_access_hashes_with_hash_access_variables
+    assigns = {
+      'var' => 'tags',
+      'nested' => { 'var' => 'tags' },
+      'products' => { 'count' => 5, 'tags' => ['deepsnow', 'freestyle'] },
+    }
+
+    assert_template_result('deepsnow', '{{ products[var].first }}', assigns)
+    assert_template_result('freestyle', '{{ products[nested.var].last }}', assigns)
+  end
+
+  def test_hash_notation_only_for_hash_access
+    assigns = { "array" => [1, 2, 3, 4, 5] }
+    assert_template_result("1", "{{ array.first }}", assigns)
+    assert_template_result("pass", '{% if array["first"] == nil %}pass{% endif %}', assigns)
+
+    assert_template_result("Hello", '{{ hash["first"] }}', { "hash" => { "first" => "Hello" } })
+  end
+
+  def test_first_can_appear_in_middle_of_callchain
+    assigns = { "product" => { 'variants' => [{ 'title' => 'draft151cm' }, { 'title' => 'element151cm' }] } }
+
+    assert_template_result('draft151cm', '{{ product.variants[0].title }}', assigns)
+    assert_template_result('element151cm', '{{ product.variants[1].title }}', assigns)
+    assert_template_result('draft151cm', '{{ product.variants.first.title }}', assigns)
+    assert_template_result('element151cm', '{{ product.variants.last.title }}', assigns)
   end
 
   def test_cents
@@ -456,6 +555,20 @@ class ContextTest < Minitest::Test
     assert_equal(:my_value, super_context.registers[:my_register])
   end
 
+  def test_new_isolated_subcontext_inherits_filters
+    my_filter = Module.new do
+      def my_filter(*)
+        'my filter result'
+      end
+    end
+
+    super_context = Context.new
+    super_context.add_filters([my_filter])
+    subcontext    = super_context.new_isolated_subcontext
+    template      = Template.parse('{{ 123 | my_filter }}')
+    assert_equal('my filter result', template.render(subcontext))
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do
@@ -482,6 +595,25 @@ class ContextTest < Minitest::Test
       end
       assert_equal(true, context.tag_disabled?("foo"))
       assert_equal(false, context.tag_disabled?("bar"))
+    end
+  end
+
+  def test_override_global_filter
+    global = Module.new do
+      def notice(output)
+        "Global #{output}"
+      end
+    end
+
+    local = Module.new do
+      def notice(output)
+        "Local #{output}"
+      end
+    end
+
+    with_global_filter(global) do
+      assert_equal('Global test', Template.parse("{{'test' | notice }}").render!)
+      assert_equal('Local test', Template.parse("{{'test' | notice }}").render!({}, filters: [local]))
     end
   end
 
