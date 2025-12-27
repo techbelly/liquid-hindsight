@@ -41,6 +41,16 @@ class LiquidTagTest < Minitest::Test
     assert_match_syntax_error("syntax error (line 3): Unknown tag 'error'", "{% liquid echo ''\n  \n error %}")
   end
 
+  def test_nested_liquid_tag
+    assert_template_result('good', <<~LIQUID)
+      {%- if true %}
+        {%- liquid
+          echo "good"
+        %}
+      {%- endif -%}
+    LIQUID
+  end
+
   def test_cannot_open_blocks_living_past_a_liquid_tag
     assert_match_syntax_error("syntax error (line 3): 'if' tag was never closed", <<~LIQUID)
       {%- liquid
@@ -55,6 +65,29 @@ class LiquidTagTest < Minitest::Test
       {%- if true -%}
       42
       {%- liquid endif -%}
+    LIQUID
+  end
+
+  def test_nested_liquid_tags
+    assert_template_result('good', <<~LIQUID)
+      {%- liquid
+        liquid
+          if true
+            echo "good"
+          endif
+      -%}
+    LIQUID
+  end
+
+  def test_nested_liquid_tags_on_same_line
+    assert_template_result('good', <<~LIQUID)
+      {%- liquid liquid liquid echo "good" -%}
+    LIQUID
+  end
+
+  def test_nested_liquid_liquid_is_not_skipped_if_used_in_non_tag_position
+    assert_template_result('liquid', <<~LIQUID, { 'liquid' => 'liquid' })
+      {%- liquid liquid liquid echo liquid -%}
     LIQUID
   end
 
