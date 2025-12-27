@@ -124,6 +124,15 @@ class TemplateTest < Minitest::Test
     assert_equal("すごい", t.render)
   end
 
+  def test_can_use_drop_as_context
+    t = Template.new
+    t.registers['lulz'] = 'haha'
+    drop = TemplateContextDrop.new
+    assert_equal('fizzbuzz', t.parse('{{foo}}').render!(drop))
+    assert_equal('bar', t.parse('{{bar}}').render!(drop))
+    assert_equal('haha', t.parse("{{baz}}").render!(drop))
+  end
+
   def test_global_filter_option_on_render
     global_filter_proc = ->(output) { "#{output} filtered" }
     rendered_template  = Template.parse("{{name}}").render({ "name" => "bob" }, global_filter: global_filter_proc)
@@ -151,6 +160,15 @@ class TemplateTest < Minitest::Test
 
     assert_raises(UndefinedVariable) do
       t.render!({ 'x' => 33, 'z' => { 'a' => 32, 'c' => { 'e' => 31 } } }, strict_variables: true)
+    end
+  end
+
+  def test_undefined_drop_methods_raise
+    d = DropWithUndefinedMethod.new
+    t = Template.new.parse('{{ foo }} {{ woot }}')
+
+    assert_raises(UndefinedDropMethod) do
+      t.render!(d, strict_variables: true)
     end
   end
 
