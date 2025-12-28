@@ -44,6 +44,11 @@ class VariableTest < Minitest::Test
     assert_template_result("  worked wonderfully  ", "  {{ test }}  ", { "test" => "worked wonderfully" })
   end
 
+  def test_expression_with_whitespace_in_square_brackets
+    assert_template_result('result', "{{ a[ 'b' ] }}", { 'a' => { 'b' => 'result' } })
+    assert_template_result('result', "{{ a[ self[ 'b' ] ] }}", { 'b' => 'c', 'a' => { 'c' => 'result' } })
+  end
+
   def test_ignore_unknown
     assert_template_result("", "{{ test }}")
   end
@@ -104,6 +109,36 @@ class VariableTest < Minitest::Test
 
   def test_nested_array
     assert_template_result('', '{{ foo }}', { 'foo' => [[nil]] })
+  end
+
+  def test_dynamic_find_var
+    assert_template_result('bar', '{{ self[key] }}', { 'key' => 'foo', 'foo' => 'bar' })
+  end
+
+  def test_raw_value_variable
+    assert_template_result('bar', '{{ self[key] }}', { 'key' => 'foo', 'foo' => 'bar' })
+  end
+
+  def test_dynamic_find_var_with_drop
+    assert_template_result(
+      'bar',
+      '{{ self[list[settings.zero]] }}',
+      {
+        'list' => ['foo'],
+        'settings' => SettingsDrop.new("zero" => 0),
+        'foo' => 'bar',
+      },
+    )
+
+    assert_template_result(
+      'foo',
+      '{{ self[list[settings.zero]["foo"]] }}',
+      {
+        'list' => [{ 'foo' => 'bar' }],
+        'settings' => SettingsDrop.new("zero" => 0),
+        'bar' => 'foo',
+      },
+    )
   end
 
   def test_double_nested_variable_lookup

@@ -126,6 +126,12 @@ module Liquid
       find_variable(key, raise_on_not_found: false) != nil
     end
 
+    def variable_defined?(key)
+      @scopes.any? { |s| s.key?(key) } ||
+        @environments.any? { |e| e.key?(key) } ||
+        @static_environments.any? { |e| e.key?(key) }
+    end
+
     def evaluate(object)
       object.respond_to?(:evaluate) ? object.evaluate(self) : object
     end
