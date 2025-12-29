@@ -29,6 +29,8 @@ class TestDrop < Liquid::Drop
     @value = value
   end
 
+  attr_reader :value
+
   def registers
     "{#{@value.inspect}=>#{@context.registers[@value].inspect}}"
   end
@@ -506,6 +508,13 @@ class StandardFiltersTest < Minitest::Test
     t = TestThing.new
     Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
     assert(t.foo > 0)
+  end
+
+  def test_map_over_proc
+    drop  = TestDrop.new(value: "testfoo")
+    p     = proc { drop }
+    output = Liquid::Template.parse('{{ procs | map: "value" }}').render!({ "procs" => [p] })
+    assert_equal("testfoo", output)
   end
 
   def test_map_over_drops_returning_procs
