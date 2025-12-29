@@ -211,6 +211,10 @@ module Liquid
       filter_array(input, property, target_value) { |ary, &block| ary.select(&block) }
     end
 
+    def reject(input, property, target_value = nil)
+      filter_array(input, property, target_value) { |ary, &block| ary.reject(&block) }
+    end
+
     def has(input, property, target_value = nil)
       filter_array(input, property, target_value, false) { |ary, &block| ary.any?(&block) }
     end
