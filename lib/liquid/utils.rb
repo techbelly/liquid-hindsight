@@ -93,6 +93,8 @@ module Liquid
       when String
         Time.parse(obj)
       end
+    rescue ::ArgumentError
+      nil
     end
 
     def self.to_liquid_value(obj)
