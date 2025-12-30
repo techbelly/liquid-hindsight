@@ -60,6 +60,10 @@ module Liquid
       Utils.to_s(input).upcase
     end
 
+    def capitalize(input)
+      Utils.to_s(input).capitalize
+    end
+
     def escape(input)
       CGI.escapeHTML(Utils.to_s(input)) unless input.nil?
     end
