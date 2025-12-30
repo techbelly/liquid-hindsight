@@ -153,6 +153,11 @@ class FiltersInTemplate < Minitest::Test
       assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, filters: [CanadianMoneyFilter]))
     end
   end
+
+  def test_local_filter_with_deprecated_syntax
+    assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, CanadianMoneyFilter))
+    assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, [CanadianMoneyFilter]))
+  end
 end
 
 class TestObject < Liquid::Drop

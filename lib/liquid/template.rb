@@ -95,6 +95,8 @@ module Liquid
         end
 
         apply_options_to_context(context, options)
+      when Module, Array
+        context.add_filters(args.pop)
       end
 
       context.resource_limits.reset
