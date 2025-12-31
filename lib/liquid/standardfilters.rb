@@ -162,6 +162,12 @@ module Liquid
       input.split(pattern)
     end
 
+    def squish(input)
+      return if input.nil?
+
+      Utils.to_s(input).strip.gsub(/\s+/, ' ')
+    end
+
     def strip_html(input)
       input = Utils.to_s(input)
       empty  = ''
