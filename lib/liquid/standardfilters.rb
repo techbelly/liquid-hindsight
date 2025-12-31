@@ -173,6 +173,11 @@ module Liquid
       input.strip
     end
 
+    def lstrip(input)
+      input = Utils.to_s(input)
+      input.lstrip
+    end
+
     def strip_html(input)
       input = Utils.to_s(input)
       empty  = ''
