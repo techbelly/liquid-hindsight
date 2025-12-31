@@ -646,6 +646,11 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result('', '{{ name | last }}', { 'name' => '' })
   end
 
+  def test_strip
+    assert_template_result('ab c', "{{ source | strip }}", { 'source' => " ab c  " })
+    assert_template_result('ab c', "{{ source | strip }}", { 'source' => " \tab c  \n \t" })
+  end
+
   def test_concat
     assert_equal([1, 2, 3, 4], @filters.concat([1, 2], [3, 4]))
     assert_equal([1, 2, 'a'],  @filters.concat([1, 2], ['a']))

@@ -168,6 +168,11 @@ module Liquid
       Utils.to_s(input).strip.gsub(/\s+/, ' ')
     end
 
+    def strip(input)
+      input = Utils.to_s(input)
+      input.strip
+    end
+
     def strip_html(input)
       input = Utils.to_s(input)
       empty  = ''
