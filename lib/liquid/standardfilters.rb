@@ -320,6 +320,11 @@ module Liquid
       InputIterator.new(input, context).concat(array)
     end
 
+    def newline_to_br(input)
+      input = Utils.to_s(input)
+      input.gsub(/\r?\n/, "<br />\n")
+    end
+
     def date(input, format)
       str_format = Utils.to_s(format)
       return input if str_format.empty?
