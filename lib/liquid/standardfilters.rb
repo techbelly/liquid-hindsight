@@ -191,6 +191,11 @@ module Liquid
       result
     end
 
+    def strip_newlines(input)
+      input = Utils.to_s(input)
+      input.gsub(/\r?\n/, '')
+    end
+
     def join(input, glue = ' ')
       glue = Utils.to_s(glue)
       InputIterator.new(input, context).join(glue)
