@@ -684,6 +684,12 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("17.42", "{{ '-17.42' | abs }}")
   end
 
+  def test_append
+    assigns = { 'a' => 'bc', 'b' => 'd' }
+    assert_template_result('bcd', "{{ a | append: 'd'}}", assigns)
+    assert_template_result('bcd', "{{ a | append: b}}", assigns)
+  end
+
   def test_concat
     assert_equal([1, 2, 3, 4], @filters.concat([1, 2], [3, 4]))
     assert_equal([1, 2, 'a'],  @filters.concat([1, 2], ['a']))

@@ -313,6 +313,12 @@ module Liquid
       end
     end
 
+    def append(input, string)
+      input = Utils.to_s(input)
+      string = Utils.to_s(string)
+      input + string
+    end
+
     def concat(input, array)
       unless array.respond_to?(:to_ary)
         raise ArgumentError, "concat filter requires an array argument"
