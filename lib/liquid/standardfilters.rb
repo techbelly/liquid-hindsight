@@ -344,6 +344,11 @@ module Liquid
       array.last if array.respond_to?(:last)
     end
 
+    def abs(input)
+      result = Utils.to_number(input).abs
+      result.is_a?(BigDecimal) ? result.to_f : result
+    end
+
     def sum(input, property = nil)
       ary = InputIterator.new(input, context)
       return 0 if ary.empty?
