@@ -326,6 +326,12 @@ module Liquid
       InputIterator.new(input, context).concat(array)
     end
 
+    def prepend(input, string)
+      input = Utils.to_s(input)
+      string = Utils.to_s(string)
+      string + input
+    end
+
     def newline_to_br(input)
       input = Utils.to_s(input)
       input.gsub(/\r?\n/, "<br />\n")
