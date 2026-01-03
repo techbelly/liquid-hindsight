@@ -671,6 +671,13 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("a<br />\nb<br />\nc", "{{ source | newline_to_br }}", { 'source' => "a\r\nb\nc" })
   end
 
+  def test_plus
+    assert_template_result("2", "{{ 1 | plus:1 }}")
+    assert_template_result("2.0", "{{ '1' | plus:'1.0' }}")
+
+    assert_template_result("5", "{{ price | plus:'2' }}", { 'price' => NumberLikeThing.new(3) })
+  end
+
   def test_abs
     assert_template_result("17", "{{ 17 | abs }}")
     assert_template_result("17", "{{ -17 | abs }}")

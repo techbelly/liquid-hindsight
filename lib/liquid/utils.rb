@@ -73,7 +73,11 @@ module Liquid
       when String
         DECIMAL_REGEX.match?(obj.strip) ? BigDecimal(obj) : obj.to_i
       else
-        0
+        if obj.respond_to?(:to_number)
+          obj.to_number
+        else
+          0
+        end
       end
     end
 

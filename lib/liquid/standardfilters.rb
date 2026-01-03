@@ -361,6 +361,10 @@ module Liquid
       result.is_a?(BigDecimal) ? result.to_f : result
     end
 
+    def plus(input, operand)
+      apply_operation(input, operand, :+)
+    end
+
     def default(input, default_value = '', options = {})
       options = {} unless options.is_a?(Hash)
       false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
@@ -413,6 +417,11 @@ module Liquid
 
     def raise_property_error(property)
       raise Liquid::ArgumentError, "cannot select the property '#{Utils.to_s(property)}'"
+    end
+
+    def apply_operation(input, operand, operation)
+      result = Utils.to_number(input).send(operation, Utils.to_number(operand))
+      result.is_a?(BigDecimal) ? result.to_f : result
     end
 
     def nil_safe_compare(a, b)
