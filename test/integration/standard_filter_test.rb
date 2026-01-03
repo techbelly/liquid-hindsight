@@ -678,6 +678,13 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("5", "{{ price | plus:'2' }}", { 'price' => NumberLikeThing.new(3) })
   end
 
+  def test_minus
+    assert_template_result("4", "{{ input | minus:operand }}", { 'input' => 5, 'operand' => 1 })
+    assert_template_result("2.3", "{{ '4.3' | minus:'2' }}")
+
+    assert_template_result("5", "{{ price | minus:'2' }}", { 'price' => NumberLikeThing.new(7) })
+  end
+
   def test_abs
     assert_template_result("17", "{{ 17 | abs }}")
     assert_template_result("17", "{{ -17 | abs }}")

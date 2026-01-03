@@ -365,6 +365,10 @@ module Liquid
       apply_operation(input, operand, :+)
     end
 
+    def minus(input, operand)
+      apply_operation(input, operand, :-)
+    end
+
     def default(input, default_value = '', options = {})
       options = {} unless options.is_a?(Hash)
       false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
