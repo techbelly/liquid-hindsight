@@ -361,6 +361,12 @@ module Liquid
       result.is_a?(BigDecimal) ? result.to_f : result
     end
 
+    def default(input, default_value = '', options = {})
+      options = {} unless options.is_a?(Hash)
+      false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
+      false_check || (input.respond_to?(:empty?) && input.empty?) ? default_value : input
+    end
+
     def sum(input, property = nil)
       ary = InputIterator.new(input, context)
       return 0 if ary.empty?
