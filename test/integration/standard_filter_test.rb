@@ -698,6 +698,15 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("17.42", "{{ '-17.42' | abs }}")
   end
 
+  def test_modulo
+    assert_template_result("1", "{{ 3 | modulo:2 }}")
+    assert_raises(Liquid::ZeroDivisionError) do
+      assert_template_result("4", "{{ 1 | modulo: 0 }}")
+    end
+
+    assert_template_result("1", "{{ price | modulo:2 }}", { 'price' => NumberLikeThing.new(3) })
+  end
+
   def test_append
     assigns = { 'a' => 'bc', 'b' => 'd' }
     assert_template_result('bcd', "{{ a | append: 'd'}}", assigns)

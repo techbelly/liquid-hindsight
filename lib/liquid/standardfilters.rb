@@ -369,6 +369,12 @@ module Liquid
       apply_operation(input, operand, :-)
     end
 
+    def modulo(input, operand)
+      apply_operation(input, operand, :%)
+    rescue ::ZeroDivisionError => e
+      raise Liquid::ZeroDivisionError, e.message
+    end
+
     def default(input, default_value = '', options = {})
       options = {} unless options.is_a?(Hash)
       false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
