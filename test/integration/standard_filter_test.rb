@@ -698,6 +698,21 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("17.42", "{{ '-17.42' | abs }}")
   end
 
+  def test_divided_by
+    assert_template_result("4", "{{ 12 | divided_by:3 }}")
+    assert_template_result("4", "{{ 14 | divided_by:3 }}")
+
+    assert_template_result("5", "{{ 15 | divided_by:3 }}")
+    assert_equal("Liquid error: divided by 0", Template.parse("{{ 5 | divided_by:0 }}").render)
+
+    assert_template_result("0.5", "{{ 2.0 | divided_by:4 }}")
+    assert_raises(Liquid::ZeroDivisionError) do
+      assert_template_result("4", "{{ 1 | modulo: 0 }}")
+    end
+
+    assert_template_result("5", "{{ price | divided_by:2 }}", { 'price' => NumberLikeThing.new(10) })
+  end
+
   def test_modulo
     assert_template_result("1", "{{ 3 | modulo:2 }}")
     assert_raises(Liquid::ZeroDivisionError) do
