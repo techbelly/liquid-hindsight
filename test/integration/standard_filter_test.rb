@@ -742,6 +742,17 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("5", "{{ price | floor }}", { 'price' => NumberLikeThing.new(5.4) })
   end
 
+  def test_at_most
+    assert_template_result("4", "{{ 5 | at_most:4 }}")
+    assert_template_result("5", "{{ 5 | at_most:5 }}")
+    assert_template_result("5", "{{ 5 | at_most:6 }}")
+
+    assert_template_result("4.5", "{{ 4.5 | at_most:5 }}")
+    assert_template_result("5", "{{ width | at_most:5 }}", { 'width' => NumberLikeThing.new(6) })
+    assert_template_result("4", "{{ width | at_most:5 }}", { 'width' => NumberLikeThing.new(4) })
+    assert_template_result("4", "{{ 5 | at_most: width }}", { 'width' => NumberLikeThing.new(4) })
+  end
+
   def test_append
     assigns = { 'a' => 'bc', 'b' => 'd' }
     assert_template_result('bcd', "{{ a | append: 'd'}}", assigns)
