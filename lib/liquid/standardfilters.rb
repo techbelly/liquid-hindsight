@@ -381,6 +381,12 @@ module Liquid
       raise Liquid::ZeroDivisionError, e.message
     end
 
+    def ceil(input)
+      Utils.to_number(input).ceil.to_i
+    rescue ::FloatDomainError => e
+      raise Liquid::FloatDomainError, e.message
+    end
+
     def default(input, default_value = '', options = {})
       options = {} unless options.is_a?(Hash)
       false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
