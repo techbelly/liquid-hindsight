@@ -732,6 +732,16 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("5", "{{ price | ceil }}", { 'price' => NumberLikeThing.new(4.6) })
   end
 
+  def test_floor
+    assert_template_result("4", "{{ input | floor }}", { 'input' => 4.6 })
+    assert_template_result("4", "{{ '4.3' | floor }}")
+    assert_raises(Liquid::FloatDomainError) do
+      assert_template_result("4", "{{ 1.0 | divided_by: 0.0 | floor }}")
+    end
+
+    assert_template_result("5", "{{ price | floor }}", { 'price' => NumberLikeThing.new(5.4) })
+  end
+
   def test_append
     assigns = { 'a' => 'bc', 'b' => 'd' }
     assert_template_result('bcd', "{{ a | append: 'd'}}", assigns)

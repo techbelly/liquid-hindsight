@@ -387,6 +387,12 @@ module Liquid
       raise Liquid::FloatDomainError, e.message
     end
 
+    def floor(input)
+      Utils.to_number(input).floor.to_i
+    rescue ::FloatDomainError => e
+      raise Liquid::FloatDomainError, e.message
+    end
+
     def default(input, default_value = '', options = {})
       options = {} unless options.is_a?(Hash)
       false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
