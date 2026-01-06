@@ -313,6 +313,13 @@ module Liquid
       end
     end
 
+    def replace(input, string, replacement = '')
+      string = Utils.to_s(string)
+      replacement = Utils.to_s(replacement)
+      input = Utils.to_s(input)
+      input.gsub(string, replacement)
+    end
+
     def append(input, string)
       input = Utils.to_s(input)
       string = Utils.to_s(string)
@@ -367,6 +374,10 @@ module Liquid
 
     def minus(input, operand)
       apply_operation(input, operand, :-)
+    end
+
+    def times(input, operand)
+      apply_operation(input, operand, :*)
     end
 
     def divided_by(input, operand)
