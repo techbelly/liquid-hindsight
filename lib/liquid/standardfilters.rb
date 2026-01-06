@@ -320,6 +320,10 @@ module Liquid
       input.gsub(string, replacement)
     end
 
+    def remove(input, string)
+      replace(input, string, '')
+    end
+
     def append(input, string)
       input = Utils.to_s(input)
       string = Utils.to_s(string)
