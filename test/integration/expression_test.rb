@@ -23,6 +23,20 @@ class ExpressionTest < Minitest::Test
     assert_expression_result(12, "012")
   end
 
+  def test_range
+    assert_template_result("3..4", "{{ ( 3 .. 4 ) }}")
+    assert_expression_result(1..2, "(1..2)")
+
+    assert_match_syntax_error(
+      "Liquid syntax error (line 1): Invalid expression type 'false' in range expression",
+      "{{ (false..true) }}",
+    )
+    assert_match_syntax_error(
+      "Liquid syntax error (line 1): Invalid expression type '(1..2)' in range expression",
+      "{{ ((1..2)..3) }}",
+    )
+  end
+
   def test_quirky_negative_sign_expression_markup
     result = Expression.parse("-", nil)
     assert(result.is_a?(VariableLookup))
