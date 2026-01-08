@@ -494,6 +494,39 @@ class TrimModeTest < Minitest::Test
     assert_template_result('ab c', '{{ "a" -}}{{ "b" }} c')
   end
 
+  def test_raw_output
+    whitespace = '        '
+    text       = <<-END_TEMPLATE
+      <div>
+        {% raw %}
+          {%- if true -%}
+            <p>
+              {{- 'John' -}}
+            </p>
+          {%- endif -%}
+        {% endraw %}
+      </div>
+    END_TEMPLATE
+    expected = <<~END_EXPECTED
+            <div>
+      #{whitespace}
+                {%- if true -%}
+                  <p>
+                    {{- 'John' -}}
+                  </p>
+                {%- endif -%}
+      #{whitespace}
+            </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+  end
+
+  def test_pre_trim_blank_preceding_text
+    assert_template_result("", "\n{%- raw %}{% endraw %}")
+    assert_template_result("", "\n{%- if true %}{% endif %}")
+    assert_template_result("BC", "{{ 'B' }} \n{%- if true %}C{% endif %}")
+  end
+
   def test_trim_blank
     assert_template_result('foobar', 'foo {{-}} bar')
   end

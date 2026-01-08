@@ -68,6 +68,12 @@ class LiquidTagTest < Minitest::Test
     LIQUID
   end
 
+  def test_liquid_tag_in_raw
+    assert_template_result("{% liquid echo 'test' %}\n", <<~LIQUID)
+      {% raw %}{% liquid echo 'test' %}{% endraw %}
+    LIQUID
+  end
+
   def test_nested_liquid_tags
     assert_template_result('good', <<~LIQUID)
       {%- liquid
