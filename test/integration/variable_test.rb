@@ -92,6 +92,15 @@ class VariableTest < Minitest::Test
     assert_equal({ 'greeting' => 'Goodbye' }, template.assigns)
   end
 
+  def test_assigns_not_polluted_from_template
+    template                 = Template.parse(%({{ test }}{% assign test = 'bar' %}{{ test }}))
+    template.assigns['test'] = 'baz'
+    assert_equal('bazbar', template.render!)
+    assert_equal('bazbar', template.render!)
+    assert_equal('foobar', template.render!('test' => 'foo'))
+    assert_equal('bazbar', template.render!)
+  end
+
   def test_hash_with_default_proc
     template        = Template.parse(%(Hello {{ test }}))
     assigns         = Hash.new { |_h, k| raise "Unknown variable '#{k}'" }
