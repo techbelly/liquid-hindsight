@@ -38,6 +38,12 @@ end
 class TemplateTest < Minitest::Test
   include Liquid
 
+  def test_instance_assigns_persist_on_same_template_object_between_parses
+    t = Template.new
+    assert_equal('from instance assigns', t.parse("{% assign foo = 'from instance assigns' %}{{ foo }}").render!)
+    assert_equal('from instance assigns', t.parse("{{ foo }}").render!)
+  end
+
   def test_warnings_is_not_exponential_time
     str = "false"
     100.times do
@@ -46,6 +52,12 @@ class TemplateTest < Minitest::Test
 
     t = Template.parse(str)
     assert_equal([], Timeout.timeout(1) { t.warnings })
+  end
+
+  def test_instance_assigns_persist_on_same_template_parsing_between_renders
+    t = Template.new.parse("{{ foo }}{% assign foo = 'foo' %}{{ foo }}")
+    assert_equal('foo', t.render!)
+    assert_equal('foofoo', t.render!)
   end
 
   def test_custom_assigns_do_not_persist_on_same_template
@@ -194,6 +206,19 @@ class TemplateTest < Minitest::Test
     assert_raises(UndefinedDropMethod) do
       t.render!(d, strict_variables: true)
     end
+  end
+
+  def test_source_string_subclass
+    string_subclass = Class.new(String) do
+      def to_s
+        self
+      end
+    end
+    source = string_subclass.new("{% assign x = 2 -%} x= {{- x }}")
+    assert_instance_of(string_subclass, source)
+    output = Template.parse(source).render!
+    assert_equal("x=2", output)
+    assert_instance_of(String, output)
   end
 
   def test_raises_error_with_invalid_utf8

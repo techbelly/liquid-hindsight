@@ -5,6 +5,36 @@ require 'test_helper'
 class AssignTest < Minitest::Test
   include Liquid
 
+  def test_assign_with_hyphen_in_variable_name
+    template_source = <<~END_TEMPLATE
+      {% assign this-thing = 'Print this-thing' -%}
+      {{ this-thing -}}
+    END_TEMPLATE
+    assert_template_result("Print this-thing", template_source)
+  end
+
+  def test_assigned_variable
+    assert_template_result(
+      '.foo.',
+      '{% assign foo = values %}.{{ foo[0] }}.',
+      { 'values' => %w(foo bar baz) },
+    )
+
+    assert_template_result(
+      '.bar.',
+      '{% assign foo = values %}.{{ foo[1] }}.',
+      { 'values' => %w(foo bar baz) },
+    )
+  end
+
+  def test_assign_with_filter
+    assert_template_result(
+      '.bar.',
+      '{% assign foo = values | split: "," %}.{{ foo[1] }}.',
+      { 'values' => "foo,bar,baz" },
+    )
+  end
+
   def test_assign_syntax_error
     assert_match_syntax_error(/assign/, '{% assign foo not values %}.')
   end
@@ -16,6 +46,33 @@ class AssignTest < Minitest::Test
       error_mode: :strict,
     )
     assert_template_result("", "{% assign foo = ('X' | downcase) %}", error_mode: :lax)
+  end
+
+  def test_expression_with_whitespace_in_square_brackets
+    source = "{% assign r = a[ 'b' ] %}{{ r }}"
+    assert_template_result('result', source, { 'a' => { 'b' => 'result' } })
+  end
+
+  def test_assign_score_of_int
+    assert_equal(1, assign_score_of(123))
+  end
+
+  def test_assign_score_of_string_counts_bytes
+    assert_equal(3, assign_score_of('123'))
+    assert_equal(5, assign_score_of('12345'))
+    assert_equal(9, assign_score_of('すごい'))
+  end
+
+  def test_assign_score_of_array
+    assert_equal(1, assign_score_of([]))
+    assert_equal(2, assign_score_of([123]))
+    assert_equal(6, assign_score_of([123, 'abcd']))
+  end
+
+  def test_assign_score_of_hash
+    assert_equal(1, assign_score_of({}))
+    assert_equal(5, assign_score_of('int' => 123))
+    assert_equal(12, assign_score_of('int' => 123, 'str' => 'abcd'))
   end
 
   def test_assign_rejects_parentheses_in_variable_name_in_strict2
@@ -40,6 +97,10 @@ class AssignTest < Minitest::Test
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% assign 1abc = 'hello' %}", error_mode: :strict2)
     end
+  end
+
+  def test_assign_allows_invalid_names_in_lax
+    assert_template_result("1234", "{% assign (a(b(c) = 1234 %}{{ self['(a(b(c)'] }}", error_mode: :lax)
   end
 
   private

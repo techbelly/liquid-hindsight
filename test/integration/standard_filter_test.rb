@@ -511,6 +511,12 @@ class StandardFiltersTest < Minitest::Test
     )
   end
 
+  def test_legacy_map_on_hashes_with_dynamic_key
+    template = "{% assign key = 'foo' %}{{ thing | map: key | map: 'bar' }}"
+    hash     = { "foo" => { "bar" => 42 } }
+    assert_template_result("42", template, { "thing" => hash })
+  end
+
   def test_sort_calls_to_liquid
     t = TestThing.new
     Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
@@ -941,6 +947,42 @@ class StandardFiltersTest < Minitest::Test
     expected_output = "false"
 
     assert_template_result(expected_output, template, { "array" => array })
+  end
+
+  def test_find_with_value
+    products = [
+      { "title" => "Pro goggles",    "price" => 1299 },
+      { "title" => "Thermal gloves", "price" => 1499 },
+      { "title" => "Alpine jacket",  "price" => 3999 },
+      { "title" => "Mountain boots", "price" => 3899 },
+      { "title" => "Safety helmet",  "price" => 1999 }
+    ]
+
+    template = <<~LIQUID
+      {%- assign product = products | find: 'price', 3999 -%}
+      {{- product.title -}}
+    LIQUID
+    expected_output = "Alpine jacket"
+
+    assert_template_result(expected_output, template, { "products" => products })
+  end
+
+  def test_find_index_with_value
+    products = [
+      { "title" => "Pro goggles",    "price" => 1299 },
+      { "title" => "Thermal gloves", "price" => 1499 },
+      { "title" => "Alpine jacket",  "price" => 3999 },
+      { "title" => "Mountain boots", "price" => 3899 },
+      { "title" => "Safety helmet",  "price" => 1999 }
+    ]
+
+    template = <<~LIQUID
+      {%- assign index = products | find_index: 'price', 3999 -%}
+      {{- index -}}
+    LIQUID
+    expected_output = "2"
+
+    assert_template_result(expected_output, template, { "products" => products })
   end
 
   def test_where

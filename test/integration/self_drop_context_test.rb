@@ -5,6 +5,15 @@ require 'test_helper'
 class SelfDropContextTest < Minitest::Test
   include Liquid
 
+  def test_self_drop_reflects_variables_assigned_after_creation
+    source = <<~LIQUID
+      {%- assign s = self -%}
+      {%- assign x = 42 %}{{ s.x -}}
+    LIQUID
+
+    assert_template_result('42', source)
+  end
+
   def test_self_drop_context_setter_is_undefined
     context = Context.new
     drop = SelfDrop.new(context)

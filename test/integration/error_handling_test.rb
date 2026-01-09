@@ -253,4 +253,14 @@ class ErrorHandlingTest < Minitest::Test
       "{{ errors.argument_error }}"
     end
   end
+
+  def test_bug_compatible_silencing_of_errors_in_blank_nodes
+    with_error_modes(:lax, :strict) do
+      output = Liquid::Template.parse("{% assign x = 0 %}{% if 1 < '2' %}not blank{% assign x = 3 %}{% endif %}{{ x }}").render
+      assert_equal("Liquid error: comparison of Integer with String failed0", output)
+
+      output = Liquid::Template.parse("{% assign x = 0 %}{% if 1 < '2' %}{% assign x = 3 %}{% endif %}{{ x }}").render
+      assert_equal("0", output)
+    end
+  end
 end
