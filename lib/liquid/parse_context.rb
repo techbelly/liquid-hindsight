@@ -18,6 +18,8 @@ module Liquid
         {}
       elsif options[:expression_cache].respond_to?(:[]) && options[:expression_cache].respond_to?(:[]=)
         options[:expression_cache]
+      elsif options[:expression_cache]
+        {}
       end
 
       self.depth   = 0
