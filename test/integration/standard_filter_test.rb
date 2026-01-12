@@ -921,6 +921,18 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, "{{ array | has: 'ok', true }}", { "array" => array })
   end
 
+  def test_has_with_empty_arrays
+    template = <<~LIQUID
+      {%- assign has_product = products | has: 'title.content', 'Not found' -%}
+      {%- unless has_product -%}
+        Product not found.
+      {%- endunless -%}
+    LIQUID
+    expected_output = "Product not found."
+
+    assert_template_result(expected_output, template, { "products" => [] })
+  end
+
   def test_has_with_false_value
     array = [
       { "handle" => "alpha", "ok" => true },
@@ -967,6 +979,18 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, template, { "products" => products })
   end
 
+  def test_find_with_empty_arrays
+    template = <<~LIQUID
+      {%- assign product = products | find: 'title.content', 'Not found' -%}
+      {%- unless product -%}
+        Product not found.
+      {%- endunless -%}
+    LIQUID
+    expected_output = "Product not found."
+
+    assert_template_result(expected_output, template, { "products" => [] })
+  end
+
   def test_find_index_with_value
     products = [
       { "title" => "Pro goggles",    "price" => 1299 },
@@ -983,6 +1007,18 @@ class StandardFiltersTest < Minitest::Test
     expected_output = "2"
 
     assert_template_result(expected_output, template, { "products" => products })
+  end
+
+  def test_find_index_with_empty_arrays
+    template = <<~LIQUID
+      {%- assign index = products | find_index: 'title.content', 'Not found' -%}
+      {%- unless index -%}
+        Index not found.
+      {%- endunless -%}
+    LIQUID
+    expected_output = "Index not found."
+
+    assert_template_result(expected_output, template, { "products" => [] })
   end
 
   def test_where

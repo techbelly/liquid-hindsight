@@ -9,6 +9,10 @@ module Liquid
       result = Liquid::Utils.to_liquid_value(
         first_block.evaluate(context),
       )
+
+      unless result
+        return first_block.attachment.render_to_output_buffer(context, output)
+      end
     end
   end
 end

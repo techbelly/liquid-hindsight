@@ -39,6 +39,11 @@ class VariableTest < Minitest::Test
     assert_template_result('one', '{% if a contains x %}one{% endif %}', { 'a' => [1], 'x' => IntegerDrop.new(1) })
   end
 
+  def test_unless_tag_calls_to_liquid_value
+    assert_template_result('', '{% unless foo %}true{% endunless %}', { 'foo' => BooleanDrop.new(true) })
+    assert_template_result('true', '{% unless foo %}true{% endunless %}', { 'foo' => BooleanDrop.new(false) })
+  end
+
   def test_simple_with_whitespaces
     assert_template_result("  worked  ", "  {{ test }}  ", { "test" => "worked" })
     assert_template_result("  worked wonderfully  ", "  {{ test }}  ", { "test" => "worked wonderfully" })
