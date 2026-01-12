@@ -366,6 +366,15 @@ class ContextTest < Minitest::Test
     assert_equal('123', @context['vars.local.test'])
   end
 
+  def test_ranges
+    assert_template_result("1..5", '{{ (1..5) }}')
+    assert_template_result("pass", '{% if (1..5) == expect %}pass{% endif %}', { "expect" => (1..5) })
+
+    assigns = { "test" => '5' }
+    assert_template_result("1..5", "{{ (1..test) }}", assigns)
+    assert_template_result("5..5", "{{ (test..test) }}", assigns)
+  end
+
   def test_cents_through_drop_nestedly
     @context.merge("cents" => { "cents" => CentsDrop.new })
     assert_equal(100, @context['cents.cents.amount'])
