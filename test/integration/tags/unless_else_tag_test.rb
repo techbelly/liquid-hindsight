@@ -13,4 +13,10 @@ class UnlessElseTagTest < Minitest::Test
     )
     assert_template_result('  you rock ?', '{% unless true %} you suck {% endunless %} {% unless false %} you rock {% endunless %}?')
   end
+
+  def test_unless_else
+    assert_template_result(' YES ', '{% unless true %} NO {% else %} YES {% endunless %}')
+    assert_template_result(' YES ', '{% unless false %} YES {% else %} NO {% endunless %}')
+    assert_template_result(' YES ', '{% unless "foo" %} NO {% else %} YES {% endunless %}')
+  end
 end

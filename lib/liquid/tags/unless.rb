@@ -13,6 +13,16 @@ module Liquid
       unless result
         return first_block.attachment.render_to_output_buffer(context, output)
       end
+
+      @blocks[1..-1].each do |block|
+        result = Liquid::Utils.to_liquid_value(
+          block.evaluate(context),
+        )
+
+        if result
+          return block.attachment.render_to_output_buffer(context, output)
+        end
+      end
     end
   end
 end
