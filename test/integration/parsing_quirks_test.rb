@@ -69,6 +69,14 @@ class ParsingQuirksTest < Minitest::Test
     assert(Template.parse("{{|test|}}", error_mode: :lax))
   end
 
+  def test_meaningless_parens_lax
+    with_error_modes(:lax) do
+      assigns = { 'b' => 'bar', 'c' => 'baz' }
+      markup  = "a == 'foo' or (b == 'bar' and c == 'baz') or false"
+      assert_template_result(' YES ', "{% if #{markup} %} YES {% endif %}", assigns)
+    end
+  end
+
   def test_unexpected_characters_silently_eat_logic_lax
     with_error_modes(:lax) do
       markup = "true && false"
