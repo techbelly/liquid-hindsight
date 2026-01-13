@@ -41,6 +41,7 @@ module Liquid
 
     def self.slice_range_using_each(collection, from, to, resource_limits, allow_endless:)
       if collection.end.nil? && !(allow_endless && (!to.nil? || range_method_overridden?(collection, :each)))
+        raise RangeError, "cannot convert endless range to an array"
       end
       if collection.begin.nil? && !range_method_overridden?(collection, :each)
         raise TypeError, "can't iterate from NilClass"
