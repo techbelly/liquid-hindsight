@@ -95,6 +95,13 @@ module Liquid
       @scopes.shift
     end
 
+    def stack(new_scope = {})
+      push(new_scope)
+      yield
+    ensure
+      pop
+    end
+
     def new_isolated_subcontext
       check_overflow
 

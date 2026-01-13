@@ -5,15 +5,32 @@ module Liquid
     DECIMAL_REGEX = /\A-?\d+\.\d+\z/
     UNIX_TIMESTAMP_REGEX = /\A\d+\z/
 
+    def self.slice_collection(collection, from, to)
+      slice_collection_using_each(collection, from, to)
+    end
+
     def self.slice_collection_for_iteration(
       collection, from, to, resource_limits, allow_endless: false, use_range_to_a: false
     )
-      if collection.is_a?(Range)
+      if integer_range?(collection)
+        RangeSlice.new(collection, from, to, resource_limits)
+      elsif collection.is_a?(Range)
         if use_range_to_a && range_method_overridden?(collection, :to_a)
           slice_collection_for_iteration_using_each(collection.to_a, from, to, resource_limits)
         else
           slice_range_using_each(collection, from, to, resource_limits, allow_endless: allow_endless)
         end
+      else
+        slice_collection(collection, from, to)
+      end
+    end
+
+    def self.slice_collection_using_each(collection, from, to)
+      segments = []
+      index    = 0
+
+      if collection.is_a?(String)
+        return collection.empty? ? [] : [collection]
       end
     end
 

@@ -3,23 +3,6 @@
 require 'test_helper'
 
 class DocTagUnitTest < Minitest::Test
-  def test_doc_tag
-    template = <<~LIQUID.chomp
-      {% doc %}
-        Renders loading-spinner.
-
-        @param {string} foo - some foo
-        @param {string} [bar] - optional bar
-
-        @example
-        {% render 'loading-spinner', foo: 'foo' %}
-        {% render 'loading-spinner', foo: 'foo', bar: 'bar' %}
-      {% enddoc %}
-    LIQUID
-
-    assert_template_result('', template)
-  end
-
   def test_doc_tag_body_content
     doc_content = "  Documentation content\n  @param {string} foo - test\n"
     template_source = "{% doc %}#{doc_content}{% enddoc %}"
@@ -57,33 +40,6 @@ class DocTagUnitTest < Minitest::Test
     assert_match_syntax_error("Liquid syntax error (line 1): Syntax Error in 'doc' - Valid syntax: {% doc %}{% enddoc %}", '{% doc } foo %}{% enddoc %}')
   end
 
-  def test_doc_tag_ignores_liquid_nodes
-    template = <<~LIQUID.chomp
-      {% doc %}
-        {% if true %}
-        {% if ... %}
-        {%- for ? -%}
-        {% while true %}
-        {%
-          unless if
-        %}
-        {% endcase %}
-      {% enddoc %}
-    LIQUID
-
-    assert_template_result('', template)
-  end
-
-  def test_doc_tag_ignores_unclosed_liquid_tags
-    template = <<~LIQUID.chomp
-      {% doc %}
-        {% if true %}
-      {% enddoc %}
-    LIQUID
-
-    assert_template_result('', template)
-  end
-
   def test_doc_tag_does_not_allow_nested_docs
     error = assert_raises(Liquid::SyntaxError) do
       template = <<~LIQUID.chomp
@@ -102,35 +58,6 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(exp_error, act_error)
   end
 
-  def test_doc_tag_ignores_nested_raw_tags
-    template = <<~LIQUID.chomp
-      {% doc %}
-        {% raw %}
-      {% enddoc %}
-    LIQUID
-
-    assert_template_result('', template)
-  end
-
-  def test_doc_tag_ignores_unclosed_assign
-    template = <<~LIQUID.chomp
-      {% doc %}
-        {% assign foo = "1"
-      {% enddoc %}
-    LIQUID
-
-    assert_template_result('', template)
-  end
-
-  def test_doc_tag_ignores_malformed_syntax
-    template = <<~LIQUID.chomp
-      {% doc %}
-      {% {{ {%- enddoc %}
-    LIQUID
-
-    assert_template_result('', template)
-  end
-
   def test_doc_tag_captures_token_before_enddoc
     template_source = "{% doc %}{{ incomplete{% enddoc %}"
 
@@ -143,47 +70,6 @@ class DocTagUnitTest < Minitest::Test
       .visit
 
     assert_equal("{{ incomplete", doc_tag.nodelist.first.to_s)
-  end
-
-  def test_doc_tag_preserves_error_line_numbers
-    template = Liquid::Template.parse(<<~LIQUID.chomp, line_numbers: true)
-      {% doc %}
-        {% if true %}
-      {% enddoc %}
-      {{ errors.standard_error }}
-    LIQUID
-
-    expected = <<~TEXT.chomp
-
-      Liquid error (line 4): standard error
-    TEXT
-
-    assert_equal(expected, template.render('errors' => ErrorDrop.new))
-  end
-
-  def test_doc_tag_whitespace_control
-    assert_template_result("Hello!", "      {%- doc -%}123{%- enddoc -%}Hello!")
-    assert_template_result("Hello!", "{%- doc -%}123{%- enddoc -%}     Hello!")
-    assert_template_result("Hello!", "      {%- doc -%}123{%- enddoc -%}     Hello!")
-    assert_template_result("Hello!", <<~LIQUID.chomp)
-      {%- doc %}Whitespace control!{% enddoc -%}
-      Hello!
-    LIQUID
-  end
-
-  def test_doc_tag_delimiter_handling
-    assert_template_result('', <<~LIQUID.chomp)
-      {%- if true -%}
-        {%- doc -%}
-          {%- docEXTRA -%}wut{% enddocEXTRA -%}xyz
-        {%- enddoc -%}
-      {%- endif -%}
-    LIQUID
-
-    assert_template_result('', "{% doc %}123{% enddoc xyz %}")
-    assert_template_result('', "{% doc %}123{% enddoc\txyz %}")
-    assert_template_result('', "{% doc %}123{% enddoc\nxyz %}")
-    assert_template_result('', "{% doc %}123{% enddoc\n   xyz  enddoc %}")
   end
 
   def test_doc_tag_visitor

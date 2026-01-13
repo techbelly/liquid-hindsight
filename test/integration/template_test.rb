@@ -121,6 +121,36 @@ class TemplateTest < Minitest::Test
     assert_equal("0123456789", t.render!)
   end
 
+  def test_resource_limits_render_score
+    t = Template.parse("{% for a in (1..10) %} {% for a in (1..10) %} foo {% endfor %} {% endfor %}")
+    t.resource_limits.render_score_limit = 50
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    assert(t.resource_limits.reached?)
+
+    t = Template.parse("{% for a in (1..100) %} foo {% endfor %}")
+    t.resource_limits.render_score_limit = 50
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    assert(t.resource_limits.reached?)
+
+    t.resource_limits.render_score_limit = 201
+    assert_equal(" foo " * 100, t.render!)
+    refute_nil(t.resource_limits.render_score)
+  end
+
+  def test_resource_limits_aborts_rendering_after_first_error
+    t = Template.parse("{% for a in (1..100) %} foo1 {% endfor %} bar {% for a in (1..100) %} foo2 {% endfor %}")
+    t.resource_limits.render_score_limit = 50
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    assert(t.resource_limits.reached?)
+  end
+
+  def test_resource_limits_hash_in_template_gets_updated_even_if_no_limits_are_set
+    t = Template.parse("{% for a in (1..100) %}x{% assign foo = 1 %} {% endfor %}")
+    t.render!
+    assert(t.resource_limits.assign_score > 0)
+    assert(t.resource_limits.render_score > 0)
+  end
+
   def test_render_length_persists_between_blocks
     t = Template.parse("{% if true %}aaaa{% endif %}")
     t.resource_limits.render_length_limit = 3
@@ -147,6 +177,14 @@ class TemplateTest < Minitest::Test
     assert_equal("Liquid error: Memory limits exceeded", t.render)
     t.resource_limits.render_length_limit = 9
     assert_equal("すごい", t.render)
+  end
+
+  def test_default_resource_limits_unaffected_by_render_with_context
+    context = Context.new
+    t = Template.parse("{% for a in (1..100) %}x{% assign foo = 1 %} {% endfor %}")
+    t.render!(context)
+    assert(context.resource_limits.assign_score > 0)
+    assert(context.resource_limits.render_score > 0)
   end
 
   def test_can_use_drop_as_context
@@ -219,6 +257,14 @@ class TemplateTest < Minitest::Test
     assert_raises(UndefinedDropMethod) do
       t.render!(d, strict_variables: true)
     end
+  end
+
+  def test_using_range_literal_works_as_expected
+    source = "{% assign foo = (x..y) %}{{ foo }}"
+    assert_template_result("1..5", source, { "x" => 1, "y" => 5 })
+
+    source = "{% assign nums = (x..y) %}{% for num in nums %}{{ num }}{% endfor %}"
+    assert_template_result("12345", source, { "x" => 1, "y" => 5 })
   end
 
   def test_source_string_subclass

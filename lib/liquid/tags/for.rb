@@ -35,6 +35,18 @@ module Liquid
       @else_block = new_body
     end
 
+    def render_to_output_buffer(context, output)
+      segment = collection_segment(context)
+
+      if segment.empty?
+        render_else(context, output)
+      else
+        render_segment(context, output, segment)
+      end
+
+      output
+    end
+
     protected
 
     def lax_parse(markup)
@@ -77,6 +89,66 @@ module Liquid
       strict_parse(markup)
     end
 
+    def collection_segment(context)
+      offsets = context.registers[:for] ||= {}
+
+      from = if @from == :continue
+        offsets[@name].to_i
+      else
+        from_value = context.evaluate(@from)
+        if from_value.nil?
+          0
+        else
+          Utils.to_integer(from_value)
+        end
+      end
+
+      collection = context.evaluate(@collection_name)
+
+      limit_value = context.evaluate(@limit)
+      to = if limit_value.nil?
+        nil
+      else
+        Utils.to_integer(limit_value) + from
+      end
+
+      segment = Utils.slice_collection_for_iteration(
+        collection, from, to, context.resource_limits, use_range_to_a: true
+      )
+      segment.reverse! if @reversed
+
+      offsets[@name] = from + segment.length
+
+      segment
+    end
+
+    def render_segment(context, output, segment)
+      for_stack = context.registers[:for_stack] ||= []
+      length    = segment.length
+
+      context.stack do
+        loop_vars = Liquid::ForloopDrop.new(@name, length, for_stack[-1])
+
+        for_stack.push(loop_vars)
+
+        begin
+          context['forloop'] = loop_vars
+
+          segment.each do |item|
+            context[@variable_name] = item
+            @for_block.render_to_output_buffer(context, output)
+            loop_vars.send(:increment!)
+
+            next unless context.interrupt?
+          end
+        ensure
+          for_stack.pop
+        end
+      end
+
+      output
+    end
+
     def set_attribute(key, expr, safe: false)
       case key
       when 'offset'
@@ -88,6 +160,10 @@ module Liquid
       when 'limit'
         @limit = parse_expression(expr, safe: safe)
       end
+    end
+
+    def render_else(context, output)
+      output
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor

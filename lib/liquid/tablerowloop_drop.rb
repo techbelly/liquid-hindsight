@@ -13,5 +13,16 @@ module Liquid
     end
 
     protected
+
+    def increment!
+      @index += 1
+
+      if @col == @cols
+        @col = 1
+        @row += 1
+      else
+        @col += 1
+      end
+    end
   end
 end

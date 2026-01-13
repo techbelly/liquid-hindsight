@@ -182,6 +182,10 @@ module Liquid
       @nodelist.reject! { |node| node.instance_of?(String) }
     end
 
+    def render(context)
+      render_to_output_buffer(context, +'')
+    end
+
     def render_to_output_buffer(context, output)
       freeze unless frozen?
 

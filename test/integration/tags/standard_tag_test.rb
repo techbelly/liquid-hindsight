@@ -66,6 +66,15 @@ class StandardTagTest < Minitest::Test
     assert_template_result('var2: 1', '{%assign var2 = var["a:b c"].paged %}var2: {{var2}}', assigns)
   end
 
+  def test_capture
+    assigns = { 'var' => 'content' }
+    assert_template_result(
+      'content foo content foo ',
+      '{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}',
+      assigns,
+    )
+  end
+
   def test_capture_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result(
@@ -87,6 +96,10 @@ class StandardTagTest < Minitest::Test
 
   def test_assign_an_empty_string
     assert_template_result('', '{% assign a = ""%}{{a}}')
+  end
+
+  def test_assign_is_global
+    assert_template_result('variable', '{%for i in (1..2) %}{% assign a = "variable"%}{% endfor %}{{a}}')
   end
 
   def test_case_detects_bad_syntax
@@ -114,5 +127,9 @@ class StandardTagTest < Minitest::Test
     assert_template_result('', '{% if true == null %}?{% endif %}', {})
     assert_template_result('', '{% if empty == true %}?{% endif %}', {})
     assert_template_result('', '{% if null == true %}?{% endif %}', {})
+  end
+
+  def test_multiline_tag
+    assert_template_result('0 1 2 3', "0{%\nfor i in (1..3)\n%} {{\ni\n}}{%\nendfor\n%}")
   end
 end

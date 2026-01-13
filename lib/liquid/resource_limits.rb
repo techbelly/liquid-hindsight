@@ -64,5 +64,15 @@ module Liquid
       raise_limits_reached if @cumulative_render_score_limit && @cumulative_render_score > @cumulative_render_score_limit
       raise_limits_reached if @cumulative_assign_score_limit && @cumulative_assign_score > @cumulative_assign_score_limit
     end
+
+    def with_capture
+      old_capture_length = @last_capture_length
+      begin
+        @last_capture_length = 0
+        yield
+      ensure
+        @last_capture_length = old_capture_length
+      end
+    end
   end
 end
