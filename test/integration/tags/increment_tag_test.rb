@@ -45,6 +45,11 @@ class IncrementTagTest < Minitest::Test
     end
   end
 
+  def test_decrement_strict2_accepts_valid_variable_name
+    template = Template.parse('{% decrement my-var %}', error_mode: :strict2)
+    assert_equal('-1', template.render)
+  end
+
   def test_increment_strict2_rejects_empty_variable_name
     assert_raises(Liquid::SyntaxError) do
       Template.parse('{% increment %}', error_mode: :strict2)
