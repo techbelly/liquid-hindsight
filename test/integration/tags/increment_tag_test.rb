@@ -16,6 +16,18 @@ class IncrementTagTest < Minitest::Test
     )
   end
 
+  def test_dec
+    assert_template_result('-1 -1', '{%decrement port %} {{ port }}', { 'port' => 10 })
+    assert_template_result(' -1 -2 -2', '{{port}} {%decrement port %} {%decrement port%} {{port}}')
+    assert_template_result(
+      '0 1 2 0 3 1 1 3',
+      '{%increment starboard %} {%increment starboard%} {%increment starboard%} ' \
+      '{%increment port %} {%increment starboard%} ' \
+      '{%increment port %} {%decrement port%} ' \
+      '{%decrement starboard %}',
+    )
+  end
+
   def test_increment_strict2_rejects_invalid_variable_name
     assert_raises(Liquid::SyntaxError) do
       Template.parse('{% increment foo bar %}', error_mode: :strict2)
