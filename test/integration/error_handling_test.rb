@@ -263,4 +263,24 @@ class ErrorHandlingTest < Minitest::Test
       assert_equal("0", output)
     end
   end
+
+  def test_internal_error_is_raised_with_template_name
+    template = Template.new
+    template.parse(
+      "{% render 'snippet' %}",
+      line_numbers: true,
+    )
+    template.name = "template/index"
+
+    context = Liquid::Context.build(
+      registers: {
+        file_system: StubFileSystem.new({}),
+      },
+    )
+
+    assert_equal(
+      "Liquid error (template/index line 1): internal",
+      template.render(context),
+    )
+  end
 end
