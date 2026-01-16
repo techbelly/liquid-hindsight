@@ -110,6 +110,12 @@ class ParsingQuirksTest < Minitest::Test
     end
   end
 
+  def test_extra_dots_in_ranges
+    with_error_modes(:lax) do
+      assert_template_result('12345', "{% for i in (1...5) %}{{ i }}{% endfor %}")
+    end
+  end
+
   def test_blank_variable_markup
     assert_template_result('', "{{}}")
   end

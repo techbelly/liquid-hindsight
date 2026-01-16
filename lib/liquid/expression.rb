@@ -103,6 +103,12 @@ module Liquid
             end
           end
         end
+
+        num_end_pos = markup.length if ss.eos?
+
+        if num_end_pos
+          markup.byteslice(0, num_end_pos).to_f
+        end
       end
     end
   end
