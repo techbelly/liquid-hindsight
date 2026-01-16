@@ -80,6 +80,29 @@ module Liquid
         byte = ss.scan_byte
 
         return false if byte != DASH && (byte < ZERO || byte > NINE)
+
+        if byte == DASH
+          peek_byte = ss.peek_byte
+
+          return false if peek_byte.nil? || !(peek_byte >= ZERO && peek_byte <= NINE)
+        end
+
+        first_dot_pos = nil
+        num_end_pos = nil
+
+        while (byte = ss.scan_byte)
+          return false if byte != DOT && (byte < ZERO || byte > NINE)
+
+          next if num_end_pos
+
+          if byte == DOT
+            if first_dot_pos.nil?
+              first_dot_pos = ss.pos
+            else
+              num_end_pos = ss.pos - 1
+            end
+          end
+        end
       end
     end
   end
