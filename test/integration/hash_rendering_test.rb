@@ -7,8 +7,56 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_render_hash_with_string_keys_and_values
+    assert_template_result("{\"key1\"=>\"value1\", \"key2\"=>\"value2\"}", "{{ my_hash }}", { "my_hash" => { "key1" => "value1", "key2" => "value2" } })
+  end
+
+  def test_render_hash_with_symbol_keys_and_integer_values
+    assert_template_result("{:key1=>1, :key2=>2}", "{{ my_hash }}", { "my_hash" => { key1: 1, key2: 2 } })
+  end
+
   def test_render_hash_with_array_values
     assert_template_result("{\"numbers\"=>[1, 2, 3]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [1, 2, 3] } })
+  end
+
+  def test_hash_with_downcase_filter
+    assert_template_result("{\"key\"=>\"value\", \"anotherkey\"=>\"anothervalue\"}", "{{ my_hash | downcase }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_upcase_filter
+    assert_template_result("{\"KEY\"=>\"VALUE\", \"ANOTHERKEY\"=>\"ANOTHERVALUE\"}", "{{ my_hash | upcase }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_strip_filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | strip }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_escape_filter
+    assert_template_result("{&quot;Key&quot;=&gt;&quot;Value&quot;, &quot;AnotherKey&quot;=&gt;&quot;AnotherValue&quot;}", "{{ my_hash | escape }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_url_encode_filter
+    assert_template_result("%7B%22Key%22%3D%3E%22Value%22%2C+%22AnotherKey%22%3D%3E%22AnotherValue%22%7D", "{{ my_hash | url_encode }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_strip_html_filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | strip_html }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_truncate__20_filter
+    assert_template_result("{\"Key\"=>\"Value\", ...", "{{ my_hash | truncate: 20 }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_replace___key____replaced_key__filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | replace: 'key', 'replaced_key' }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_append____appended_text__filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"} appended text", "{{ my_hash | append: ' appended text' }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
+  def test_hash_with_prepend___prepended_text___filter
+    assert_template_result("prepended text {\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | prepend: 'prepended text ' }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
 
   def test_render_hash_with_array_values_empty
