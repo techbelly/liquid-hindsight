@@ -126,7 +126,48 @@ module Liquid
     end
 
     def self.to_s(obj, seen = {})
-      obj.to_s
+      case obj
+      when Hash
+        if obj.class.instance_method(:to_s) == HASH_TO_S_METHOD
+          hash_inspect(obj, seen)
+        else
+          obj.to_s
+        end
+      else
+        obj.to_s
+      end
     end
+
+    def self.inspect(obj, seen = {})
+      obj.inspect
+    end
+
+    def self.hash_inspect(hash, seen = {})
+      if seen[hash.object_id]
+      end
+      seen[hash.object_id] = true
+
+      str = +"{"
+      first = true
+      hash.each do |key, value|
+        if first
+          first = false
+        end
+
+        key_str = inspect(key, seen)
+        str << key_str
+        str << "=>"
+
+        value_str = inspect(value, seen)
+        str << value_str
+      end
+      str << "}"
+      str
+    ensure
+      seen.delete(hash.object_id)
+    end
+
+    HASH_TO_S_METHOD = Hash.instance_method(:to_s)
+    private_constant :HASH_TO_S_METHOD
   end
 end

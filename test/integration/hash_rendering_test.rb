@@ -7,7 +7,28 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_render_hash_with_array_values
+    assert_template_result("{\"numbers\"=>[1, 2, 3]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [1, 2, 3] } })
+  end
+
+  def test_render_hash_with_array_values_empty
+    assert_template_result("{\"numbers\"=>[]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [] } })
+  end
+
+  def test_join_filter_with_hash
+    array = [{ "key1" => "value1" }, { "key2" => "value2" }]
+    glue = { "lol" => "wut" }
+    assert_template_result("{\"key1\"=>\"value1\"}{\"lol\"=>\"wut\"}{\"key2\"=>\"value2\"}", "{{ my_array | join: glue }}", { "my_array" => array, "glue" => glue })
+  end
+
   def test_rendering_hash_with_custom_to_s_method_uses_custom_to_s
     assert_template_result("kewl", "{{ my_hash }}", { "my_hash" => HashWithCustomToS.new })
+  end
+
+  def test_rendering_hash_without_custom_to_s_uses_default_inspect
+    my_hash = HashWithoutCustomToS.new
+    my_hash[:foo] = :bar
+
+    assert_template_result("{:foo=>:bar}", "{{ my_hash }}", { "my_hash" => my_hash })
   end
 end

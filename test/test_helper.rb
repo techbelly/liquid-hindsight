@@ -215,6 +215,9 @@ class HashWithCustomToS < Hash
   end
 end
 
+class HashWithoutCustomToS < Hash
+end
+
 class StubFileSystem
   attr_reader :file_read_count
 
