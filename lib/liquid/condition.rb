@@ -89,6 +89,10 @@ module Liquid
       @attachment = attachment
     end
 
+    def inspect
+      "#<Condition #{[@left, @operator, @right].compact.join(' ')}>"
+    end
+
     protected
 
     attr_reader :child_relation

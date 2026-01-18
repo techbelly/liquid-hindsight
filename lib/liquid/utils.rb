@@ -139,7 +139,14 @@ module Liquid
     end
 
     def self.inspect(obj, seen = {})
-      obj.inspect
+      case obj
+      when Hash
+        if obj.class.instance_method(:inspect) == HASH_INSPECT_METHOD
+          hash_inspect(obj, seen)
+        end
+      else
+        obj.inspect
+      end
     end
 
     def self.hash_inspect(hash, seen = {})
@@ -171,5 +178,8 @@ module Liquid
 
     HASH_TO_S_METHOD = Hash.instance_method(:to_s)
     private_constant :HASH_TO_S_METHOD
+
+    HASH_INSPECT_METHOD = Hash.instance_method(:inspect)
+    private_constant :HASH_INSPECT_METHOD
   end
 end

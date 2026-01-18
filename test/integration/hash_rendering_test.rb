@@ -15,6 +15,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{:key1=>1, :key2=>2}", "{{ my_hash }}", { "my_hash" => { key1: 1, key2: 2 } })
   end
 
+  def test_render_nested_hash
+    assert_template_result("{\"outer\"=>{\"inner\"=>\"value\"}}", "{{ my_hash }}", { "my_hash" => { "outer" => { "inner" => "value" } } })
+  end
+
   def test_render_hash_with_array_values
     assert_template_result("{\"numbers\"=>[1, 2, 3]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [1, 2, 3] } })
   end
@@ -67,6 +71,10 @@ class HashRenderingTest < Minitest::Test
     array = [{ "key1" => "value1" }, { "key2" => "value2" }]
     glue = { "lol" => "wut" }
     assert_template_result("{\"key1\"=>\"value1\"}{\"lol\"=>\"wut\"}{\"key2\"=>\"value2\"}", "{{ my_array | join: glue }}", { "my_array" => array, "glue" => glue })
+  end
+
+  def test_render_hash_with_hash_key
+    assert_template_result("{{\"foo\"=>\"bar\"}=>42}", "{{ my_hash }}", { "my_hash" => { Hash["foo" => "bar"] => 42 } })
   end
 
   def test_rendering_hash_with_custom_to_s_method_uses_custom_to_s
