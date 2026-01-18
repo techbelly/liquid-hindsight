@@ -23,6 +23,12 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{\"numbers\"=>[1, 2, 3]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [1, 2, 3] } })
   end
 
+  def test_render_recursive_hash
+    recursive_hash = { "self" => {} }
+    recursive_hash["self"]["self"] = recursive_hash
+    assert_template_result("{\"self\"=>{\"self\"=>{...}}}", "{{ my_hash }}", { "my_hash" => recursive_hash })
+  end
+
   def test_hash_with_downcase_filter
     assert_template_result("{\"key\"=>\"value\", \"anotherkey\"=>\"anothervalue\"}", "{{ my_hash | downcase }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end

@@ -151,6 +151,7 @@ module Liquid
 
     def self.hash_inspect(hash, seen = {})
       if seen[hash.object_id]
+        return "{...}"
       end
       seen[hash.object_id] = true
 
