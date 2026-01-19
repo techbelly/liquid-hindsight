@@ -89,6 +89,10 @@ module Liquid
       @attachment = attachment
     end
 
+    def else?
+      false
+    end
+
     def inspect
       "#<Condition #{[@left, @operator, @right].compact.join(' ')}>"
     end
