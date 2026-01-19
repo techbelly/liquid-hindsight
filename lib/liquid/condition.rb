@@ -173,6 +173,10 @@ module Liquid
   end
 
   class ElseCondition < Condition
+    def else?
+      true
+    end
+
     def evaluate(_context)
       true
     end

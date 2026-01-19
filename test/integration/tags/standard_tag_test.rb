@@ -122,6 +122,29 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_case_with_else
+    assigns = { 'condition' => 5 }
+    assert_template_result(
+      ' hit ',
+      '{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => 6 }
+    assert_template_result(
+      ' else ',
+      '{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => 6 }
+    assert_template_result(
+      ' else ',
+      '{% case condition %} {% when 5 %} hit {% else %} else {% endcase %}',
+      assigns,
+    )
+  end
+
   def test_case_on_size
     assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [] })
     assert_template_result('1', '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1] })
@@ -129,6 +152,79 @@ class StandardTagTest < Minitest::Test
     assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1] })
     assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1, 1] })
     assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1, 1, 1] })
+  end
+
+  def test_case_on_size_with_else
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [] },
+    )
+
+    assert_template_result(
+      '1',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1] },
+    )
+
+    assert_template_result(
+      '2',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1] },
+    )
+
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1, 1] },
+    )
+
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1, 1, 1] },
+    )
+
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1, 1, 1, 1] },
+    )
+  end
+
+  def test_case_on_length_with_else
+    assert_template_result(
+      'else',
+      '{% case a.empty? %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+
+    assert_template_result(
+      'false',
+      '{% case false %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+
+    assert_template_result(
+      'true',
+      '{% case true %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+
+    assert_template_result(
+      'else',
+      '{% case NULL %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+  end
+
+  def test_assign_from_case
+    code = "{% case collection.handle %}{% when 'menswear-jackets' %}{% assign ptitle = 'menswear' %}{% when 'menswear-t-shirts' %}{% assign ptitle = 'menswear' %}{% else %}{% assign ptitle = 'womenswear' %}{% endcase %}{{ ptitle }}"
+    assert_template_result("menswear",   code, { "collection" => { 'handle' => 'menswear-jackets' } })
+    assert_template_result("menswear",   code, { "collection" => { 'handle' => 'menswear-t-shirts' } })
+    assert_template_result("womenswear", code, { "collection" => { 'handle' => 'x' } })
+    assert_template_result("womenswear", code, { "collection" => { 'handle' => 'y' } })
+    assert_template_result("womenswear", code, { "collection" => { 'handle' => 'z' } })
   end
 
   def test_case_when_or
