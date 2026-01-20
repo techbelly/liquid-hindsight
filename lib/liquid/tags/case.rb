@@ -84,7 +84,15 @@ module Liquid
     def record_when_condition(markup)
       body = new_body
 
-      parse_lax_when(markup, body)
+      if strict2_mode?
+        parse_strict2_when(markup, body)
+      else
+        parse_lax_when(markup, body)
+      end
+    end
+
+    def parse_strict2_when(markup, body)
+      parser = @parse_context.new_parser(markup)
     end
 
     def parse_lax_when(markup, body)

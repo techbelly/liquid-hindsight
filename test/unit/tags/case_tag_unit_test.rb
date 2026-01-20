@@ -52,4 +52,26 @@ class CaseTagUnitTest < Minitest::Test
       assert_match(/Unexpected character =/, error.message)
     end
   end
+
+  def test_case_when_with_invalid_expression
+    template = <<~LIQUID
+      {%- case 'baz' -%}
+        {%- when foo=>bar -%}
+          one
+        {%- else -%}
+          two
+      {%- endcase -%}
+    LIQUID
+    assigns = { 'foo' => { 'bar' => 'baz' } }
+
+    with_error_modes(:lax, :strict) do
+      assert_template_result("one", template, assigns)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
 end
