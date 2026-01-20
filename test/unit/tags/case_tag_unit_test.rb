@@ -9,4 +9,26 @@ class CaseTagUnitTest < Minitest::Test
     template = Liquid::Template.parse('{% case var %}{% when true %}WHEN{% else %}ELSE{% endcase %}')
     assert_equal(['WHEN', 'ELSE'], template.root.nodelist[0].nodelist.map(&:nodelist).flatten)
   end
+
+  def test_case_with_invalid_expression
+    template = <<~LIQUID
+      {%- case foo=>bar -%}
+        {%- when 'baz' -%}
+          one
+        {%- else -%}
+          two
+      {%- endcase -%}
+    LIQUID
+    assigns = { 'foo' => { 'bar' => 'baz' } }
+
+    with_error_modes(:lax, :strict) do
+      assert_template_result("one", template, assigns)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
 end
