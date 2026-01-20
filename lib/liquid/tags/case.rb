@@ -67,6 +67,8 @@ module Liquid
 
     def strict2_parse(markup)
       parser = @parse_context.new_parser(markup)
+      @left = safe_parse_expression(parser)
+      parser.consume(:end_of_string)
     end
 
     def strict_parse(markup)

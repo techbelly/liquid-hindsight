@@ -10,6 +10,27 @@ class CaseTagUnitTest < Minitest::Test
     assert_equal(['WHEN', 'ELSE'], template.root.nodelist[0].nodelist.map(&:nodelist).flatten)
   end
 
+  def test_case_with_trailing_element
+    template = <<~LIQUID
+      {%- case 1 bar -%}
+        {%- when 1 -%}
+          one
+        {%- else -%}
+          two
+      {%- endcase -%}
+    LIQUID
+
+    with_error_modes(:lax, :strict) do
+      assert_template_result("one", template)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+
+      assert_match(/Expected end_of_string but found/, error.message)
+    end
+  end
+
   def test_case_with_invalid_expression
     template = <<~LIQUID
       {%- case foo=>bar -%}
