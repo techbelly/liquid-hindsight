@@ -120,6 +120,8 @@ module Liquid
         case method_name
         when :blank?
           liquid_blank?(value)
+        when :empty?
+          liquid_empty?(value)
         end
       end
     end
@@ -133,6 +135,10 @@ module Liquid
       when Array, Hash
         value.empty?
       end
+    end
+
+    def liquid_empty?(value)
+      value.respond_to?(:empty?) ? value.empty? : false
     end
 
     def interpret_condition(left, right, op, context)
