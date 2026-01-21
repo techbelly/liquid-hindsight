@@ -17,6 +17,29 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_table_row_renders_correct_error_message_for_invalid_parameters
+    assert_template_result(
+      "Liquid error (line 1): invalid integer",
+      '{% tablerow n in (1...10) limit:true %} {{n}} {% endtablerow %}',
+      error_mode: :warn,
+      render_errors: true,
+    )
+
+    assert_template_result(
+      "Liquid error (line 1): invalid integer",
+      '{% tablerow n in (1...10) offset:true %} {{n}} {% endtablerow %}',
+      error_mode: :warn,
+      render_errors: true,
+    )
+
+    assert_template_result(
+      "Liquid error (line 1): invalid integer",
+      '{% tablerow n in (1...10) cols:true %} {{n}} {% endtablerow %}',
+      render_errors: true,
+      error_mode: :warn,
+    )
+  end
+
   def test_tablerow_without_in_keyword_in_strict2_mode
     template = '{% tablerow i (1..10) %}{{ i }}{% endtablerow %}'
 
