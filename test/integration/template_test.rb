@@ -283,6 +283,28 @@ class TemplateTest < Minitest::Test
     end
   end
 
+  def test_undefined_filters
+    t = Template.parse("{{a}} {{x | upcase | somefilter1 | somefilter2 | somefilter3}}")
+    filters = Module.new do
+      def somefilter3(v)
+      end
+    end
+    result = t.render({ 'a' => 123, 'x' => 'foo' }, filters: [filters], strict_filters: true)
+
+    assert_equal('123 ', result)
+    assert_equal(1, t.errors.count)
+    assert_instance_of(Liquid::UndefinedFilter, t.errors[0])
+    assert_equal('Liquid error: undefined filter somefilter1', t.errors[0].message)
+  end
+
+  def test_undefined_filters_raise
+    t = Template.parse("{{x | somefilter1 | upcase | somefilter2}}")
+
+    assert_raises(UndefinedFilter) do
+      t.render!({ 'x' => 'foo' }, strict_filters: true)
+    end
+  end
+
   def test_using_range_literal_works_as_expected
     source = "{% assign foo = (x..y) %}{{ foo }}"
     assert_template_result("1..5", source, { "x" => 1, "y" => 5 })
