@@ -144,9 +144,36 @@ module Liquid
         if obj.class.instance_method(:inspect) == HASH_INSPECT_METHOD
           hash_inspect(obj, seen)
         end
+      when Array
+        array_inspect(obj, seen)
       else
         obj.inspect
       end
+    end
+
+    def self.array_inspect(arr, seen = {})
+      if seen[arr.object_id]
+      end
+
+      seen[arr.object_id] = true
+      str = +"["
+      cursor = 0
+      len = arr.length
+
+      while cursor < len
+        if cursor > 0
+          str << ", "
+        end
+
+        item_str = inspect(arr[cursor], seen)
+        str << item_str
+        cursor += 1
+      end
+
+      str << "]"
+      str
+    ensure
+      seen.delete(arr.object_id)
     end
 
     def self.hash_inspect(hash, seen = {})
