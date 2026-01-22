@@ -234,6 +234,20 @@ class TemplateTest < Minitest::Test
     assert_equal('BOB filtered', rendered_template)
   end
 
+  def test_undefined_variables
+    t      = Template.parse("{{x}} {{y}} {{z.a}} {{z.b}} {{z.c.d}}")
+    result = t.render({ 'x' => 33, 'z' => { 'a' => 32, 'c' => { 'e' => 31 } } }, strict_variables: true)
+
+    assert_equal('33  32  ', result)
+    assert_equal(3, t.errors.count)
+    assert_instance_of(Liquid::UndefinedVariable, t.errors[0])
+    assert_equal('Liquid error: undefined variable y', t.errors[0].message)
+    assert_instance_of(Liquid::UndefinedVariable, t.errors[1])
+    assert_equal('Liquid error: undefined variable b', t.errors[1].message)
+    assert_instance_of(Liquid::UndefinedVariable, t.errors[2])
+    assert_equal('Liquid error: undefined variable d', t.errors[2].message)
+  end
+
   def test_nil_value_does_not_raise
     t      = Template.parse("some{{x}}thing", error_mode: :strict)
     result = t.render!({ 'x' => nil }, strict_variables: true)
@@ -248,6 +262,16 @@ class TemplateTest < Minitest::Test
     assert_raises(UndefinedVariable) do
       t.render!({ 'x' => 33, 'z' => { 'a' => 32, 'c' => { 'e' => 31 } } }, strict_variables: true)
     end
+  end
+
+  def test_undefined_drop_methods
+    d = DropWithUndefinedMethod.new
+    t = Template.new.parse('{{ foo }} {{ woot }}')
+    result = t.render(d, strict_variables: true)
+
+    assert_equal('foo ', result)
+    assert_equal(1, t.errors.count)
+    assert_instance_of(Liquid::UndefinedDropMethod, t.errors[0])
   end
 
   def test_undefined_drop_methods_raise

@@ -85,6 +85,8 @@ module Liquid
       case exc
       when MemoryError
         raise
+      when UndefinedVariable, UndefinedDropMethod, UndefinedFilter
+        context.handle_error(exc, line_number)
       else
         error_message = context.handle_error(exc, line_number)
         error_mode = context.registers.static[:template_error_mode]

@@ -50,6 +50,12 @@ class SelfDropContextTest < Minitest::Test
     assert_equal('42', result)
   end
 
+  def test_self_drop_with_strict_variables_returns_nil_for_undefined_var
+    t = Template.parse('{{ self.x }}')
+    result = t.render({}, strict_variables: true)
+    assert_equal('', result)
+  end
+
   def test_self_drop_can_be_passed_as_bare_drop_to_render
     t = Template.parse('{{ self.x }}')
     drop = SelfDrop.new(Context.new({ 'x' => 42 }))
