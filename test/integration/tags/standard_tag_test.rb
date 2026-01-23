@@ -309,6 +309,22 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_multiple_named_cycles
+    assert_template_result(
+      'one one two two one one',
+      '{%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %} {%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %} {%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %}',
+    )
+  end
+
+  def test_multiple_named_cycles_with_names_from_context
+    assigns = { "var1" => 1, "var2" => 2 }
+    assert_template_result(
+      'one one two two one one',
+      '{%cycle var1: "one", "two" %} {%cycle var2: "one", "two" %} {%cycle var1: "one", "two" %} {%cycle var2: "one", "two" %} {%cycle var1: "one", "two" %} {%cycle var2: "one", "two" %}',
+      assigns,
+    )
+  end
+
   def test_size_of_array
     assigns = { "array" => [1, 2, 3, 4] }
     assert_template_result('array has 4 elements', "array has {{ array.size }} elements", assigns)

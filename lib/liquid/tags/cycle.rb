@@ -3,6 +3,7 @@
 module Liquid
   class Cycle < Tag
     SimpleSyntax = /\A#{QuotedFragment}+/o
+    NamedSyntax  = /\A(#{QuotedFragment})\s*\:\s*(.*)/om
     UNNAMED_CYCLE_PATTERN = /\w+:0x\h{8}/
 
     attr_reader :variables
@@ -47,6 +48,10 @@ module Liquid
 
     def lax_parse(markup)
       case markup
+      when NamedSyntax
+        @variables = variables_from_string(Regexp.last_match(2))
+        @name      = parse_expression(Regexp.last_match(1))
+        @is_named = true
       when SimpleSyntax
         @variables = variables_from_string(markup)
         @name      = @variables.to_s
