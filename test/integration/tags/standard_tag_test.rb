@@ -289,6 +289,26 @@ class StandardTagTest < Minitest::Test
     end
   end
 
+  def test_cycle
+    assert_template_result('one', '{%cycle "one", "two"%}')
+    assert_template_result('one two', '{%cycle "one", "two"%} {%cycle "one", "two"%}')
+    assert_template_result(' two', '{%cycle "", "two"%} {%cycle "", "two"%}')
+
+    assert_template_result('one two one', '{%cycle "one", "two"%} {%cycle "one", "two"%} {%cycle "one", "two"%}')
+
+    assert_template_result(
+      'text-align: left text-align: right',
+      '{%cycle "text-align: left", "text-align: right" %} {%cycle "text-align: left", "text-align: right"%}',
+    )
+  end
+
+  def test_multiple_cycles
+    assert_template_result(
+      '1 2 1 1 2 3 1',
+      '{%cycle 1,2%} {%cycle 1,2%} {%cycle 1,2%} {%cycle 1,2,3%} {%cycle 1,2,3%} {%cycle 1,2,3%} {%cycle 1,2,3%}',
+    )
+  end
+
   def test_size_of_array
     assigns = { "array" => [1, 2, 3, 4] }
     assert_template_result('array has 4 elements', "array has {{ array.size }} elements", assigns)

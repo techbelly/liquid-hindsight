@@ -3,6 +3,62 @@
 require 'test_helper'
 
 class CycleTagTest < Minitest::Test
+  def test_simple_cycle_inside_for_loop
+    template = <<~LIQUID
+      {%- for i in (1..3) -%}
+        {%- cycle '1', '2', '3' -%}
+      {%- endfor -%}
+    LIQUID
+
+    assert_template_result("123", template)
+  end
+
+  def test_cycle_with_variables_inside_for_loop
+    template = <<~LIQUID
+      {%- assign a = 1 -%}
+      {%- assign b = 2 -%}
+      {%- assign c = 3 -%}
+      {%- for i in (1..3) -%}
+        {% cycle a, b, c %}
+      {%- endfor -%}
+    LIQUID
+
+    assert_template_result("123", template)
+  end
+
+  def test_unnamed_cycle_have_independent_counters_when_used_with_lookups
+    template = <<~LIQUID
+      {%- assign a = "1" -%}
+      {%- for i in (1..3) -%}
+        {%- cycle a, "2" -%}
+        {%- cycle a, "2" -%}
+      {%- endfor -%}
+    LIQUID
+
+    assert_template_result("112211", template)
+  end
+
+  def test_unnamed_cycle_dependent_counter_when_used_with_literal_values
+    template = <<~LIQUID
+      {%- cycle "1", "2" -%}
+      {%- cycle "1", "2" -%}
+      {%- cycle "1", "2" -%}
+    LIQUID
+
+    assert_template_result("121", template)
+  end
+
+  def test_optional_trailing_comma
+    template = <<~LIQUID
+      {%- cycle "1", "2", -%}
+      {%- cycle "1", "2", -%}
+      {%- cycle "1", "2", -%}
+      {%- cycle "1", -%}
+    LIQUID
+
+    assert_template_result("1211", template)
+  end
+
   def test_cycle_tag_without_arguments
     error = assert_raises(Liquid::SyntaxError) do
       Template.parse("{% cycle %}")

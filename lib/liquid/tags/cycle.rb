@@ -12,6 +12,29 @@ module Liquid
       parse_with_selected_parser(markup)
     end
 
+    def render_to_output_buffer(context, output)
+      context.registers[:cycle] ||= {}
+
+      key       = context.evaluate(@name)
+      iteration = context.registers[:cycle][key].to_i
+
+      val = context.evaluate(@variables[iteration])
+
+      if val.is_a?(Array)
+        val = val.join
+      elsif !val.is_a?(String)
+        val = val.to_s
+      end
+
+      output << val
+
+      iteration += 1
+      iteration = 0 if iteration >= @variables.size
+
+      context.registers[:cycle][key] = iteration
+      output
+    end
+
     private
 
     def strict2_parse(markup)
