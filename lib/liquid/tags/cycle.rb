@@ -46,6 +46,22 @@ module Liquid
       raise SyntaxError, options[:locale].t("errors.syntax.cycle") if p.look(:end_of_string)
 
       first_expression = safe_parse_expression(p)
+      if p.look(:colon)
+        @name = first_expression
+        @is_named = true
+        p.consume(:colon)
+        @variables << maybe_dup_lookup(safe_parse_expression(p))
+      else
+        @variables << maybe_dup_lookup(first_expression)
+      end
+
+      while p.consume?(:comma)
+        break if p.look(:end_of_string)
+
+        @variables << maybe_dup_lookup(safe_parse_expression(p))
+      end
+
+      p.consume(:end_of_string)
     end
 
     def strict_parse(markup)
