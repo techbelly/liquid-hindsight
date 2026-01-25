@@ -1164,6 +1164,46 @@ class StandardFiltersTest < Minitest::Test
     assert_nil(@filters.where([nil], "ok"))
   end
 
+  def test_all_filters_never_raise_non_liquid_exception
+    skip("too slow on non-CRuby due to many exceptions") unless RUBY_ENGINE == 'ruby'
+
+    test_drop = TestDrop.new(value: "test")
+    test_drop.context = Context.new
+    test_enum = TestEnumerable.new
+    test_enum.context = Context.new
+    test_types = [
+      "foo",
+      123,
+      0,
+      0.0,
+      -1234.003030303,
+      -99999999,
+      1234.38383000383830003838300,
+      nil,
+      true,
+      false,
+      TestThing.new,
+      test_drop,
+      test_enum,
+      ["foo", "bar"],
+      { "foo" => "bar" },
+      { foo: "bar" },
+      [{ "foo" => "bar" }, { "foo" => 123 }, { "foo" => nil }, { "foo" => true }, { "foo" => ["foo", "bar"] }],
+      { 1 => "bar" },
+      ["foo", 123, nil, true, false, Drop, ["foo"], { foo: "bar" }],
+    ]
+    StandardFilters.public_instance_methods(false).each do |method|
+      arg_count = @filters.method(method).arity
+      arg_count *= -1 if arg_count < 0
+
+      test_types.repeated_permutation(arg_count) do |args|
+        @filters.send(method, *args)
+      rescue Liquid::Error
+        nil
+      end
+    end
+  end
+
   def test_where_no_target_value
     input = [
       { "foo" => false },

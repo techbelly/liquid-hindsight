@@ -477,6 +477,8 @@ module Liquid
           item
         elsif item.respond_to?(:[])
           item[property]
+        else
+          0
         end
       rescue TypeError
         raise_property_error(property)
@@ -530,6 +532,8 @@ module Liquid
         1
       elsif b.nil?
         -1
+      else
+        raise Liquid::ArgumentError, "cannot sort values of incompatible types"
       end
     end
 
