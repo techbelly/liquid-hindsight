@@ -320,6 +320,27 @@ module Liquid
       input.gsub(string, replacement)
     end
 
+    def replace_first(input, string, replacement = '')
+      string = Utils.to_s(string)
+      replacement = Utils.to_s(replacement)
+      input = Utils.to_s(input)
+      input.sub(string, replacement)
+    end
+
+    def replace_last(input, string, replacement)
+      input = Utils.to_s(input)
+      string = Utils.to_s(string)
+      replacement = Utils.to_s(replacement)
+
+      start_index = input.rindex(string)
+
+      return input unless start_index
+
+      output = input.dup
+      output[start_index, string.length] = replacement
+      output
+    end
+
     def remove(input, string)
       replace(input, string, '')
     end
