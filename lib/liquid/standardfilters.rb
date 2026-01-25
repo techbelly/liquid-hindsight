@@ -345,6 +345,14 @@ module Liquid
       replace(input, string, '')
     end
 
+    def remove_first(input, string)
+      replace_first(input, string, '')
+    end
+
+    def remove_last(input, string)
+      replace_last(input, string, '')
+    end
+
     def append(input, string)
       input = Utils.to_s(input)
       string = Utils.to_s(string)
