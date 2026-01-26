@@ -27,6 +27,29 @@ module Liquid
         context: context,
         parse_context: parse_context,
       )
+
+      context_variable_name = @alias_name || template_name.split('/').last
+
+      render_partial_func = ->(var, forloop) {
+        inner_context               = context.new_isolated_subcontext
+        inner_context.template_name = partial.name
+        inner_context.partial       = true
+        inner_context['forloop']    = forloop if forloop
+
+        @attributes.each do |key, value|
+          inner_context[key] = context.evaluate(value)
+        end
+        inner_context[context_variable_name] = var unless var.nil?
+        partial.render_to_output_buffer(inner_context, output)
+      }
+
+      variable = @variable_name_expr ? context.evaluate(@variable_name_expr) : nil
+      if @is_for_loop && variable.respond_to?(:each) && variable.respond_to?(:count)
+        forloop = Liquid::ForloopDrop.new(template_name, variable.count, nil)
+        variable.each { |var| render_partial_func.call(var, forloop) }
+      else
+        render_partial_func.call(variable, nil)
+      end
     end
 
     def strict2_parse(markup)
