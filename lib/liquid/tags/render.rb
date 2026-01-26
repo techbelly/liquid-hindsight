@@ -41,6 +41,7 @@ module Liquid
         end
         inner_context[context_variable_name] = var unless var.nil?
         partial.render_to_output_buffer(inner_context, output)
+        forloop&.send(:increment!)
       }
 
       variable = @variable_name_expr ? context.evaluate(@variable_name_expr) : nil
@@ -50,6 +51,8 @@ module Liquid
       else
         render_partial_func.call(variable, nil)
       end
+
+      output
     end
 
     def strict2_parse(markup)
