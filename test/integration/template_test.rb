@@ -250,6 +250,16 @@ class TemplateTest < Minitest::Test
     assert_equal('haha', t.parse("{{baz}}").render!(drop))
   end
 
+  def test_render_bang_force_rethrow_errors_on_passed_context
+    context = Context.new('drop' => ErroneousDrop.new)
+    t = Template.new.parse('{{ drop.bad_method }}')
+
+    e = assert_raises(RuntimeError) do
+      t.render!(context)
+    end
+    assert_equal('ruby error in drop', e.message)
+  end
+
   def test_exception_renderer_that_returns_string
     exception = nil
     handler   = ->(e) {
