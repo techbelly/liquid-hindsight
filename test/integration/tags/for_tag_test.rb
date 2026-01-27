@@ -11,6 +11,16 @@ end
 class ForTagTest < Minitest::Test
   include Liquid
 
+  def test_for_with_range
+    assert_template_result(' 1  2  3 ', '{%for item in (1..3) %} {{item}} {%endfor%}')
+
+    assert_raises(Liquid::ArgumentError) do
+      Template.parse('{% for i in (a..2) %}{% endfor %}').render!("a" => [1, 2])
+    end
+
+    assert_template_result(' 0  1  2  3 ', '{% for item in (a..3) %} {{item}} {% endfor %}', { "a" => "invalid integer" })
+  end
+
   def test_for_with_variable_range
     assert_template_result(' 1  2  3 ', '{%for item in (1..foobar) %} {{item}} {%endfor%}', { "foobar" => 3 })
   end
