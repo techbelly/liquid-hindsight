@@ -78,6 +78,8 @@ class ForTagTest < Minitest::Test
   end
 
   class LoaderDrop < Liquid::Drop
+    attr_reader :each_called, :load_slice_called
+
     def initialize(data)
       @data = data
     end
@@ -90,6 +92,26 @@ class ForTagTest < Minitest::Test
       @load_slice_called = true
       @data[(from..to - 1)]
     end
+  end
+
+  def test_iterate_with_load_slice_when_limit_applied
+    loader   = LoaderDrop.new([1, 2, 3, 4, 5])
+    assigns  = { 'items' => loader }
+    expected = '1'
+    template = '{% for item in items limit:1 %}{{item}}{% endfor %}'
+    assert_template_result(expected, template, assigns)
+    assert(!loader.each_called)
+    assert(loader.load_slice_called)
+  end
+
+  def test_iterate_with_load_slice_when_limit_and_offset_applied
+    loader   = LoaderDrop.new([1, 2, 3, 4, 5])
+    assigns  = { 'items' => loader }
+    expected = '34'
+    template = '{% for item in items offset:2 limit:2 %}{{item}}{% endfor %}'
+    assert_template_result(expected, template, assigns)
+    assert(!loader.each_called)
+    assert(loader.load_slice_called)
   end
 
   def test_for_cleans_up_registers
