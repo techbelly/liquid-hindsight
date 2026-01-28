@@ -63,6 +63,19 @@ class ForTagTest < Minitest::Test
     assert_equal("Liquid error: invalid integer", exception.message)
   end
 
+  def test_for_with_break_after_nested_loop
+    source = <<~LIQUID.chomp
+      {% for i in (1..2) -%}
+        {% for j in (1..2) -%}
+          {{ i }}-{{ j }},
+        {%- endfor -%}
+        {% break -%}
+      {% endfor -%}
+      after
+    LIQUID
+    assert_template_result("1-1,1-2,after", source)
+  end
+
   def test_inner_for_over_empty_input
     assert_template_result('oo', '{% for a in (1..2) %}o{% for b in empty %}{% endfor %}{% endfor %}')
   end
@@ -150,6 +163,17 @@ class ForTagTest < Minitest::Test
     template.resource_limits.cumulative_render_score_limit = 3
     assert_equal('', template.render!)
     assert_raises(Liquid::MemoryError) { template.render! }
+  end
+
+  def test_range_break_charges_only_visited_items_and_preserves_full_metadata
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse(
+      '{% for i in numbers reversed %}{{ forloop.length }}:{{ i }}{% break %}{% endfor %}',
+    )
+    template.resource_limits.render_score_limit = 10
+
+    assert_equal('1000:1000', template.render!('numbers' => range))
+    assert_operator(template.resource_limits.render_score, :<=, 10)
   end
 
   def test_range_subclass_uses_its_custom_each

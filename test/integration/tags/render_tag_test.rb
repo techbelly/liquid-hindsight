@@ -149,6 +149,12 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_break_through_render
+    options = { partials: { 'break' => '{% break %}' } }
+    assert_template_result('1', '{% for i in (1..3) %}{{ i }}{% break %}{{ i }}{% endfor %}', **options)
+    assert_template_result('112233', '{% for i in (1..3) %}{{ i }}{% render "break" %}{{ i }}{% endfor %}', **options)
+  end
+
   def test_increment_is_isolated_between_renders
     assert_template_result(
       '010',
