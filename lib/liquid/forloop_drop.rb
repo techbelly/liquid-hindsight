@@ -17,6 +17,18 @@ module Liquid
       @index + 1
     end
 
+    def index0
+      @index
+    end
+
+    def rindex
+      @length - @index
+    end
+
+    def rindex0
+      @length - @index - 1
+    end
+
     def first
       @index == 0
     end
