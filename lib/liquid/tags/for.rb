@@ -165,7 +165,11 @@ module Liquid
     end
 
     def render_else(context, output)
-      output
+      if @else_block
+        @else_block.render_to_output_buffer(context, output)
+      else
+        output
+      end
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
