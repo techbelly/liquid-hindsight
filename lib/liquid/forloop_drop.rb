@@ -11,6 +11,8 @@ module Liquid
 
     attr_reader :length
 
+    attr_reader :parentloop
+
     attr_reader :name
 
     def index

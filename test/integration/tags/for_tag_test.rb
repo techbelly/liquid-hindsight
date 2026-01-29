@@ -11,6 +11,33 @@ end
 class ForTagTest < Minitest::Test
   include Liquid
 
+  def test_for
+    assert_template_result(' yo  yo  yo  yo ', '{%for item in array%} yo {%endfor%}', { 'array' => [1, 2, 3, 4] })
+    assert_template_result('yoyo', '{%for item in array%}yo{%endfor%}', { 'array' => [1, 2] })
+    assert_template_result(' yo ', '{%for item in array%} yo {%endfor%}', { 'array' => [1] })
+    assert_template_result('', '{%for item in array%}{%endfor%}', { 'array' => [1, 2] })
+    expected = <<HERE
+
+  yo
+
+  yo
+
+  yo
+
+HERE
+    template = <<~HERE
+      {%for item in array%}
+        yo
+      {%endfor%}
+    HERE
+    assert_template_result(expected, template, { 'array' => [1, 2, 3] })
+  end
+
+  def test_for_reversed
+    assigns = { 'array' => [1, 2, 3] }
+    assert_template_result('321', '{%for item in array reversed %}{{item}}{%endfor%}', assigns)
+  end
+
   def test_for_with_range
     assert_template_result(' 1  2  3 ', '{%for item in (1..3) %} {{item}} {%endfor%}')
 
@@ -33,6 +60,39 @@ class ForTagTest < Minitest::Test
   def test_for_with_drop_value_range
     foobar = ThingWithValue.new
     assert_template_result(' 1  2  3 ', '{%for item in (1..foobar.value) %} {{item}} {%endfor%}', { "foobar" => foobar })
+  end
+
+  def test_for_with_variable
+    assert_template_result(' 1  2  3 ', '{%for item in array%} {{item}} {%endfor%}', { 'array' => [1, 2, 3] })
+    assert_template_result('123', '{%for item in array%}{{item}}{%endfor%}', { 'array' => [1, 2, 3] })
+    assert_template_result('123', '{% for item in array %}{{item}}{% endfor %}', { 'array' => [1, 2, 3] })
+    assert_template_result('abcd', '{%for item in array%}{{item}}{%endfor%}', { 'array' => ['a', 'b', 'c', 'd'] })
+    assert_template_result('a b c', '{%for item in array%}{{item}}{%endfor%}', { 'array' => ['a', ' ', 'b', ' ', 'c'] })
+    assert_template_result('abc', '{%for item in array%}{{item}}{%endfor%}', { 'array' => ['a', '', 'b', '', 'c'] })
+  end
+
+  def test_for_helpers
+    assigns = { 'array' => [1, 2, 3] }
+    assert_template_result(
+      ' 1/3  2/3  3/3 ',
+      '{%for item in array%} {{forloop.index}}/{{forloop.length}} {%endfor%}',
+      assigns,
+    )
+    assert_template_result(' 1  2  3 ', '{%for item in array%} {{forloop.index}} {%endfor%}', assigns)
+    assert_template_result(' 0  1  2 ', '{%for item in array%} {{forloop.index0}} {%endfor%}', assigns)
+    assert_template_result(' 2  1  0 ', '{%for item in array%} {{forloop.rindex0}} {%endfor%}', assigns)
+    assert_template_result(' 3  2  1 ', '{%for item in array%} {{forloop.rindex}} {%endfor%}', assigns)
+    assert_template_result(' true  false  false ', '{%for item in array%} {{forloop.first}} {%endfor%}', assigns)
+    assert_template_result(' false  false  true ', '{%for item in array%} {{forloop.last}} {%endfor%}', assigns)
+  end
+
+  def test_for_and_if
+    assigns = { 'array' => [1, 2, 3] }
+    assert_template_result(
+      '+--',
+      '{%for item in array%}{% if forloop.first %}+{% else %}-{% endif %}{%endfor%}',
+      assigns,
+    )
   end
 
   def test_limiting_with_invalid_limit
@@ -61,6 +121,53 @@ class ForTagTest < Minitest::Test
       Template.parse(template).render!(assigns)
     end
     assert_equal("Liquid error: invalid integer", exception.message)
+  end
+
+  def test_nested_for
+    assigns = { 'array' => [[1, 2], [3, 4], [5, 6]] }
+    assert_template_result('123456', '{%for item in array%}{%for i in item%}{{ i }}{%endfor%}{%endfor%}', assigns)
+  end
+
+  def test_offset_only
+    assigns = { 'array' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] }
+    assert_template_result('890', '{%for i in array offset:7 %}{{ i }}{%endfor%}', assigns)
+  end
+
+  def test_for_with_break
+    assigns = { 'array' => { 'items' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] } }
+
+    markup   = '{% for i in array.items %}{% break %}{% endfor %}'
+    expected = ""
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{{ i }}{% break %}{% endfor %}'
+    expected = "1"
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{% break %}{{ i }}{% endfor %}'
+    expected = ""
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{{ i }}{% if i > 3 %}{% break %}{% endif %}{% endfor %}'
+    expected = "1234"
+    assert_template_result(expected, markup, assigns)
+
+    assigns  = { 'array' => [[1, 2], [3, 4], [5, 6]] }
+    markup   = '{% for item in array %}' \
+               '{% for i in item %}' \
+                 '{% if i == 1 %}' \
+                   '{% break %}' \
+                 '{% endif %}' \
+                 '{{ i }}' \
+               '{% endfor %}' \
+             '{% endfor %}'
+    expected = '3456'
+    assert_template_result(expected, markup, assigns)
+
+    assigns  = { 'array' => { 'items' => [1, 2, 3, 4, 5] } }
+    markup   = '{% for i in array.items %}{% if i == 9999 %}{% break %}{% endif %}{{ i }}{% endfor %}'
+    expected = '12345'
+    assert_template_result(expected, markup, assigns)
   end
 
   def test_for_with_break_after_nested_loop
@@ -105,6 +212,26 @@ class ForTagTest < Minitest::Test
     )
   end
 
+  def test_for_parentloop_references_parent_loop
+    assert_template_result(
+      '1.1 1.2 1.3 2.1 2.2 2.3 ',
+      '{% for inner in outer %}{% for k in inner %}' \
+      '{{ forloop.parentloop.index }}.{{ forloop.index }} ' \
+      '{% endfor %}{% endfor %}',
+      { 'outer' => [[1, 1, 1], [1, 1, 1]] },
+    )
+  end
+
+  def test_for_parentloop_nil_when_not_present
+    assert_template_result(
+      '.1 .2 ',
+      '{% for inner in outer %}' \
+      '{{ forloop.parentloop.index }}.{{ forloop.index }} ' \
+      '{% endfor %}',
+      { 'outer' => [[1, 1, 1], [1, 1, 1]] },
+    )
+  end
+
   def test_inner_for_over_empty_input
     assert_template_result('oo', '{% for a in (1..2) %}o{% for b in empty %}{% endfor %}{% endfor %}')
   end
@@ -119,6 +246,13 @@ class ForTagTest < Minitest::Test
     end
   end
 
+  def test_spacing_with_variable_naming_in_for_loop
+    expected = '12345'
+    template = '{% for       item   in   items %}{{item}}{% endfor %}'
+    assigns  = { 'items' => [1, 2, 3, 4, 5] }
+    assert_template_result(expected, template, assigns)
+  end
+
   class LoaderDrop < Liquid::Drop
     attr_reader :each_called, :load_slice_called
 
@@ -128,12 +262,23 @@ class ForTagTest < Minitest::Test
 
     def each
       @each_called = true
+      @data.each { |el| yield el }
     end
 
     def load_slice(from, to)
       @load_slice_called = true
       @data[(from..to - 1)]
     end
+  end
+
+  def test_iterate_with_each_when_no_limit_applied
+    loader   = LoaderDrop.new([1, 2, 3, 4, 5])
+    assigns  = { 'items' => loader }
+    expected = '12345'
+    template = '{% for item in items %}{{item}}{% endfor %}'
+    assert_template_result(expected, template, assigns)
+    assert(loader.each_called)
+    assert(!loader.load_slice_called)
   end
 
   def test_iterate_with_load_slice_when_limit_applied
