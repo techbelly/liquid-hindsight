@@ -278,6 +278,47 @@ HERE
     assert_template_result("1-1,1-2,after", source)
   end
 
+  def test_for_with_continue
+    assigns = { 'array' => { 'items' => [1, 2, 3, 4, 5] } }
+
+    markup   = '{% for i in array.items %}{% continue %}{% endfor %}'
+    expected = ""
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{{ i }}{% continue %}{% endfor %}'
+    expected = "12345"
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{% continue %}{{ i }}{% endfor %}'
+    expected = ""
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{% if i > 3 %}{% continue %}{% endif %}{{ i }}{% endfor %}'
+    expected = "123"
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{% if i == 3 %}{% continue %}{% else %}{{ i }}{% endif %}{% endfor %}'
+    expected = "1245"
+    assert_template_result(expected, markup, assigns)
+
+    assigns  = { 'array' => [[1, 2], [3, 4], [5, 6]] }
+    markup   = '{% for item in array %}' \
+               '{% for i in item %}' \
+                 '{% if i == 1 %}' \
+                   '{% continue %}' \
+                 '{% endif %}' \
+                 '{{ i }}' \
+               '{% endfor %}' \
+             '{% endfor %}'
+    expected = '23456'
+    assert_template_result(expected, markup, assigns)
+
+    assigns  = { 'array' => { 'items' => [1, 2, 3, 4, 5] } }
+    markup   = '{% for i in array.items %}{% if i == 9999 %}{% continue %}{% endif %}{{ i }}{% endfor %}'
+    expected = '12345'
+    assert_template_result(expected, markup, assigns)
+  end
+
   def test_for_tag_string
     assert_template_result(
       'test string',
