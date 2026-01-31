@@ -59,6 +59,38 @@ module Liquid
       length     = collection.length
 
       cols = @attributes.key?('cols') ? to_integer(context.evaluate(@attributes['cols'])) : length
+
+      output << "<tr class=\"row1\">\n"
+      context.resource_limits.increment_write_score(output)
+      context.stack do
+        tablerowloop = Liquid::TablerowloopDrop.new(length, cols)
+        context['tablerowloop'] = tablerowloop
+
+        collection.each do |item|
+          context[@variable_name] = item
+
+          output << "<td class=\"col#{tablerowloop.col}\">"
+          super
+          output << '</td>'
+          context.resource_limits.increment_write_score(output)
+
+          if context.interrupt?
+            interrupt = context.pop_interrupt
+            break if interrupt.is_a?(BreakInterrupt)
+          end
+
+          if tablerowloop.col_last && !tablerowloop.last
+            output << "</tr>\n<tr class=\"row#{tablerowloop.row + 1}\">"
+            context.resource_limits.increment_write_score(output)
+          end
+
+          tablerowloop.send(:increment!)
+        end
+      end
+
+      output << "</tr>\n"
+      context.resource_limits.increment_write_score(output)
+      output
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
