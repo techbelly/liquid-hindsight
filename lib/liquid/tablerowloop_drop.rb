@@ -14,8 +14,6 @@ module Liquid
 
     attr_reader :col
 
-    attr_reader :row
-
     def first
       @index == 0
     end
@@ -24,17 +22,16 @@ module Liquid
       @index == @length - 1
     end
 
+    def col_last
+      @col == @cols
+    end
+
     protected
 
     def increment!
       @index += 1
 
-      if @col == @cols
-        @col = 1
-        @row += 1
-      else
-        @col += 1
-      end
+      @col += 1
     end
   end
 end

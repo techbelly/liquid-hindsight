@@ -25,6 +25,24 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_cols_nil_constant_same_as_evaluated_nil_expression
+    expect = "<tr class=\"row1\">\n" \
+      "<td class=\"col1\">false</td>" \
+      "<td class=\"col2\">false</td>" \
+      "</tr>\n"
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) cols:nil %}{{ tablerowloop.col_last }}{% endtablerow %}",
+    )
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) cols:var %}{{ tablerowloop.col_last }}{% endtablerow %}",
+      { "var" => nil },
+    )
+  end
+
   def test_nil_limit_is_treated_as_zero
     expect = "<tr class=\"row1\">\n" \
       "</tr>\n"
@@ -37,6 +55,24 @@ class TableRowTest < Minitest::Test
     assert_template_result(
       expect,
       "{% tablerow i in (1..2) limit:var %}{{ i }}{% endtablerow %}",
+      { "var" => nil },
+    )
+  end
+
+  def test_nil_offset_is_treated_as_zero
+    expect = "<tr class=\"row1\">\n" \
+      "<td class=\"col1\">1:false</td>" \
+      "<td class=\"col2\">2:true</td>" \
+      "</tr>\n"
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) offset:nil %}{{ i }}:{{ tablerowloop.col_last }}{% endtablerow %}",
+    )
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) offset:var %}{{ i }}:{{ tablerowloop.col_last }}{% endtablerow %}",
       { "var" => nil },
     )
   end
@@ -100,6 +136,51 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_tablerow_with_range_attribute_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow i in (1..3) range: (1..10) %}{{ i }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td><td class="col3">3</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template)
+    end
+  end
+
+  def test_tablerow_with_bracketed_access_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow n in obj["numbers"] cols: 2 %}{{ n }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">10</td><td class="col2">20</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template, { 'obj' => { 'numbers' => [10, 20] } })
+    end
+  end
+
+  def test_tablerow_without_attributes_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow i in (1..3) %}{{ i }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td><td class="col3">3</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template)
+    end
+  end
+
   def test_tablerow_without_in_keyword_in_strict2_mode
     template = '{% tablerow i (1..10) %}{{ i }}{% endtablerow %}'
 
@@ -133,6 +214,24 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_tablerow_with_invalid_attribute_strict_vs_strict2
+    template = '{% tablerow i in (1..5) invalid_attr: 10 %}{{ i }}{% endtablerow %}'
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td><td class="col3">3</td><td class="col4">4</td><td class="col5">5</td></tr>
+    OUTPUT
+
+    with_error_modes(:lax, :strict) do
+      assert_template_result(expected, template)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(SyntaxError) { Template.parse(template) }
+      assert_match(/Invalid attribute 'invalid_attr'/, error.message)
+    end
+  end
+
   def test_tablerow_with_invalid_expression_strict_vs_strict2
     template = '{% tablerow i in (1..5) limit: foo=>bar %}{{ i }}{% endtablerow %}'
 
@@ -148,5 +247,82 @@ class TableRowTest < Minitest::Test
       error = assert_raises(SyntaxError) { Template.parse(template) }
       assert_match(/Unexpected character =/, error.message)
     end
+  end
+
+  def test_integer_range_is_not_materialized_and_charges_empty_iterations
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse('{% tablerow i in numbers %}{% endtablerow %}')
+    template.resource_limits.render_score_limit = 3
+
+    assert_raises(Liquid::MemoryError) { template.render!('numbers' => range) }
+
+    assert(template.resource_limits.reached?)
+    assert_equal(4, template.resource_limits.render_score)
+  end
+
+  def test_tablerow_checks_generated_output_during_empty_body_iteration
+    template = Template.parse('{% tablerow i in (1..100) %}{% endtablerow %}')
+    template.resource_limits.render_length_limit = 40
+    checked_lengths = []
+    limits = template.resource_limits
+    original_increment_write_score = limits.method(:increment_write_score)
+    limits.define_singleton_method(:increment_write_score) do |output|
+      checked_lengths << output.bytesize
+      original_increment_write_score.call(output)
+    end
+
+    assert_equal('Liquid error: Memory limits exceeded', template.render)
+    assert(template.resource_limits.reached?)
+    assert_operator(checked_lengths.last, :<, 1000)
+  end
+
+  def test_tablerow_range_scores_persist_across_renders
+    template = Template.parse('{% tablerow i in (1..2) %}{% endtablerow %}')
+    template.resource_limits.cumulative_render_score_limit = 3
+    template.render!
+    assert_raises(Liquid::MemoryError) { template.render! }
+  end
+
+  def test_range_subclass_uses_its_custom_each_with_beginless_bounds
+    range = Class.new(Range) do
+      def each
+        yield 10
+        yield 20
+      end
+    end.new(nil, 3)
+
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">10</td><td class=\"col2\">20</td></tr>\n",
+      '{% tablerow i in numbers %}{{ i }}{% endtablerow %}',
+      { 'numbers' => range },
+    )
+  end
+
+  def test_endless_range_subclass_uses_its_custom_each_without_a_limit
+    range = Class.new(Range) do
+      def each
+        yield 10
+        yield 20
+      end
+    end.new(1, nil)
+
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">10</td><td class=\"col2\">20</td></tr>\n",
+      '{% tablerow i in numbers %}{{ i }}{% endtablerow %}',
+      { 'numbers' => range },
+    )
+  end
+
+  def test_range_subclass_custom_to_a_is_not_used
+    range = Class.new(Range) do
+      def to_a
+      end
+    end.new(1, 3)
+
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">1</td><td class=\"col2\">2</td><td class=\"col3\">3</td></tr>\n",
+      '{% tablerow i in numbers %}{{ i }}{% endtablerow %}',
+      { 'numbers' => range },
+    )
   end
 end
