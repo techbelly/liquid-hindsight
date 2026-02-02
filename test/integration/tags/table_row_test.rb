@@ -290,6 +290,18 @@ class TableRowTest < Minitest::Test
     assert_equal(4, template.resource_limits.render_score)
   end
 
+  def test_integer_range_uses_arithmetic_offsets_limit_and_full_metadata
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse(
+      '{% tablerow i in numbers offset:997 limit:2 %}{{ tablerowloop.length }}:{{ tablerowloop.index }}:{{ i }}{% endtablerow %}',
+    )
+
+    assert_equal(
+      "<tr class=\"row1\">\n<td class=\"col1\">2:1:998</td><td class=\"col2\">2:2:999</td></tr>\n",
+      template.render!('numbers' => range),
+    )
+  end
+
   def test_tablerow_checks_generated_output_during_empty_body_iteration
     template = Template.parse('{% tablerow i in (1..100) %}{% endtablerow %}')
     template.resource_limits.render_length_limit = 40

@@ -14,6 +14,10 @@ module Liquid
 
     attr_reader :col
 
+    def index
+      @index + 1
+    end
+
     def first
       @index == 0
     end
