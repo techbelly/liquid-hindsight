@@ -14,6 +14,8 @@ module Liquid
 
     attr_reader :col
 
+    attr_reader :row
+
     def index
       @index + 1
     end
