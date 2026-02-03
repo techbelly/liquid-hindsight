@@ -70,7 +70,13 @@ module Liquid
     def partial_options
       @partial_options ||= begin
         dont_pass = @template_options[:include_options_blacklist]
-        @template_options
+        if dont_pass == true
+          { locale: locale }
+        elsif dont_pass.is_a?(Array)
+          @template_options.reject { |k, _v| dont_pass.include?(k) }
+        else
+          @template_options
+        end
       end
     end
   end
