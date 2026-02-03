@@ -141,6 +141,22 @@ class RenderTagTest < Minitest::Test
     assert_equal(1, file_system.file_read_count)
   end
 
+  def test_render_tag_doesnt_cache_partials_across_renders
+    file_system = StubFileSystem.new('snippet' => 'my message')
+
+    assert_equal(
+      'my message',
+      Template.parse('{% include "snippet" %}').render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(1, file_system.file_read_count)
+
+    assert_equal(
+      'my message',
+      Template.parse('{% include "snippet" %}').render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(2, file_system.file_read_count)
+  end
+
   def test_render_tag_within_if_statement
     assert_template_result(
       'my message',

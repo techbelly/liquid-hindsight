@@ -21,6 +21,40 @@ module Liquid
     def render_to_output_buffer(context, output)
       template_name = context.evaluate(@template_name_expr)
       raise ArgumentError, options[:locale].t("errors.argument.include") unless template_name.is_a?(String)
+
+      partial = PartialCache.load(
+        template_name,
+        context: context,
+        parse_context: parse_context,
+      )
+
+      context_variable_name = @alias_name || template_name.split('/').last
+
+      variable = if @variable_name_expr
+        context.evaluate(@variable_name_expr)
+      else
+        context.find_variable(template_name, raise_on_not_found: false)
+      end
+
+      old_template_name = context.template_name
+      old_partial       = context.partial
+
+      begin
+        context.template_name = partial.name
+        context.partial = true
+
+        context.stack do
+          @attributes.each do |key, value|
+            context[key] = context.evaluate(value)
+          end
+
+          context[context_variable_name] = variable
+          partial.render_to_output_buffer(context, output)
+        end
+      ensure
+        context.template_name = old_template_name
+        context.partial       = old_partial
+      end
     end
 
     alias_method :parse_context, :options

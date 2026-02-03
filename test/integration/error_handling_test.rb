@@ -254,6 +254,15 @@ class ErrorHandlingTest < Minitest::Test
     end
   end
 
+  def test_included_template_name_with_line_numbers
+    environment = Liquid::Environment.build(file_system: TestFileSystem.new)
+    template = Liquid::Template.parse("Argument error:\n{% include 'product' %}", line_numbers: true, environment: environment)
+    page     = template.render('errors' => ErrorDrop.new)
+
+    assert_equal("Argument error:\nLiquid error (product line 1): argument error", page)
+    assert_equal("product", template.errors.first.template_name)
+  end
+
   def test_bug_compatible_silencing_of_errors_in_blank_nodes
     with_error_modes(:lax, :strict) do
       output = Liquid::Template.parse("{% assign x = 0 %}{% if 1 < '2' %}not blank{% assign x = 3 %}{% endif %}{{ x }}").render

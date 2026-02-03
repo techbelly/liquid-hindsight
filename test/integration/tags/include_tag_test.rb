@@ -49,6 +49,181 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_include_tag_looks_for_file_system_in_registers_first
+    assert_equal(
+      'from OtherFileSystem',
+      Template.parse("{% include 'pick_a_source' %}").render!({}, registers: { file_system: OtherFileSystem.new }),
+    )
+  end
+
+  def test_include_tag_with
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% include 'product' with products[0] %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
+  def test_include_tag_with_alias
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% include 'product_alias' with products[0] as product %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: { "product_alias" => "Product: {{ product.title }} " },
+    )
+  end
+
+  def test_include_tag_with_default_name
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% include 'product' %}",
+      { "product" => { 'title' => 'Draft 151cm' } },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
+  def test_include_tag_with_local_variables
+    assert_template_result(
+      "Locale: test123 ",
+      "{% include 'locale_variables' echo1: 'test123' %}",
+      partials: { "locale_variables" => "Locale: {{echo1}} {{echo2}}" },
+    )
+  end
+
+  def test_include_tag_with_multiple_local_variables
+    assert_template_result(
+      "Locale: test123 test321",
+      "{% include 'locale_variables' echo1: 'test123', echo2: 'test321' %}",
+      partials: { "locale_variables" => "Locale: {{echo1}} {{echo2}}" },
+    )
+  end
+
+  def test_include_tag_with_multiple_local_variables_from_context
+    assert_template_result(
+      "Locale: test123 test321",
+      "{% include 'locale_variables' echo1: echo1, echo2: more_echos.echo2 %}",
+      { 'echo1' => 'test123', 'more_echos' => { "echo2" => 'test321' } },
+      partials: { "locale_variables" => "Locale: {{echo1}} {{echo2}}" },
+    )
+  end
+
+  def test_included_templates_assigns_variables
+    assert_template_result(
+      "bar",
+      "{% include 'assignments' %}{{ foo }}",
+      partials: { 'assignments' => "{% assign foo = 'bar' %}" },
+    )
+  end
+
+  def test_nested_include_tag
+    partials = { "body" => "body {% include 'body_detail' %}", "body_detail" => "body_detail" }
+    assert_template_result("body body_detail", "{% include 'body' %}", partials: partials)
+
+    partials = partials.merge({
+      "nested_template" => "{% include 'header' %} {% include 'body' %} {% include 'footer' %}",
+      "header" => "header",
+      "footer" => "footer",
+    })
+    assert_template_result("header body body_detail footer", "{% include 'nested_template' %}", partials: partials)
+  end
+
+  def test_recursively_included_template_does_not_produce_endless_loop
+    infinite_file_system = Class.new do
+      def read_template_file(_template_path)
+        "-{% include 'loop' %}"
+      end
+    end
+
+    env = Liquid::Environment.build(file_system: infinite_file_system.new)
+
+    assert_raises(Liquid::StackLevelError) do
+      Template.parse("{% include 'loop' %}", environment: env).render!
+    end
+  end
+
+  def test_dynamically_choosen_template
+    assert_template_result(
+      "Test123",
+      "{% include template %}",
+      { "template" => 'Test123' },
+      partials: { "Test123" => "Test123" },
+    )
+
+    assert_template_result(
+      "Test321",
+      "{% include template %}",
+      { "template" => 'Test321' },
+      partials: { "Test321" => "Test321" },
+    )
+
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% include template for product %}",
+      { "template" => 'product', 'product' => { 'title' => 'Draft 151cm' } },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
+  def test_strict2_parsing_errors
+    with_error_modes(:lax, :strict) do
+      assert_template_result(
+        'hello value1 value2',
+        '{% include "snippet" !!! arg1: "value1" ~~~ arg2: "value2" %}',
+        partials: { 'snippet' => 'hello {{ arg1 }} {{ arg2 }}' },
+      )
+    end
+
+    with_error_modes(:strict2) do
+      assert_syntax_error(
+        '{% include "snippet" !!! arg1: "value1" ~~~ arg2: "value2" %}',
+      )
+      assert_syntax_error(
+        '{% include "snippet" | filter %}',
+      )
+    end
+  end
+
+  def test_optional_commas
+    partials = { 'snippet' => 'hello {{ arg1 }} {{ arg2 }}' }
+    assert_template_result('hello value1 value2', '{% include "snippet", arg1: "value1", arg2: "value2" %}', partials: partials)
+    assert_template_result('hello value1 value2', '{% include "snippet"  arg1: "value1", arg2: "value2" %}', partials: partials)
+    assert_template_result('hello value1 value2', '{% include "snippet"  arg1: "value1"  arg2: "value2" %}', partials: partials)
+  end
+
+  def test_include_tag_caches_second_read_of_same_partial
+    file_system = CountingFileSystem.new
+    environment = Liquid::Environment.build(file_system: file_system)
+    assert_equal(
+      'from CountingFileSystemfrom CountingFileSystem',
+      Template.parse("{% include 'pick_a_source' %}{% include 'pick_a_source' %}", environment: environment).render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(1, file_system.count)
+  end
+
+  def test_include_tag_doesnt_cache_partials_across_renders
+    file_system = CountingFileSystem.new
+    assert_equal(
+      'from CountingFileSystem',
+      Template.parse("{% include 'pick_a_source' %}").render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(1, file_system.count)
+
+    assert_equal(
+      'from CountingFileSystem',
+      Template.parse("{% include 'pick_a_source' %}").render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(2, file_system.count)
+  end
+
+  def test_include_tag_within_if_statement
+    assert_template_result(
+      "foo_if_true",
+      "{% if true %}{% include 'foo_if_true' %}{% endif %}",
+      partials: { "foo_if_true" => "foo_if_true" },
+    )
+  end
+
   def test_custom_include_tag
     original_tag = Liquid::Template.tags['include']
     Liquid::Template.tags['include'] = CustomInclude
@@ -105,6 +280,30 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_including_via_variable_value
+    assert_template_result(
+      "from TestFileSystem",
+      "{% assign page = 'pick_a_source' %}{% include page %}",
+      partials: { "pick_a_source" => "from TestFileSystem" },
+    )
+
+    partials = { "product" => "Product: {{ product.title }} " }
+
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% assign page = 'product' %}{% include page %}",
+      { "product" => { 'title' => 'Draft 151cm' } },
+      partials: partials,
+    )
+
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% assign page = 'product' %}{% include page for foo %}",
+      { "foo" => { 'title' => 'Draft 151cm' } },
+      partials: partials,
+    )
+  end
+
   def test_including_with_strict_variables
     env = Liquid::Environment.build(
       file_system: StubFileSystem.new('simple' => 'simple'),
@@ -114,6 +313,36 @@ class IncludeTagTest < Minitest::Test
     template.render(nil, strict_variables: true)
 
     assert_equal([], template.errors)
+  end
+
+  def test_break_through_include
+    assert_template_result("1", "{% for i in (1..3) %}{{ i }}{% break %}{{ i }}{% endfor %}")
+    assert_template_result(
+      "1",
+      "{% for i in (1..3) %}{{ i }}{% include 'break' %}{{ i }}{% endfor %}",
+      partials: { 'break' => "{% break %}" },
+    )
+  end
+
+  def test_render_tag_renders_error_with_template_name
+    assert_template_result(
+      'Liquid error (foo line 1): standard error',
+      "{% include 'foo' with errors %}",
+      { 'errors' => ErrorDrop.new },
+      partials: { 'foo' => '{{ foo.standard_error }}' },
+      render_errors: true,
+    )
+  end
+
+  def test_render_tag_renders_error_with_template_name_from_template_factory
+    assert_template_result(
+      'Liquid error (some/path/foo line 1): standard error',
+      "{% include 'foo' with errors %}",
+      { 'errors' => ErrorDrop.new },
+      partials: { 'foo' => '{{ foo.standard_error }}' },
+      template_factory: StubTemplateFactory.new,
+      render_errors: true,
+    )
   end
 
   def test_include_template_with_invalid_expression
