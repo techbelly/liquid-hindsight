@@ -20,12 +20,32 @@ module Liquid
       @index + 1
     end
 
+    def index0
+      @index
+    end
+
+    def col0
+      @col - 1
+    end
+
+    def rindex
+      @length - @index
+    end
+
+    def rindex0
+      @length - @index - 1
+    end
+
     def first
       @index == 0
     end
 
     def last
       @index == @length - 1
+    end
+
+    def col_first
+      @col == 1
     end
 
     def col_last
