@@ -74,11 +74,29 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_include_tag_for_alias
+    assert_template_result(
+      "Product: Draft 151cm Product: Element 155cm ",
+      "{% include 'product_alias' for products as product %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: { "product_alias" => "Product: {{ product.title }} " },
+    )
+  end
+
   def test_include_tag_with_default_name
     assert_template_result(
       "Product: Draft 151cm ",
       "{% include 'product' %}",
       { "product" => { 'title' => 'Draft 151cm' } },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
+  def test_include_tag_for
+    assert_template_result(
+      "Product: Draft 151cm Product: Element 155cm ",
+      "{% include 'product' for products %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
       partials: { "product" => "Product: {{ product.title }} " },
     )
   end
@@ -126,6 +144,27 @@ class IncludeTagTest < Minitest::Test
       "footer" => "footer",
     })
     assert_template_result("header body body_detail footer", "{% include 'nested_template' %}", partials: partials)
+  end
+
+  def test_nested_include_with_variable
+    partials = {
+      "nested_product_template" => "Product: {{ nested_product_template.title }} {%include 'details'%} ",
+      "details" => "details",
+    }
+
+    assert_template_result(
+      "Product: Draft 151cm details ",
+      "{% include 'nested_product_template' with product %}",
+      { "product" => { "title" => 'Draft 151cm' } },
+      partials: partials,
+    )
+
+    assert_template_result(
+      "Product: Draft 151cm details Product: Element 155cm details ",
+      "{% include 'nested_product_template' for products %}",
+      { "products" => [{ "title" => 'Draft 151cm' }, { "title" => 'Element 155cm' }] },
+      partials: partials,
+    )
   end
 
   def test_recursively_included_template_does_not_produce_endless_loop
