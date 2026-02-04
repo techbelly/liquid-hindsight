@@ -106,6 +106,7 @@ module Liquid
       context.resource_limits.reset
 
       if @profiling && context.profiler.nil?
+        @profiler = context.profiler = Liquid::Profiler.new
       end
 
       context.template_name ||= name
@@ -140,6 +141,7 @@ module Liquid
 
     def configure_options(options)
       if (profiling = options[:profile])
+        raise "Profiler not loaded, require 'liquid/profiler' first" unless defined?(Liquid::Profiler)
       end
 
       @options      = options
