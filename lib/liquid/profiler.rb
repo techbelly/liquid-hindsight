@@ -7,7 +7,7 @@ module Liquid
     include Enumerable
 
     class Timing
-      attr_reader :template_name, :line_number, :children
+      attr_reader :code, :template_name, :line_number, :children
       attr_accessor :total_time
       alias_method :render_time, :total_time
       alias_method :partial, :template_name
@@ -43,6 +43,11 @@ module Liquid
           @total_time += timing.total_time
         end
       end
+    end
+
+    def children
+      children = @root_children
+      children
     end
 
     def each(&block)

@@ -41,6 +41,14 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_profiling_times_the_rendering_of_tokens
+    t = Template.parse("{% include 'a_template' %}", profile: true)
+    t.render!
+
+    node = t.profiler[0]
+    refute_nil(node.render_time)
+  end
+
   def test_profiling_times_the_entire_render
     t = Template.parse("{% include 'a_template' %}", profile: true)
     t.render!
@@ -57,5 +65,33 @@ class ProfilerTest < Minitest::Test
     def render_to_output_buffer(_context, _output)
       sleep(@duration)
     end
+  end
+
+  def test_profiling_multiple_renders
+    with_custom_tag('sleep', SleepTag) do
+      context = Liquid::Context.new
+      t = Liquid::Template.parse("{% sleep 0.001 %}", profile: true)
+      context.template_name = 'index'
+      t.render!(context)
+      context.template_name = 'layout'
+      first_render_time = context.profiler.total_time
+      t.render!(context)
+
+      profiler = context.profiler
+      children = profiler.children
+      assert_operator(first_render_time, :>=, 0.001)
+      assert_operator(profiler.total_time, :>=, 0.001 + first_render_time)
+      assert_equal(["index", "layout"], children.map(&:template_name))
+      assert_equal([nil, nil], children.map(&:code))
+      assert_equal(profiler.total_time, children.map(&:total_time).reduce(&:+))
+    end
+  end
+
+  def test_profiling_supports_total_time
+    t = Template.parse("{% if true %} {{ test }} {% endif %}", profile: true)
+    output = t.render!("test" => TestDrop.new("one"))
+    assert_equal(" one ", output)
+
+    assert_operator(t.profiler[0].total_time, :>, 0.0)
   end
 end
