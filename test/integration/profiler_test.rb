@@ -41,6 +41,27 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_profiling_includes_line_numbers_of_included_partials
+    t = Template.parse("{% include 'a_template' %}", profile: true)
+    t.render!
+
+    included_children = t.profiler[0].children
+
+    assert_equal(1, included_children[0].line_number)
+    assert_equal(2, included_children[1].line_number)
+  end
+
+  def test_profiling_render_tag
+    t = Template.parse("{% render 'a_template' %}", profile: true)
+    t.render!
+
+    render_children = t.profiler[0].children
+    render_children.each do |timing|
+      assert_equal('a_template', timing.partial)
+    end
+    assert_equal([1, 2], render_children.map(&:line_number))
+  end
+
   def test_profiling_times_the_rendering_of_tokens
     t = Template.parse("{% include 'a_template' %}", profile: true)
     t.render!
@@ -85,6 +106,66 @@ class ProfilerTest < Minitest::Test
       assert_equal([nil, nil], children.map(&:code))
       assert_equal(profiler.total_time, children.map(&:total_time).reduce(&:+))
     end
+  end
+
+  def test_profiling_uses_include_to_mark_children
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}", profile: true)
+    t.render!
+
+    include_node = t.profiler[1]
+    assert_equal(2, include_node.children.length)
+  end
+
+  def test_profiling_marks_children_with_the_name_of_included_partial
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}", profile: true)
+    t.render!
+
+    include_node = t.profiler[1]
+    include_node.children.each do |child|
+      assert_equal("a_template", child.partial)
+    end
+  end
+
+  def test_profiling_supports_multiple_templates
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}\n{% include 'b_template' %}", profile: true)
+    t.render!
+
+    a_template = t.profiler[1]
+    a_template.children.each do |child|
+      assert_equal("a_template", child.partial)
+    end
+
+    b_template = t.profiler[2]
+    b_template.children.each do |child|
+      assert_equal("b_template", child.partial)
+    end
+  end
+
+  def test_profiling_supports_rendering_the_same_partial_multiple_times
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}\n{% include 'a_template' %}", profile: true)
+    t.render!
+
+    a_template1 = t.profiler[1]
+    a_template1.children.each do |child|
+      assert_equal("a_template", child.partial)
+    end
+
+    a_template2 = t.profiler[2]
+    a_template2.children.each do |child|
+      assert_equal("a_template", child.partial)
+    end
+  end
+
+  def test_can_iterate_over_each_profiling_entry
+    t = Template.parse("{{ 'a string' | upcase }}\n{% increment test %}", profile: true)
+    t.render!
+
+    timing_count = 0
+    t.profiler.each do |_timing|
+      timing_count += 1
+    end
+
+    assert_equal(2, timing_count)
   end
 
   def test_profiling_supports_total_time
