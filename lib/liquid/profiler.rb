@@ -18,6 +18,16 @@ module Liquid
         @line_number = line_number
         @children = []
       end
+
+      def self_time
+        @self_time ||= begin
+          total_children_time = 0.0
+          @children.each do |child|
+            total_children_time += child.total_time
+          end
+          @total_time - total_children_time
+        end
+      end
     end
 
     attr_reader :total_time
