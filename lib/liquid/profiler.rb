@@ -62,6 +62,10 @@ module Liquid
       children[idx]
     end
 
+    def length
+      children.length
+    end
+
     def profile_node(template_name, code: nil, line_number: nil)
       timing = Timing.new(code: code, template_name: template_name, line_number: line_number)
       parent_children = @current_children
