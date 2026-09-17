@@ -33,7 +33,12 @@ module Liquid
     end
 
     def self.raise_unknown_tag(tag, block_name, block_delimiter, parse_context)
-      if tag.start_with?('end')
+      if tag == 'else'
+        raise SyntaxError, parse_context.locale.t(
+          "errors.syntax.unexpected_else",
+          block_name: block_name,
+        )
+      elsif tag.start_with?('end')
         raise SyntaxError, parse_context.locale.t(
           "errors.syntax.invalid_delimiter",
           tag: tag,

@@ -86,6 +86,10 @@ module Liquid
 
       @attributes = {}
       while p.look(:id)
+        key = p.consume
+        p.consume(:colon)
+        @attributes[key] = safe_parse_expression(p)
+        p.consume?(:comma)
       end
 
       p.consume(:end_of_string)
@@ -110,6 +114,9 @@ module Liquid
         markup.scan(TagAttributes) do |key, value|
           @attributes[key] = parse_expression(value)
         end
+
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.include")
       end
     end
 

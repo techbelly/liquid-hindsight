@@ -7,11 +7,15 @@ module Liquid
 
     disable_tags "include"
 
-    attr_reader :template_name_expr, :variable_name_expr, :attributes
+    attr_reader :template_name_expr, :variable_name_expr, :attributes, :alias_name
 
     def initialize(tag_name, markup, options)
       super
       parse_with_selected_parser(markup)
+    end
+
+    def for_loop?
+      @is_for_loop
     end
 
     def render_to_output_buffer(context, output)
@@ -68,6 +72,10 @@ module Liquid
 
       @attributes = {}
       while p.look(:id)
+        key = p.consume
+        p.consume(:colon)
+        @attributes[key] = safe_parse_expression(p)
+        p.consume?(:comma)
       end
 
       p.consume(:end_of_string)

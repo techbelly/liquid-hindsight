@@ -7,6 +7,7 @@ module Liquid
     LiquidTagToken      = /\A\s*(#{TagName})\s*(.*?)\z/o
     FullToken           = /\A#{TagStart}#{WhitespaceControl}?(\s*)(#{TagName})(\s*)(.*?)#{WhitespaceControl}?#{TagEnd}\z/om
     FullTokenPossiblyInvalid = /\A(.*)#{TagStart}#{WhitespaceControl}?\s*(\w+)\s*(.*)?#{WhitespaceControl}?#{TagEnd}\z/om
+    ContentOfVariable   = /\A#{VariableStart}#{WhitespaceControl}?(.*?)#{WhitespaceControl}?#{VariableEnd}\z/om
     WhitespaceOrNothing = /\A\s*\z/
     TAGSTART            = "{%"
     VARSTART            = "{{"
@@ -227,6 +228,14 @@ module Liquid
         return Variable.new(markup, parse_context)
       end
 
+      BlockBody.raise_missing_variable_terminator(token, parse_context)
+    end
+
+    def raise_missing_tag_terminator(token, parse_context)
+      BlockBody.raise_missing_tag_terminator(token, parse_context)
+    end
+
+    def raise_missing_variable_terminator(token, parse_context)
       BlockBody.raise_missing_variable_terminator(token, parse_context)
     end
   end

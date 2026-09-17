@@ -45,7 +45,7 @@ module Liquid
     end
 
     attr_reader :attachment, :child_condition
-    attr_reader :left, :operator, :right
+    attr_accessor :left, :operator, :right
 
     def initialize(left = nil, operator = nil, right = nil)
       @left     = left
@@ -104,6 +104,10 @@ module Liquid
     private
 
     def equal_variables(left, right)
+      if left.is_a?(MethodLiteral)
+        return call_method_literal(left, right)
+      end
+
       if right.is_a?(MethodLiteral)
         return call_method_literal(right, left)
       end
@@ -122,6 +126,8 @@ module Liquid
           liquid_blank?(value)
         when :empty?
           liquid_empty?(value)
+        else
+          false
         end
       end
     end
@@ -130,15 +136,24 @@ module Liquid
       case value
       when NilClass, FalseClass
         true
+      when TrueClass, Numeric
+        false
       when String
         value.empty? || value.match?(/\A\s*\z/)
       when Array, Hash
         value.empty?
+      else
+        value.respond_to?(:empty?) ? value.empty? : false
       end
     end
 
     def liquid_empty?(value)
-      value.respond_to?(:empty?) ? value.empty? : false
+      case value
+      when String, Array, Hash
+        value.empty?
+      else
+        value.respond_to?(:empty?) ? value.empty? : false
+      end
     end
 
     def interpret_condition(left, right, op, context)

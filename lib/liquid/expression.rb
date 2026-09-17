@@ -108,6 +108,8 @@ module Liquid
 
         if num_end_pos
           markup.byteslice(0, num_end_pos).to_f
+        else
+          markup.byteslice(0, first_dot_pos).to_f
         end
       end
     end

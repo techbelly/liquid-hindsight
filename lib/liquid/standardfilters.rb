@@ -11,6 +11,8 @@ module Liquid
     supports_64bit_indices = begin
       [][1 << 33, 1 << 33]
       true
+    rescue RangeError
+      false
     end
 
     INDEX_RANGE = if supports_64bit_indices
@@ -119,6 +121,9 @@ module Liquid
           Utils.to_s(input).slice(offset, length) || ''
         end
       rescue RangeError
+        if INDEX_RANGE.cover?(length) && INDEX_RANGE.cover?(offset)
+          raise
+        end
         offset = offset.clamp(INDEX_RANGE)
         length = length.clamp(INDEX_RANGE)
         retry
@@ -148,6 +153,7 @@ module Liquid
         input.split(" ", words + 1)
       rescue RangeError
         return input if words + 1 > MAX_I32
+        raise
       end
       return input if wordlist.length <= words
 
@@ -285,7 +291,9 @@ module Liquid
       InputIterator.new(input, context).map do |e|
         e = e.call if e.is_a?(Proc)
 
-        if e.respond_to?(:[])
+        if property == "to_liquid"
+          e
+        elsif e.respond_to?(:[])
           r = e[property]
           r.is_a?(Proc) ? r.call : r
         end

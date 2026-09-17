@@ -2,7 +2,7 @@
 
 module Liquid
   class Context
-    attr_reader :scopes, :errors, :registers, :environments, :resource_limits, :static_environments
+    attr_reader :scopes, :errors, :registers, :environments, :resource_limits, :static_registers, :static_environments
     attr_accessor :exception_renderer, :template_name, :partial, :global_filter, :strict_variables, :strict_filters, :environment
 
     def self.build(environment: Environment.default, environments: {}, outer_scope: {}, registers: {}, rethrow_errors: false, resource_limits: nil, static_environments: {}, &block)
@@ -123,6 +123,10 @@ module Liquid
         subcontext.warnings = warnings
         subcontext.disabled_tags = @disabled_tags
       end
+    end
+
+    def clear_instance_assigns
+      @scopes[0] = {}
     end
 
     def []=(key, value)

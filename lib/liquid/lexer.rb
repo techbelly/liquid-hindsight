@@ -26,6 +26,7 @@ module Liquid
     OPEN_SQUARE = [:open_square, "["].freeze
     PIPE = [:pipe, "|"].freeze
     QUESTION = [:question, "?"].freeze
+    RUBY_WHITESPACE = [" ", "\t", "\r", "\n", "\f"].freeze
     SINGLE_STRING_LITERAL = /'[^\']*'/
     WHITESPACE_OR_NOTHING = /\s*/
 
@@ -158,6 +159,8 @@ module Liquid
       rescue ::ArgumentError => e
         if e.message == "invalid byte sequence in #{ss.string.encoding}"
           raise SyntaxError, "Invalid byte sequence in #{ss.string.encoding}"
+        else
+          raise
         end
       end
 

@@ -27,6 +27,10 @@ module Liquid
       @markup
     end
 
+    def ==(other)
+      self.class == other.class && name == other.name && filters == other.filters
+    end
+
     def markup_context(markup)
       "in \"{{#{markup}}}\""
     end
@@ -100,6 +104,7 @@ module Liquid
 
     def render_obj_to_output(obj, output)
       case obj
+      when NilClass
       when Array
         obj.each do |o|
           render_obj_to_output(o, output)
@@ -107,6 +112,10 @@ module Liquid
       else
         output << Liquid::Utils.to_s(obj)
       end
+    end
+
+    def disabled?(_context)
+      false
     end
 
     def disabled_tags

@@ -27,6 +27,10 @@ module Liquid
 
     alias_method :eql?, :==
 
+    def hash
+      @self_context.object_id.hash
+    end
+
     protected
 
     attr_reader :self_context

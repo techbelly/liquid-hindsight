@@ -5,7 +5,7 @@ module Liquid
     Syntax = /(\w+)\s+in\s+(#{QuotedFragment}+)/o
     ALLOWED_ATTRIBUTES = ['cols', 'limit', 'offset', 'range'].freeze
 
-    attr_reader :collection_name, :attributes
+    attr_reader :variable_name, :collection_name, :attributes
 
     def initialize(tag_name, markup, options)
       super
@@ -52,6 +52,8 @@ module Liquid
         markup.scan(TagAttributes) do |key, value|
           @attributes[key] = parse_expression(value)
         end
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.table_row")
       end
     end
 

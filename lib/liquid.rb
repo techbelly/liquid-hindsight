@@ -6,22 +6,30 @@ module Liquid
   FilterSeparator             = /\|/
   ArgumentSeparator           = ','
   FilterArgumentSeparator     = ':'
+  VariableAttributeSeparator  = '.'
   WhitespaceControl           = '-'
   TagStart                    = /\{\%/
   TagEnd                      = /\%\}/
   TagName                     = /#|\w+/
   VariableSignature           = /\(?[\w\-\.\[\]]\)?/
   VariableSegment             = /[\w\-]/
+  VariableStart               = /\{\{/
   VariableEnd                 = /\}\}/
+  VariableIncompleteEnd       = /\}\}?/
   QuotedString                = /"[^"]*"|'[^']*'/
   QuotedFragment              = /#{QuotedString}|(?:[^\s,\|'"]|#{QuotedString})+/o
   TagAttributes               = /(\w[\w-]*)\s*\:\s*(#{QuotedFragment})/o
+  AnyStartingTag              = /#{TagStart}|#{VariableStart}/o
+  PartialTemplateParser       = /#{TagStart}.*?#{TagEnd}|#{VariableStart}.*?#{VariableIncompleteEnd}/om
+  TemplateParser              = /(#{PartialTemplateParser}|#{AnyStartingTag})/om
   VariableParser              = /\[(?>[^\[\]]+|\g<0>)*\]|#{VariableSegment}+\??/o
 
   RAISE_EXCEPTION_LAMBDA = ->(_e) { raise }
+  HAS_STRING_SCANNER_SCAN_BYTE = StringScanner.instance_methods.include?(:scan_byte)
 end
 
 require "liquid/version"
+require "liquid/deprecations"
 require "liquid/const"
 require 'liquid/standardfilters'
 require 'liquid/file_system'

@@ -17,6 +17,7 @@ module Liquid
 
     def parse_body(body, tokenizer)
       if parse_context.depth >= MAX_DEPTH
+        raise StackLevelError, "Nesting too deep"
       end
 
       parse_context.depth += 1
@@ -56,12 +57,16 @@ module Liquid
       ensure
         parse_context.depth -= 1
       end
+
+      false
     end
 
     def parse_raw_tag_body(tokenizer)
       while (token = tokenizer.send(:shift))
         return if token =~ BlockBody::FullTokenPossiblyInvalid && "endraw" == Regexp.last_match(2)
       end
+
+      raise_tag_never_closed("raw")
     end
   end
 end

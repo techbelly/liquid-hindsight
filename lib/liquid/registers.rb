@@ -45,4 +45,6 @@ module Liquid
       @changes.key?(key) || @static.key?(key)
     end
   end
+
+  StaticRegisters = Registers
 end

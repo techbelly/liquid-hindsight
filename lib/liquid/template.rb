@@ -8,8 +8,27 @@ module Liquid
     attr_reader :profiler
 
     class << self
+      def error_mode=(mode)
+        Deprecations.warn("Template.error_mode=", "Environment#error_mode=")
+        Environment.default.error_mode = mode
+      end
+
       def error_mode
         Environment.default.error_mode
+      end
+
+      def default_exception_renderer=(renderer)
+        Deprecations.warn("Template.default_exception_renderer=", "Environment#exception_renderer=")
+        Environment.default.exception_renderer = renderer
+      end
+
+      def default_exception_renderer
+        Environment.default.exception_renderer
+      end
+
+      def file_system=(file_system)
+        Deprecations.warn("Template.file_system=", "Environment#file_system=")
+        Environment.default.file_system = file_system
       end
 
       def file_system
@@ -18,6 +37,25 @@ module Liquid
 
       def tags
         Environment.default.tags
+      end
+
+      def register_tag(name, klass)
+        Deprecations.warn("Template.register_tag", "Environment#register_tag")
+        Environment.default.register_tag(name, klass)
+      end
+
+      def register_filter(mod)
+        Deprecations.warn("Template.register_filter", "Environment#register_filter")
+        Environment.default.register_filter(mod)
+      end
+
+      private def default_resource_limits=(limits)
+        Deprecations.warn("Template.default_resource_limits=", "Environment#default_resource_limits=")
+        Environment.default.default_resource_limits = limits
+      end
+
+      def default_resource_limits
+        Environment.default.default_resource_limits
       end
 
       def parse(source, options = {})

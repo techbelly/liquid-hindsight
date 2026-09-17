@@ -32,6 +32,7 @@ module Liquid
 
     def strict2_parse(markup)
       unless markup =~ Syntax
+        self.class.raise_syntax_error(parse_context)
       end
 
       lhs = Regexp.last_match(1).strip

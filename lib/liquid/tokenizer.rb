@@ -8,6 +8,7 @@ module Liquid
 
     TAG_END = /%\}/
     TAG_OR_VARIABLE_START = /\{[\{\%]/
+    NEWLINE = /\n/
 
     OPEN_CURLEY = "{".ord
     CLOSE_CURLEY = "}".ord
@@ -104,6 +105,8 @@ module Liquid
     rescue ::ArgumentError => e
       if e.message == "invalid byte sequence in #{@ss.string.encoding}"
         raise SyntaxError, "Invalid byte sequence in #{@ss.string.encoding}"
+      else
+        raise
       end
     end
 
@@ -133,6 +136,8 @@ module Liquid
         elsif byte_a == OPEN_CURLEY && byte_b == PERCENTAGE
           return next_tag_token_with_start(start)
         end
+
+        byte_a = byte_b
       end
 
       "{{"

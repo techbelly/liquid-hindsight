@@ -373,6 +373,7 @@ class TemplateTest < Minitest::Test
     t = Template.parse("{{a}} {{x | upcase | somefilter1 | somefilter2 | somefilter3}}")
     filters = Module.new do
       def somefilter3(v)
+        "-#{v}-"
       end
     end
     result = t.render({ 'a' => 123, 'x' => 'foo' }, filters: [filters], strict_filters: true)

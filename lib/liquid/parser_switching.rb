@@ -8,6 +8,9 @@ module Liquid
       strict_parse_with_error_context(markup)
     rescue SyntaxError => e
       case parse_context.error_mode
+      when :rigid
+        rigid_warn
+        raise
       when :strict2
         raise
       when :strict
@@ -20,6 +23,7 @@ module Liquid
 
     def parse_with_selected_parser(markup)
       case parse_context.error_mode
+      when :rigid   then rigid_warn && strict2_parse_with_error_context(markup)
       when :strict2 then strict2_parse_with_error_context(markup)
       when :strict  then strict_parse_with_error_context(markup)
       when :lax     then lax_parse(markup)
@@ -38,6 +42,10 @@ module Liquid
     end
 
     private
+
+    def rigid_warn
+      Deprecations.warn(':rigid', ':strict2')
+    end
 
     def strict2_parse_with_error_context(markup)
       strict2_parse(markup)

@@ -146,6 +146,8 @@ module Liquid
 
     def self.to_s(obj, seen = {})
       case obj
+      when BigDecimal
+        obj.to_s("F")
       when Hash
         if obj.class.instance_method(:to_s) == HASH_TO_S_METHOD
           hash_inspect(obj, seen)
@@ -164,6 +166,8 @@ module Liquid
       when Hash
         if obj.class.instance_method(:inspect) == HASH_INSPECT_METHOD
           hash_inspect(obj, seen)
+        else
+          obj.inspect
         end
       when Array
         array_inspect(obj, seen)
@@ -174,6 +178,7 @@ module Liquid
 
     def self.array_inspect(arr, seen = {})
       if seen[arr.object_id]
+        return "[...]"
       end
 
       seen[arr.object_id] = true

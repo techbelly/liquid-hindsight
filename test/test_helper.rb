@@ -14,6 +14,11 @@ if (env_mode = ENV['LIQUID_PARSER_MODE'])
 end
 Liquid::Environment.default.error_mode = mode
 
+if Minitest.const_defined?('Test')
+else
+  Minitest::Test = MiniTest::Unit::TestCase
+end
+
 module Minitest
   class Test
     def fixture(name)

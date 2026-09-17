@@ -390,7 +390,7 @@ HERE
   end
 
   class LoaderDrop < Liquid::Drop
-    attr_reader :each_called, :load_slice_called
+    attr_accessor :each_called, :load_slice_called
 
     def initialize(data)
       @data = data
@@ -528,6 +528,8 @@ HERE
   def test_endless_range_subclass_with_custom_each_remains_unsupported
     range = Class.new(Range) do
       def each
+        yield 10
+        yield 20
       end
     end.new(1, nil)
 

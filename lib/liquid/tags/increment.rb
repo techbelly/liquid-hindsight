@@ -4,6 +4,8 @@ module Liquid
   class Increment < Tag
     include ParserSwitching
 
+    attr_reader :variable_name
+
     def initialize(tag_name, markup, options)
       super
       parse_with_selected_parser(markup)

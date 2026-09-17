@@ -6,11 +6,13 @@ module Liquid
 
     attr_accessor :tags
 
+    attr_accessor :strainer_template
+
     attr_accessor :exception_renderer
 
     attr_accessor :file_system
 
-    attr_reader :default_resource_limits
+    attr_accessor :default_resource_limits
 
     class << self
       def build(tags: nil, file_system: nil, error_mode: nil, exception_renderer: nil)
@@ -73,6 +75,10 @@ module Liquid
       end
 
       strainer_template.new(context)
+    end
+
+    def filter_method_names
+      @strainer_template.filter_method_names
     end
 
     def tag_for_name(name)

@@ -8,11 +8,18 @@ module Liquid
   end
 
   class LocalFileSystem
-    attr_reader :root
+    attr_accessor :root
 
     def initialize(root, pattern = "_%s.liquid")
       @root    = root
       @pattern = pattern
+    end
+
+    def read_template_file(template_path)
+      full_path = full_path(template_path)
+      raise FileSystemError, "No such template '#{template_path}'" unless File.exist?(full_path)
+
+      File.read(full_path)
     end
 
     def full_path(template_path)

@@ -4,7 +4,7 @@ module Liquid
   class For < Block
     Syntax = /\A(#{VariableSegment}+)\s+in\s+(#{QuotedFragment}+)\s*(reversed)?/o
 
-    attr_reader :collection_name, :limit, :from
+    attr_reader :collection_name, :variable_name, :limit, :from
 
     def initialize(tag_name, markup, options)
       super
@@ -59,6 +59,8 @@ module Liquid
         markup.scan(TagAttributes) do |key, value|
           set_attribute(key, value)
         end
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.for")
       end
     end
 
@@ -76,6 +78,7 @@ module Liquid
       while p.look(:comma) || p.look(:id)
         p.consume?(:comma)
         unless (attribute = p.id?('limit') || p.id?('offset'))
+          raise SyntaxError, options[:locale].t("errors.syntax.for_invalid_attribute")
         end
         p.consume(:colon)
         set_attribute(attribute, p.expression, safe: true)
