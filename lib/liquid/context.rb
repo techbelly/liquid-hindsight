@@ -54,6 +54,10 @@ module Liquid
     end
     # rubocop:enable Metrics/ParameterLists
 
+    def apply_global_filter(obj)
+      global_filter.nil? ? obj : global_filter.call(obj)
+    end
+
     protected
 
     attr_writer :base_scope_depth, :warnings, :errors, :strainer, :filters, :disabled_tags
