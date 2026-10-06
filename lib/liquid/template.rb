@@ -98,6 +98,10 @@ module Liquid
 
         c
       when Liquid::Drop
+        drop = args.shift
+        c    = Context.new([drop, assigns], instance_assigns, registers, @rethrow_errors, @resource_limits, {}, @environment)
+        drop.context = c if drop.respond_to?(:context=)
+        c
       when Hash
         Context.new([args.shift, assigns], instance_assigns, registers, @rethrow_errors, @resource_limits, {}, @environment)
       when nil
