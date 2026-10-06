@@ -122,6 +122,11 @@ class ContextTest < Minitest::Test
     assert_equal('bar', @context['foo'])
   end
 
+  def test_cents
+    @context.merge("cents" => HundredCentes.new)
+    assert_equal(100, @context['cents'])
+  end
+
   def test_to_liquid_and_context_at_first_level
     @context['category'] = Category.new("foobar")
     assert_kind_of(CategoryDrop, @context['category'])
