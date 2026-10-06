@@ -14,6 +14,21 @@ module Liquid
       @path = path
     end
 
+    def translate(name, vars = {})
+      interpolate(deep_fetch_translation(name), vars)
+    end
+    alias_method :t, :translate
+
+    def locale
+      @locale ||= YAML.load_file(@path)
+    end
+
     private
+
+    def deep_fetch_translation(name)
+      name.split('.').reduce(locale) do |level, cur|
+        level[cur] || raise(TranslationError, "Translation for #{name} does not exist in locale #{path}")
+      end
+    end
   end
 end
