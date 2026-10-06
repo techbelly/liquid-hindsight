@@ -138,6 +138,26 @@ class ContextTest < Minitest::Test
     end
   end
 
+  def test_length_query
+    assert_template_result(
+      "true",
+      "{% if numbers.size == 4 %}true{% endif %}",
+      { "numbers" => [1, 2, 3, 4] },
+    )
+
+    assert_template_result(
+      "true",
+      "{% if numbers.size == 4 %}true{% endif %}",
+      { "numbers" => { 1 => 1, 2 => 2, 3 => 3, 4 => 4 } },
+    )
+
+    assert_template_result(
+      "true",
+      "{% if numbers.size == 1000 %}true{% endif %}",
+      { "numbers" => { 1 => 1, 2 => 2, 3 => 3, 4 => 4, 'size' => 1000 } },
+    )
+  end
+
   def test_add_filter
     filter = Module.new do
       def hi(output)

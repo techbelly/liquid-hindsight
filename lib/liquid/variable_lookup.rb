@@ -27,8 +27,14 @@ module Liquid
             string_scanner,
             cache,
           )
+        elsif COMMAND_METHODS.include?(lookup)
+          @command_flags |= 1 << i
         end
       end
+    end
+
+    def lookup_command?(lookup_index)
+      @command_flags & (1 << lookup_index) != 0
     end
 
     def evaluate(context)
@@ -50,6 +56,12 @@ module Liquid
           # if its a proc we will replace the entry with the proc
           res    = context.lookup_and_evaluate(object, key)
           object = res.to_liquid
+
+          # Some special cases. If the part wasn't in square brackets and
+          # no key with the same name was found we interpret following calls
+          # as commands and call them on the current object
+        elsif lookup_command?(i) && object.respond_to?(key)
+          object = object.send(key).to_liquid
         end
 
         # If we are dealing with a drop here we have to
