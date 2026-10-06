@@ -20,9 +20,27 @@ module Liquid
 
     attr_reader :blocks
 
+    def initialize(tag_name, markup, options)
+      super
+      @blocks = []
+      push_block('if', markup)
+    end
+
     ELSE_TAG_NAMES = ['elsif', 'else'].freeze
     private_constant :ELSE_TAG_NAMES
 
     private
+
+    def push_block(tag, markup)
+      block = if tag == 'else'
+        ElseCondition.new
+      else
+        parse_with_selected_parser(markup)
+      end
+    end
+
+    def strict_parse(markup)
+      p = @parse_context.new_parser(markup)
+    end
   end
 end

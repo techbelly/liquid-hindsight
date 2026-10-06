@@ -5,6 +5,14 @@ require 'test_helper'
 class ErrorHandlingTest < Minitest::Test
   include Liquid
 
+  def test_unrecognized_operator
+    with_error_modes(:strict) do
+      assert_raises(SyntaxError) do
+        Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ')
+      end
+    end
+  end
+
   def test_with_line_numbers_adds_numbers_to_parser_errors
     source = <<~LIQUID
       foobar
