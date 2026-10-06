@@ -39,6 +39,7 @@ module Liquid
 
     def parse(tokens)
       if parse_body(@for_block, tokens)
+        parse_body(@else_block, tokens)
       end
       @else_block&.freeze
       @for_block.freeze
@@ -46,6 +47,11 @@ module Liquid
 
     def nodelist
       @else_block ? [@for_block, @else_block] : [@for_block]
+    end
+
+    def unknown_tag(tag, markup, tokens)
+      return super unless tag == 'else'
+      @else_block = new_body
     end
 
     protected
