@@ -111,6 +111,7 @@ module Liquid
     end
 
     def render_obj_to_output(obj, output)
+      output << Liquid::Utils.to_s(obj)
     end
 
     private
