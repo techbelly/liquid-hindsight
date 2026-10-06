@@ -5,6 +5,13 @@ require 'test_helper'
 class ParserUnitTest < Minitest::Test
   include Liquid
 
+  def test_consume
+    p = new_parser("wat: 7")
+    assert_equal('wat', p.consume(:id))
+    assert_equal(':', p.consume(:colon))
+    assert_equal('7', p.consume(:number))
+  end
+
   def test_invalid_expression
     assert_raises(SyntaxError) do
       p = new_parser("==")

@@ -9,6 +9,12 @@ module Liquid
       @reject_bare_brackets = reject_bare_brackets
     end
 
+    def consume(type = nil)
+      token = @tokens[@p]
+      @p += 1
+      token[1]
+    end
+
     def expression
       token = @tokens[@p]
       raise SyntaxError, "#{token} is not a valid expression"
