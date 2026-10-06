@@ -29,6 +29,19 @@ module Liquid
       unless result
         return first_block.attachment.render_to_output_buffer(context, output)
       end
+
+      # After the first condition unless works just like if
+      @blocks[1..-1].each do |block|
+        result = Liquid::Utils.to_liquid_value(
+          block.evaluate(context),
+        )
+
+        if result
+          return block.attachment.render_to_output_buffer(context, output)
+        end
+      end
+
+      output
     end
   end
 end
