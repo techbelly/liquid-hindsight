@@ -28,6 +28,13 @@ class TemplateUnitTest < Minitest::Test
     end
   end
 
+  class TemplateSubclass < Liquid::Template
+  end
+
+  def test_template_inheritance
+    assert_equal("foo", TemplateSubclass.parse("foo").render)
+  end
+
   def test_invalid_utf8
     input = "\xff\x00"
     error = assert_raises(SyntaxError) do
