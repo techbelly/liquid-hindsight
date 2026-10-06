@@ -35,6 +35,21 @@ class ForTagTest < Minitest::Test
     assert_template_result(' 1  2  3 ', '{%for item in (1..foobar.value) %} {{item}} {%endfor%}', { "foobar" => foobar })
   end
 
+  def test_for_helpers
+    assigns = { 'array' => [1, 2, 3] }
+    assert_template_result(
+      ' 1/3  2/3  3/3 ',
+      '{%for item in array%} {{forloop.index}}/{{forloop.length}} {%endfor%}',
+      assigns,
+    )
+    assert_template_result(' 1  2  3 ', '{%for item in array%} {{forloop.index}} {%endfor%}', assigns)
+    assert_template_result(' 0  1  2 ', '{%for item in array%} {{forloop.index0}} {%endfor%}', assigns)
+    assert_template_result(' 2  1  0 ', '{%for item in array%} {{forloop.rindex0}} {%endfor%}', assigns)
+    assert_template_result(' 3  2  1 ', '{%for item in array%} {{forloop.rindex}} {%endfor%}', assigns)
+    assert_template_result(' true  false  false ', '{%for item in array%} {{forloop.first}} {%endfor%}', assigns)
+    assert_template_result(' false  false  true ', '{%for item in array%} {{forloop.last}} {%endfor%}', assigns)
+  end
+
   def test_for_and_if
     assigns = { 'array' => [1, 2, 3] }
     assert_template_result(
