@@ -43,6 +43,38 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_summary
+    #   The 0-based index of the current iteration.
+    # @liquid_return [number]
+    def index0
+      @index
+    end
+
+    # @liquid_public_docs
+    # @liquid_summary
+    #   The 0-based index of the current column.
+    # @liquid_return [number]
+    def col0
+      @col - 1
+    end
+
+    # @liquid_public_docs
+    # @liquid_summary
+    #   The 1-based index of the current iteration, in reverse order.
+    # @liquid_return [number]
+    def rindex
+      @length - @index
+    end
+
+    # @liquid_public_docs
+    # @liquid_summary
+    #   The 0-based index of the current iteration, in reverse order.
+    # @liquid_return [number]
+    def rindex0
+      @length - @index - 1
+    end
+
+    # @liquid_public_docs
+    # @liquid_summary
     #   Returns `true` if the current iteration is the first. Returns `false` if not.
     # @liquid_return [boolean]
     def first
@@ -55,6 +87,14 @@ module Liquid
     # @liquid_return [boolean]
     def last
       @index == @length - 1
+    end
+
+    # @liquid_public_docs
+    # @liquid_summary
+    #   Returns `true` if the current column is the first in the row. Returns `false` if not.
+    # @liquid_return [boolean]
+    def col_first
+      @col == 1
     end
 
     # @liquid_public_docs
