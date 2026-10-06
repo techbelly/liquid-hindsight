@@ -685,6 +685,17 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result('1 1 1 2', "{{ '1 1 1 1' | replace_last: '1', 2 }}")
   end
 
+  def test_remove
+    assert_equal('   ', @filters.remove("a a a a", 'a'))
+    assert_template_result('   ', "{{ '1 1 1 1' | remove: 1 }}")
+
+    assert_equal('b a a', @filters.remove_first("a b a a", 'a '))
+    assert_template_result(' 1 1 1', "{{ '1 1 1 1' | remove_first: 1 }}")
+
+    assert_equal('a a b', @filters.remove_last("a a b a", ' a'))
+    assert_template_result('1 1 1 ', "{{ '1 1 1 1' | remove_last: 1 }}")
+  end
+
   def test_pipes_in_string_arguments
     assert_template_result('foobar', "{{ 'foo|bar' | remove: '|' }}")
   end

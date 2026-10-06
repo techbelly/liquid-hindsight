@@ -653,6 +653,28 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Removes the first instance of a substring inside a string.
+    # @liquid_syntax string | remove_first: string
+    # @liquid_return [string]
+    def remove_first(input, string)
+      replace_first(input, string, '')
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Removes the last instance of a substring inside a string.
+    # @liquid_syntax string | remove_last: string
+    # @liquid_return [string]
+    def remove_last(input, string)
+      replace_last(input, string, '')
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Adds a given string to the end of a string.
     # @liquid_syntax string | append: string
     # @liquid_return [string]
