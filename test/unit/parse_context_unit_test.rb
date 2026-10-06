@@ -51,6 +51,14 @@ class ParseContextUnitTest < Minitest::Test
     assert_equal(['title'], result_strict2.lookups)
   end
 
+  def test_parse_expression_with_empty_string_and_safe_true
+    result_strict = strict_parse_context.parse_expression('', safe: true)
+    assert_nil(result_strict)
+
+    result_strict2 = strict2_parse_context.parse_expression('', safe: true)
+    assert_nil(result_strict2)
+  end
+
   private
 
   def strict_parse_context
