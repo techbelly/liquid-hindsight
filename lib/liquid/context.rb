@@ -206,6 +206,12 @@ module Liquid
 
     def squash_instance_assigns_with_environments
       @scopes.last.each_key do |k|
+        @environments.each do |env|
+          if env.key?(k)
+            scopes.last[k] = lookup_and_evaluate(env, k)
+            break
+          end
+        end
       end
     end # squash_instance_assigns_with_environments
   end # Context
