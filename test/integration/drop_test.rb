@@ -169,6 +169,10 @@ class DropsTest < Minitest::Test
     end
   end
 
+  def test_empty_string_value_access
+    assert_equal('', Liquid::Template.parse('{{ product[value] }}').render!('product' => ProductDrop.new, 'value' => ''))
+  end
+
   def test_invokable_methods
     assert_equal(%w(to_liquid catchall context texts).to_set, ProductDrop.invokable_methods)
     assert_equal(%w(to_liquid scopes_as_array loop_pos scopes).to_set, ContextDrop.invokable_methods)
