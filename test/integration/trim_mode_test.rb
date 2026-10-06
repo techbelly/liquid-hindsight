@@ -191,4 +191,40 @@ class TrimModeTest < Minitest::Test
     END_EXPECTED
     assert_template_result(expected, text)
   end
+
+  def test_pre_and_post_trim_tags
+    text = <<-END_TEMPLATE
+      <div>
+        <p>
+          {%- if true %}
+          yes
+          {% endif -%}
+        </p>
+      </div>
+    END_TEMPLATE
+    expected = <<-END_EXPECTED
+      <div>
+        <p>
+          yes
+          </p>
+      </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+
+    text = <<-END_TEMPLATE
+      <div>
+        <p>
+          {%- if false %}
+          no
+          {% endif -%}
+        </p>
+      </div>
+    END_TEMPLATE
+    expected = <<-END_EXPECTED
+      <div>
+        <p></p>
+      </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+  end
 end # TrimModeTest
