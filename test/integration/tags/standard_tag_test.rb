@@ -75,4 +75,11 @@ class StandardTagTest < Minitest::Test
       assert_template_result('',  '{% case false %}{% huh %}true{% endcase %}', {})
     end
   end
+
+  def test_illegal_symbols
+    assert_template_result('', '{% if true == empty %}?{% endif %}', {})
+    assert_template_result('', '{% if true == null %}?{% endif %}', {})
+    assert_template_result('', '{% if empty == true %}?{% endif %}', {})
+    assert_template_result('', '{% if null == true %}?{% endif %}', {})
+  end
 end # StandardTagTest
