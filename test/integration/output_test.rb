@@ -53,4 +53,11 @@ class OutputTest < Minitest::Test
     source = " {{car.bmw}} {{car.gm}} {{car.bmw}} "
     assert_template_result(" good bad good ", source, @assigns)
   end
+
+  def test_variable_piping
+    text     = %( {{ car.gm | make_funny }} )
+    expected = %( LOL )
+
+    assert_equal(expected, Template.parse(text).render!(@assigns, filters: [FunnyFilter]))
+  end
 end # OutputTest
