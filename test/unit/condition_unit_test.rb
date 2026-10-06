@@ -185,6 +185,15 @@ class ConditionUnitTest < Minitest::Test
   # Ruby's standard library has empty? on String, Array, and Hash, but Liquid
   # provides a fallback implementation for consistency.
 
+  def test_empty_with_empty_string
+    # An empty string ("") has length 0, so it's empty.
+    # Different from blank - empty is a stricter check.
+    @context['empty_string'] = ''
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_true(VariableLookup.new('empty_string'), '==', empty_literal)
+  end
+
   private
 
   def assert_evaluates_true(left, op, right)

@@ -100,7 +100,20 @@ module Liquid
     private
 
     def equal_variables(left, right)
+      if right.is_a?(MethodLiteral)
+        return call_method_literal(right, left)
+      end
+
       left == right
+    end
+
+    def call_method_literal(literal, value)
+      method_name = literal.method_name
+
+      # If the object responds to the method (e.g., ActiveSupport is loaded), use it
+      if value.respond_to?(method_name)
+        value.send(method_name)
+      end
     end
 
     def interpret_condition(left, right, op, context)
