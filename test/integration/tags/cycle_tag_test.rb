@@ -3,6 +3,16 @@
 require 'test_helper'
 
 class CycleTagTest < Minitest::Test
+  def test_unnamed_cycle_dependent_counter_when_used_with_literal_values
+    template = <<~LIQUID
+      {%- cycle "1", "2" -%}
+      {%- cycle "1", "2" -%}
+      {%- cycle "1", "2" -%}
+    LIQUID
+
+    assert_template_result("121", template)
+  end
+
   def test_cycle_tag_without_arguments
     error = assert_raises(Liquid::SyntaxError) do
       Template.parse("{% cycle %}")
