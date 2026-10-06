@@ -45,6 +45,14 @@ module Liquid
       "#{@tag_name} #{@markup}"
     end
 
+    def name
+      self.class.name.downcase
+    end
+
+    def render(_context)
+      ''
+    end
+
     private
   end
 end
