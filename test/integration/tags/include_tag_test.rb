@@ -49,6 +49,13 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_include_tag_looks_for_file_system_in_registers_first
+    assert_equal(
+      'from OtherFileSystem',
+      Template.parse("{% include 'pick_a_source' %}").render!({}, registers: { file_system: OtherFileSystem.new }),
+    )
+  end
+
   def test_include_tag_with_default_name
     assert_template_result(
       "Product: Draft 151cm ",
