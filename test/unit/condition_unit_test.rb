@@ -214,6 +214,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new('empty_hash'), '==', blank_literal)
   end
 
+  def test_blank_with_false
+    # false is considered blank to match ActiveSupport semantics.
+    # This allows {% if some_flag == blank %} to work when flag is false.
+    @context['false_value'] = false
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('false_value'), '==', blank_literal)
+  end
+
   def test_not_blank_with_true
     # true is a definite value, not blank.
     # Ensures {% if flag == blank %} works correctly for boolean flags.

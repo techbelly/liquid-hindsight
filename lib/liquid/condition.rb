@@ -130,6 +130,8 @@ module Liquid
     # empty arrays, and empty hashes
     def liquid_blank?(value)
       case value
+      when NilClass, FalseClass
+        true
       when TrueClass, Numeric
         false
       when String
