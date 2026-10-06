@@ -10,6 +10,12 @@ module Liquid
     include ParserSwitching
 
     class << self
+      def parse(tag_name, markup, tokenizer, parse_context)
+        tag = new(tag_name, markup, parse_context)
+        tag.parse(tokenizer)
+        tag
+      end
+
       def disable_tags(*tag_names)
         tag_names += disabled_tags
         define_singleton_method(:disabled_tags) { tag_names }
@@ -23,6 +29,13 @@ module Liquid
       def disabled_tags
         []
       end
+    end
+
+    def initialize(tag_name, markup, parse_context)
+      @tag_name      = tag_name
+      @markup        = markup
+      @parse_context = parse_context
+      @line_number   = parse_context.line_number
     end
 
     def parse(_tokens)
