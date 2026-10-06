@@ -85,4 +85,8 @@ class BlankTest < Minitest::Test
   def test_cycle_is_not_blank
     assert_template_result("  " * ((N + 1) / 2) + " ", wrap("{% cycle ' ', ' ' %}"))
   end
+
+  def test_raw_is_not_blank
+    assert_template_result("  " * (N + 1), wrap(" {% raw %} {% endraw %}"))
+  end
 end
