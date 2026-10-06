@@ -55,4 +55,11 @@ class EnvironmentFilterTest < Minitest::Test
     strainer = @environment.create_strainer(@context)
     assert_equal("password", strainer.invoke("undef_the_method", "password"))
   end
+
+  def test_strainer_only_allows_methods_defined_in_filters
+    strainer = @environment.create_strainer(@context)
+    assert_equal("1 + 1", strainer.invoke("instance_eval", "1 + 1"))
+    assert_equal("puts",  strainer.invoke("__send__", "puts", "Hi Mom"))
+    assert_equal("has_method?", strainer.invoke("invoke", "has_method?", "invoke"))
+  end
 end
