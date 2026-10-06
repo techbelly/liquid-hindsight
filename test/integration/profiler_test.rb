@@ -43,6 +43,14 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_profiling_times_the_rendering_of_tokens
+    t = Template.parse("{% include 'a_template' %}", profile: true)
+    t.render!
+
+    node = t.profiler[0]
+    refute_nil(node.render_time)
+  end
+
   def test_profiling_times_the_entire_render
     t = Template.parse("{% include 'a_template' %}", profile: true)
     t.render!
