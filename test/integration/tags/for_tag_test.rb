@@ -67,4 +67,15 @@ class ForTagTest < Minitest::Test
 
     assert_raises(RangeError) { template.render!('numbers' => (1..)) }
   end
+
+  def test_endless_range_subclass_with_custom_each_remains_unsupported
+    range = Class.new(Range) do
+      def each
+      end
+    end.new(1, nil)
+
+    assert_raises(RangeError) do
+      Template.parse('{% for i in numbers %}{{ i }}{% endfor %}').render!('numbers' => range)
+    end
+  end
 end
