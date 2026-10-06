@@ -649,6 +649,14 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, template, { "array" => array })
   end
 
+  def test_where_with_empty_string_is_a_no_op
+    environment = { "array" => ["alpha", "beta", "gamma"] }
+    expected_output = "alpha beta gamma"
+    template = "{{ array | where: '' | join: ' ' }}"
+
+    assert_template_result(expected_output, template, environment)
+  end
+
   def test_where_string_keys
     input = [
       "alpha", "beta", "gamma", "delta"
