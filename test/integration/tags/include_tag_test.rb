@@ -99,6 +99,16 @@ class IncludeTagTest < Minitest::Test
     end
   end
 
+  def test_include_tag_caches_second_read_of_same_partial
+    file_system = CountingFileSystem.new
+    environment = Liquid::Environment.build(file_system: file_system)
+    assert_equal(
+      'from CountingFileSystemfrom CountingFileSystem',
+      Template.parse("{% include 'pick_a_source' %}{% include 'pick_a_source' %}", environment: environment).render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(1, file_system.count)
+  end
+
   def test_custom_include_tag
     original_tag = Liquid::Template.tags['include']
     Liquid::Template.tags['include'] = CustomInclude
