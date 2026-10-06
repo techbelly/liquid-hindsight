@@ -72,4 +72,9 @@ class BlankTest < Minitest::Test
     assert_template_result("", wrap(" "))
     assert_template_result("", wrap("\t"))
   end
+
+  def test_whitespace_is_not_blank_if_other_stuff_is_present
+    body = "     x "
+    assert_template_result(body * (N + 1), wrap(body))
+  end
 end
