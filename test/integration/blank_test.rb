@@ -77,4 +77,8 @@ class BlankTest < Minitest::Test
     body = "     x "
     assert_template_result(body * (N + 1), wrap(body))
   end
+
+  def test_increment_is_not_blank
+    assert_template_result(" 0" * 2 * (N + 1), wrap("{% assign foo = 0 %} {% increment foo %} {% decrement foo %}"))
+  end
 end
