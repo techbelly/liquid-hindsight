@@ -17,6 +17,14 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_table_col_counter
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">1</td><td class=\"col2\">2</td></tr>\n<tr class=\"row2\"><td class=\"col1\">1</td><td class=\"col2\">2</td></tr>\n<tr class=\"row3\"><td class=\"col1\">1</td><td class=\"col2\">2</td></tr>\n",
+      '{% tablerow n in numbers cols:2%}{{tablerowloop.col}}{% endtablerow %}',
+      { 'numbers' => [1, 2, 3, 4, 5, 6] },
+    )
+  end
+
   def test_quoted_fragment
     assert_template_result(
       "<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 4 </td><td class=\"col2\"> 5 </td><td class=\"col3\"> 6 </td></tr>\n",
