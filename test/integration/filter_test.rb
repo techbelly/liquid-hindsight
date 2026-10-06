@@ -80,6 +80,10 @@ class FiltersTest < Minitest::Test
       { "case_sensitive" => ["sensitive", "Expected", "case"] },
     )
   end
+
+  def test_strip_html
+    assert_template_result("bla blub", "{{ var | strip_html }}", { "var" => "<b>bla blub</a>" })
+  end
 end
 
 class TestObject < Liquid::Drop
