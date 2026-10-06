@@ -145,6 +145,44 @@ class StandardTagTest < Minitest::Test
     assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1, 1, 1] })
   end
 
+  def test_case_on_size_with_else
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [] },
+    )
+
+    assert_template_result(
+      '1',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1] },
+    )
+
+    assert_template_result(
+      '2',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1] },
+    )
+
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1, 1] },
+    )
+
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1, 1, 1] },
+    )
+
+    assert_template_result(
+      'else',
+      '{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}',
+      { 'a' => [1, 1, 1, 1, 1] },
+    )
+  end
+
   def test_case_when_or
     code = '{% case condition %}{% when 1 or 2 or 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}'
     assert_template_result(' its 1 or 2 or 3 ', code, { 'condition' => 1 })
