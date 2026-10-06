@@ -155,6 +155,8 @@ module Liquid
       hash.each do |key, value|
         if first
           first = false
+        else
+          str << ", "
         end
 
         key_str = inspect(key, seen)
