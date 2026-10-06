@@ -179,6 +179,20 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Decodes a string in URL-safe [Base64 format](https://developer.mozilla.org/en-US/docs/Glossary/Base64).
+    # @liquid_syntax string | base64_url_safe_decode
+    # @liquid_return [string]
+    def base64_url_safe_decode(input)
+      input = Utils.to_s(input)
+      StandardFilters.try_coerce_encoding(Base64.urlsafe_decode64(input), encoding: input.encoding)
+    rescue ::ArgumentError
+      raise Liquid::ArgumentError, "invalid base64 provided to base64_url_safe_decode"
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Returns a substring or series of array items, starting at a given 0-based index.
     # @liquid_description
     #   By default, the substring has a length of one character, and the array series has one array item. However, you can
