@@ -43,6 +43,17 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_profiling_includes_line_numbers_of_liquid_nodes
+    t = Template.parse("{{ 'a string' | upcase }}\n{% increment test %}", profile: true)
+    t.render!
+    assert_equal(2, t.profiler.length)
+
+    # {{ 'a string' | upcase }}
+    assert_equal(1, t.profiler[0].line_number)
+    # {{ increment test }}
+    assert_equal(2, t.profiler[1].line_number)
+  end
+
   def test_profiling_includes_line_numbers_of_included_partials
     t = Template.parse("{% include 'a_template' %}", profile: true)
     t.render!
