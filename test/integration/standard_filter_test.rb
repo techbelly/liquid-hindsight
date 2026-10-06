@@ -823,6 +823,18 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("-0.4", "{{ input | sum }}", { "input" => input })
   end
 
+  def test_sum_with_floats_and_indexable_map_values
+    input = [{ "quantity" => 1 }, { "quantity" => 0.2, "weight" => -0.3 }, { "weight" => 0.4 }]
+    assert_equal(0.0, @filters.sum(input))
+    assert_equal(1.2, @filters.sum(input, "quantity"))
+    assert_equal(0.1, @filters.sum(input, "weight"))
+    assert_equal(0.0, @filters.sum(input, "subtotal"))
+    assert_template_result("0", "{{ input | sum }}", { "input" => input })
+    assert_template_result("1.2", "{{ input | sum: 'quantity' }}", { "input" => input })
+    assert_template_result("0.1", "{{ input | sum: 'weight' }}", { "input" => input })
+    assert_template_result("0", "{{ input | sum: 'subtotal' }}", { "input" => input })
+  end
+
   def test_sum_with_non_string_property
     input = [{ true => 1 }, { 1.0 => 0.2, 1 => -0.3 }, { 1..5 => 0.4 }]
 
