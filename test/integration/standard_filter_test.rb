@@ -977,6 +977,24 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, template, { "array" => array })
   end
 
+  def test_find_with_value
+    products = [
+      { "title" => "Pro goggles",    "price" => 1299 },
+      { "title" => "Thermal gloves", "price" => 1499 },
+      { "title" => "Alpine jacket",  "price" => 3999 },
+      { "title" => "Mountain boots", "price" => 3899 },
+      { "title" => "Safety helmet",  "price" => 1999 }
+    ]
+
+    template = <<~LIQUID
+      {%- assign product = products | find: 'price', 3999 -%}
+      {{- product.title -}}
+    LIQUID
+    expected_output = "Alpine jacket"
+
+    assert_template_result(expected_output, template, { "products" => products })
+  end
+
   def test_find_with_empty_arrays
     template = <<~LIQUID
       {%- assign product = products | find: 'title.content', 'Not found' -%}
