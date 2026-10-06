@@ -21,6 +21,10 @@ module Liquid
       end
     end
 
+    def delete(key)
+      @changes.delete(key)
+    end
+
     UNDEFINED = Object.new
 
     def key?(key)
