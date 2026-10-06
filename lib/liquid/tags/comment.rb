@@ -48,6 +48,8 @@ module Liquid
           end
 
           case tag_name
+          when "comment"
+            comment_tag_depth += 1
           when "endcomment"
             comment_tag_depth -= 1
           end
