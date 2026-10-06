@@ -71,6 +71,12 @@ module Liquid
 
     def self.to_integer(num)
       return num if num.is_a?(Integer)
+      num = num.to_s
+      begin
+        Integer(num)
+      rescue ::ArgumentError
+        raise Liquid::ArgumentError, "invalid integer"
+      end
     end
 
     def self.to_liquid_value(obj)
