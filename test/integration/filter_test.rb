@@ -101,6 +101,26 @@ class FiltersTest < Minitest::Test
     assert_equal('A b C', Template.parse("{{objects | sort_natural: 'a' | map: 'a' | join}}").render(@context))
   end
 
+  def test_compact
+    # Test strings
+    assert_template_result(
+      "a b c",
+      "{{words | compact | join}}",
+      { "words" => ['a', nil, 'b', nil, 'c'] },
+    )
+
+    # Test hashes
+    assert_template_result(
+      "A C",
+      "{{hashes | compact: 'a' | map: 'a' | join}}",
+      { "hashes" => [{ "a" => "A" }, { "a" => nil }, { "a" => "C" }] },
+    )
+
+    # Test objects
+    @context['objects'] = [TestObject.new('A'), TestObject.new(nil), TestObject.new('C')]
+    assert_equal('A C', Template.parse("{{objects | compact: 'a' | map: 'a' | join}}").render(@context))
+  end
+
   def test_strip_html
     assert_template_result("bla blub", "{{ var | strip_html }}", { "var" => "<b>bla blub</a>" })
   end

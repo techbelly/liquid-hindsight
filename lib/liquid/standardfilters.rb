@@ -512,7 +512,9 @@ module Liquid
     def compact(input, property = nil)
       ary = InputIterator.new(input, context)
 
-      if ary.empty? # The next two cases assume a non-empty array.
+      if property.nil?
+        ary.compact
+      elsif ary.empty? # The next two cases assume a non-empty array.
         []
       else
         ary.reject do |item|
@@ -740,6 +742,10 @@ module Liquid
           item = Utils.to_liquid_value(item)
           block ? yield(item) : item
         end
+      end
+
+      def compact
+        to_a.compact
       end
 
       def empty?
