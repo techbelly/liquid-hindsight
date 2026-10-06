@@ -69,6 +69,10 @@ class AssignTest < Minitest::Test
     end
   end
 
+  def test_assign_with_filter_in_strict2
+    assert_template_result("HELLO", "{% assign my_var = 'hello' | upcase %}{{ my_var }}", error_mode: :strict2)
+  end
+
   private
 
   class ObjectWrapperDrop < Liquid::Drop
