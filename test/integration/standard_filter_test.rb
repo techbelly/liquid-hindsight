@@ -660,6 +660,20 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result('a', "{{ 'a' | to_number }}")
   end
 
+  def test_reject_with_value
+    array = [
+      { "handle" => "alpha", "ok" => true },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => true },
+    ]
+
+    template = "{{ array | reject: 'ok', true | map: 'handle' | join: ' ' }}"
+    expected_output = "beta gamma"
+
+    assert_template_result(expected_output, template, { "array" => array })
+  end
+
   def test_reject_with_false_value
     array = [
       { "handle" => "alpha", "ok" => true },
