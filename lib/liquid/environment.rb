@@ -94,6 +94,15 @@ module Liquid
       @tags[name] = klass
     end
 
+    # Registers a new filter with the environment.
+    #
+    # @param filter [Module] The module that contains the filter methods.
+    # @return [void]
+    def register_filter(filter)
+      @strainer_template_class_cache.clear
+      @strainer_template.add_filter(filter)
+    end
+
     # Creates a new strainer instance with the given filters, caching the result
     # for faster lookup.
     #
