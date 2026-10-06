@@ -90,6 +90,10 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.upcase(nil))
   end
 
+  def test_has_on_empty_array
+    refute(@filters.has([], 'foo', 'bar'))
+  end
+
   def test_split
     assert_equal(['12', '34'], @filters.split('12~34', '~'))
     assert_equal(['A? ', ' ,Z'], @filters.split('A? ~ ~ ~ ,Z', '~ ~ ~'))

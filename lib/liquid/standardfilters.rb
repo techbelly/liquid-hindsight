@@ -210,6 +210,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Tests if any item in an array has a specific property value.
+    # @liquid_description
+    #   This requires you to provide both the property name and the associated value.
+    # @liquid_syntax array | has: string, string
+    # @liquid_return [boolean]
+    def has(input, property, target_value = nil)
+      filter_array(input, property, target_value, false) { |ary, &block| ary.any?(&block) }
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Returns the first item in an array.
     # @liquid_syntax array | first
     # @liquid_return [untyped]
@@ -235,6 +248,12 @@ module Liquid
     private
 
     attr_reader :context
+
+    def filter_array(input, property, target_value, default_value = [], &block)
+      ary = InputIterator.new(input, context)
+
+      return default_value if ary.empty?
+    end
 
     class InputIterator
       include Enumerable
