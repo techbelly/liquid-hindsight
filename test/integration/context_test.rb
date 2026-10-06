@@ -314,6 +314,15 @@ class ContextTest < Minitest::Test
     assert_template_result("Hello", '{{ hash["first"] }}', { "hash" => { "first" => "Hello" } })
   end
 
+  def test_first_can_appear_in_middle_of_callchain
+    assigns = { "product" => { 'variants' => [{ 'title' => 'draft151cm' }, { 'title' => 'element151cm' }] } }
+
+    assert_template_result('draft151cm', '{{ product.variants[0].title }}', assigns)
+    assert_template_result('element151cm', '{{ product.variants[1].title }}', assigns)
+    assert_template_result('draft151cm', '{{ product.variants.first.title }}', assigns)
+    assert_template_result('element151cm', '{{ product.variants.last.title }}', assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
