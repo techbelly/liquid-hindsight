@@ -300,6 +300,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Removes leading and trailing whitespace and collapses consecutive whitespace to a single space.
+    # @liquid_syntax string | squish
+    # @liquid_return [string]
+    def squish(input)
+      return if input.nil?
+
+      Utils.to_s(input).strip.gsub(/\s+/, ' ')
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Strips all HTML tags from a string.
     # @liquid_syntax string | strip_html
     # @liquid_return [string]
