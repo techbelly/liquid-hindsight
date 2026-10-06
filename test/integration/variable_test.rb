@@ -63,6 +63,11 @@ class VariableTest < Minitest::Test
     assert_template_result("false", "{{ false }}")
   end
 
+  def test_nil_renders_as_empty_string
+    assert_template_result("", "{{ nil }}")
+    assert_template_result("cat", "{{ nil | append: 'cat' }}")
+  end
+
   def test_preset_assigns
     template                 = Template.parse(%({{ test }}))
     template.assigns['test'] = 'worked'
