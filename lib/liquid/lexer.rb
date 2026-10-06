@@ -124,6 +124,9 @@ module Liquid
             else
               output << special
             end
+          elsif (sub_table = TWO_CHARS_COMPARISON_JUMP_TABLE[peeked])
+            ss.scan_byte
+            raise_syntax_error(start_pos, ss)
           elsif (sub_table = COMPARISON_JUMP_TABLE[peeked])
             ss.scan_byte
             output << SINGLE_COMPARISON_TOKENS[peeked]
