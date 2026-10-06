@@ -65,6 +65,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("prepended text {\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | prepend: 'prepended text ' }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
 
+  def test_render_hash_with_array_values_empty
+    assert_template_result("{\"numbers\"=>[]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [] } })
+  end
+
   def test_join_filter_with_hash
     array = [{ "key1" => "value1" }, { "key2" => "value2" }]
     glue = { "lol" => "wut" }
