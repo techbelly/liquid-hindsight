@@ -89,6 +89,14 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('', '{% if 10 > null %} NO {% endif %}')
   end
 
+  def test_else_if
+    assert_template_result('0', '{% if 0 == 0 %}0{% elsif 1 == 1%}1{% else %}2{% endif %}')
+    assert_template_result('1', '{% if 0 != 0 %}0{% elsif 1 == 1%}1{% else %}2{% endif %}')
+    assert_template_result('2', '{% if 0 != 0 %}0{% elsif 1 != 1%}1{% else %}2{% endif %}')
+
+    assert_template_result('elsif', '{% if false %}if{% elsif true %}elsif{% endif %}')
+  end
+
   def test_syntax_error_no_variable
     assert_raises(SyntaxError) { assert_template_result('', '{% if jerry == 1 %}') }
   end
