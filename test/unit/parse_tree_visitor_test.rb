@@ -19,6 +19,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_dynamic_variable
+    assert_equal(
+      ["test", "inlookup"],
+      visit(%({{ test[inlookup] }})),
+    )
+  end
+
   private
 
   def traversal(template)
