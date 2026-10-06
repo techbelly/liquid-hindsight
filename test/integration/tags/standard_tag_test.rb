@@ -183,6 +183,32 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_case_on_length_with_else
+    assert_template_result(
+      'else',
+      '{% case a.empty? %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+
+    assert_template_result(
+      'false',
+      '{% case false %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+
+    assert_template_result(
+      'true',
+      '{% case true %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+
+    assert_template_result(
+      'else',
+      '{% case NULL %}{% when true %}true{% when false %}false{% else %}else{% endcase %}',
+      {},
+    )
+  end
+
   def test_case_when_or
     code = '{% case condition %}{% when 1 or 2 or 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}'
     assert_template_result(' its 1 or 2 or 3 ', code, { 'condition' => 1 })
