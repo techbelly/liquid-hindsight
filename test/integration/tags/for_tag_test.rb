@@ -159,12 +159,23 @@ class ForTagTest < Minitest::Test
 
     def each
       @each_called = true
+      @data.each { |el| yield el }
     end
 
     def load_slice(from, to)
       @load_slice_called = true
       @data[(from..to - 1)]
     end
+  end
+
+  def test_iterate_with_each_when_no_limit_applied
+    loader   = LoaderDrop.new([1, 2, 3, 4, 5])
+    assigns  = { 'items' => loader }
+    expected = '12345'
+    template = '{% for item in items %}{{item}}{% endfor %}'
+    assert_template_result(expected, template, assigns)
+    assert(loader.each_called)
+    assert(!loader.load_slice_called)
   end
 
   def test_iterate_with_load_slice_when_limit_applied
