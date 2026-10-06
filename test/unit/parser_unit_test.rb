@@ -12,6 +12,12 @@ class ParserUnitTest < Minitest::Test
     assert_equal('7', p.consume(:number))
   end
 
+  def test_jump
+    p = new_parser("wat: 7")
+    p.jump(2)
+    assert_equal('7', p.consume(:number))
+  end
+
   def test_invalid_expression
     assert_raises(SyntaxError) do
       p = new_parser("==")

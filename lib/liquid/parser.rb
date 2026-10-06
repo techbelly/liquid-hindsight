@@ -9,6 +9,10 @@ module Liquid
       @reject_bare_brackets = reject_bare_brackets
     end
 
+    def jump(point)
+      @p = point
+    end
+
     def consume(type = nil)
       token = @tokens[@p]
       @p += 1
