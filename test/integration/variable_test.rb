@@ -35,4 +35,9 @@ class VariableTest < Minitest::Test
     assert_template_result('worked', "{{ test.test }}", { 'test' => { 'test' => 'worked' } })
     assert_template_result('worked', "{{ test . test }}", { 'test' => { 'test' => 'worked' } })
   end
+
+  def test_false_renders_as_false
+    assert_template_result("false", "{{ foo }}", { 'foo' => false })
+    assert_template_result("false", "{{ false }}")
+  end
 end
