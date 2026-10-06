@@ -90,6 +90,13 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.upcase(nil))
   end
 
+  def test_escape
+    assert_equal('&lt;strong&gt;', @filters.escape('<strong>'))
+    assert_equal('1', @filters.escape(1))
+    assert_equal('2001-02-03', @filters.escape(Date.new(2001, 2, 3)))
+    assert_nil(@filters.escape(nil))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))

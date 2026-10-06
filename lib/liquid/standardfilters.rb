@@ -73,6 +73,18 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Escapes special characters in HTML, such as `<>`, `'`, and `&`, and converts characters into escape sequences. The filter doesn't effect characters within the string that don’t have a corresponding escape sequence.".
+    # @liquid_syntax string | escape
+    # @liquid_return [string]
+    def escape(input)
+      CGI.escapeHTML(Utils.to_s(input)) unless input.nil?
+    end
+    alias_method :h, :escape
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.

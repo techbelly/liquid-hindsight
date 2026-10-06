@@ -20,3 +20,6 @@ class Range # :nodoc:
     self
   end
 end
+
+class Date # :nodoc:
+end
