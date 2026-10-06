@@ -209,6 +209,21 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal([Liquid::ArgumentError], template.errors.map(&:class))
   end
 
+  def test_setting_exception_renderer_on_environment
+    exceptions = []
+    exception_renderer = ->(e) do
+      exceptions << e
+      ''
+    end
+
+    environment = Liquid::Environment.build(exception_renderer: exception_renderer)
+    template = Liquid::Template.parse('This is a runtime error: {{ errors.argument_error }}', environment: environment)
+    output = template.render('errors' => ErrorDrop.new)
+
+    assert_equal('This is a runtime error: ', output)
+    assert_equal([Liquid::ArgumentError], template.errors.map(&:class))
+  end
+
   class TestFileSystem
     def read_template_file(_template_path)
       "{{ errors.argument_error }}"
