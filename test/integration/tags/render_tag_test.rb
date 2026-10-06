@@ -5,6 +5,14 @@ require 'test_helper'
 class RenderTagTest < Minitest::Test
   include Liquid
 
+  def test_render_does_not_mutate_parent_scope
+    assert_template_result(
+      '',
+      "{% render 'snippet' %}{{ inner }}",
+      partials: { 'snippet' => '{% assign inner = 1 %}' },
+    )
+  end
+
   def test_nested_render_tag
     assert_template_result(
       'one two',
