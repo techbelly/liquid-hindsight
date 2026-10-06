@@ -296,6 +296,15 @@ module Liquid
 
       if ary.empty? # The next two cases assume a non-empty array.
         []
+      else
+        ary.reject do |item|
+          item[property].nil?
+        rescue TypeError
+          raise_property_error(property)
+        rescue NoMethodError
+          return nil unless item.respond_to?(:[])
+          raise
+        end
       end
     end
 
