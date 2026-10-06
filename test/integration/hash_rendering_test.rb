@@ -7,6 +7,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_hash_with_strip_filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | strip }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
   def test_hash_with_escape_filter
     assert_template_result("{&quot;Key&quot;=&gt;&quot;Value&quot;, &quot;AnotherKey&quot;=&gt;&quot;AnotherValue&quot;}", "{{ my_hash | escape }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
