@@ -51,6 +51,17 @@ class ParseContextUnitTest < Minitest::Test
     assert_equal(['title'], result_strict2.lookups)
   end
 
+  def test_parse_expression_with_empty_string
+    result_strict = strict_parse_context.parse_expression('')
+    assert_nil(result_strict)
+
+    error = assert_raises(Liquid::InternalError) do
+      strict2_parse_context.parse_expression('')
+    end
+
+    assert_match(/unsafe parse_expression cannot be used in strict2 mode/, error.message)
+  end
+
   def test_parse_expression_with_empty_string_and_safe_true
     result_strict = strict_parse_context.parse_expression('', safe: true)
     assert_nil(result_strict)
