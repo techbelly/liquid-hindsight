@@ -158,6 +158,10 @@ class ContextTest < Minitest::Test
     )
   end
 
+  def test_hyphenated_variable
+    assert_template_result("godz", "{{ oh-my }}", { "oh-my" => 'godz' })
+  end
+
   def test_add_filter
     filter = Module.new do
       def hi(output)
