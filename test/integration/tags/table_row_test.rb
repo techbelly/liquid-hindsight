@@ -181,6 +181,22 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_tablerow_with_variable_collection_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow n in numbers cols: 2 %}{{ n }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td></tr>
+      <tr class="row2"><td class="col1">3</td><td class="col2">4</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template, { 'numbers' => [1, 2, 3, 4] })
+    end
+  end
+
   def test_tablerow_with_dotted_access_in_strict2_mode
     template = <<~LIQUID.chomp
       {% tablerow n in obj.numbers cols: 2 %}{{ n }}{% endtablerow %}
