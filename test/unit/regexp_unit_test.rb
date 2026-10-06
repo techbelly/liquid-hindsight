@@ -31,4 +31,8 @@ class RegexpUnitTest < Minitest::Test
   def test_single_quoted_words
     assert_equal(['arg1', 'arg2', "'arg 3'"], 'arg1 arg2 \'arg 3\''.scan(QuotedFragment))
   end
+
+  def test_quoted_words_in_the_middle
+    assert_equal(['arg1', 'arg2', '"arg 3"', 'arg4'], 'arg1 arg2 "arg 3" arg4   '.scan(QuotedFragment))
+  end
 end # RegexpTest
