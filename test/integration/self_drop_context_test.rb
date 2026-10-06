@@ -26,4 +26,11 @@ class SelfDropContextTest < Minitest::Test
   def test_bare_self_compares_equal_to_bare_self
     assert_template_result('T', '{% if self == self %}T{% else %}F{% endif %}')
   end
+
+  def test_self_drop_can_be_passed_as_bare_drop_to_render
+    t = Template.parse('{{ self.x }}')
+    drop = SelfDrop.new(Context.new({ 'x' => 42 }))
+    result = t.render(drop)
+    assert_equal('42', result)
+  end
 end
