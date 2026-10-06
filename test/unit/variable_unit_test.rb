@@ -30,6 +30,11 @@ class VariableUnitTest < Minitest::Test
     assert_equal('hello! $!@.;"ddasd" ', var.name)
   end
 
+  def test_string_dot
+    var = create_variable(%( test.test ))
+    assert_equal(VariableLookup.new('test.test'), var.name)
+  end
+
   def test_variable_lookup_interface
     lookup = VariableLookup.new('a.b.c')
     assert_equal('a', lookup.name)
