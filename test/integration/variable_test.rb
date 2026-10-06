@@ -81,4 +81,16 @@ class VariableTest < Minitest::Test
   def test_multiline_variable
     assert_template_result("worked", "{{\ntest\n}}", { "test" => "worked" })
   end
+
+  def test_double_nested_variable_lookup
+    assert_template_result(
+      'bar',
+      '{{ list[list[settings.zero]]["foo"] }}',
+      {
+        'list' => [1, { 'foo' => 'bar' }],
+        'settings' => SettingsDrop.new("zero" => 0),
+        'bar' => 'foo',
+      },
+    )
+  end
 end
