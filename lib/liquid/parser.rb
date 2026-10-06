@@ -57,6 +57,17 @@ module Liquid
       end
     end
 
+    def argument
+      str = +""
+      # might be a keyword argument (identifier: expression)
+      if look(:id) && look(:colon, 1)
+        str << consume << consume << ' '
+      end
+
+      str << expression
+      str
+    end
+
     def variable_lookups
       str = +""
       loop do
