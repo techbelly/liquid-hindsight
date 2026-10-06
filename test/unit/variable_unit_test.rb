@@ -10,6 +10,20 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('hello'), var.name)
   end
 
+  def test_filters_without_whitespace
+    var = create_variable('hello | textileze | paragraph')
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['textileze', []], ['paragraph', []]], var.filters)
+
+    var = create_variable('hello|textileze|paragraph')
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['textileze', []], ['paragraph', []]], var.filters)
+
+    var = create_variable("hello|replace:'foo','bar'|textileze")
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['replace', ['foo', 'bar']], ['textileze', []]], var.filters)
+  end
+
   def test_string_to_filter
     var = create_variable("'http://disney.com/logo.gif' | image: 'med' ")
     assert_equal('http://disney.com/logo.gif', var.name)
