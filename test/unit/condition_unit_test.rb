@@ -178,6 +178,15 @@ class ConditionUnitTest < Minitest::Test
   # - Arrays and Hashes are blank if empty
   # - true and numbers are never blank
 
+  def test_blank_with_whitespace_string
+    # Template authors expect "   " to be blank since it has no visible content.
+    # This matches ActiveSupport's String#blank? which returns true for whitespace-only strings.
+    @context['whitespace'] = '   '
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('whitespace'), '==', blank_literal)
+  end
+
   def test_blank_with_empty_string
     # An empty string has no content, so it should be considered blank.
     # This is the most basic case of a blank string.
