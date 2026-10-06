@@ -60,6 +60,18 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('', '{% if true and false %} YES {% endif %}')
   end
 
+  def test_comparisons_on_null
+    assert_template_result('', '{% if null < 10 %} NO {% endif %}')
+    assert_template_result('', '{% if null <= 10 %} NO {% endif %}')
+    assert_template_result('', '{% if null >= 10 %} NO {% endif %}')
+    assert_template_result('', '{% if null > 10 %} NO {% endif %}')
+
+    assert_template_result('', '{% if 10 < null %} NO {% endif %}')
+    assert_template_result('', '{% if 10 <= null %} NO {% endif %}')
+    assert_template_result('', '{% if 10 >= null %} NO {% endif %}')
+    assert_template_result('', '{% if 10 > null %} NO {% endif %}')
+  end
+
   def test_syntax_error_no_variable
     assert_raises(SyntaxError) { assert_template_result('', '{% if jerry == 1 %}') }
   end
