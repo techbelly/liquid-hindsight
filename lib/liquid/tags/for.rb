@@ -60,6 +60,12 @@ module Liquid
 
     def render_to_output_buffer(context, output)
       segment = collection_segment(context)
+
+      if segment.empty?
+        render_else(context, output)
+      end
+
+      output
     end
 
     protected
@@ -130,6 +136,11 @@ module Liquid
       segment = Utils.slice_collection_for_iteration(
         collection, from, to, context.resource_limits, use_range_to_a: true
       )
+      segment.reverse! if @reversed
+
+      offsets[@name] = from + segment.length
+
+      segment
     end
 
     def set_attribute(key, expr, safe: false)
@@ -143,6 +154,10 @@ module Liquid
       when 'limit'
         @limit = parse_expression(expr, safe: safe)
       end
+    end
+
+    def render_else(context, output)
+      output
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor

@@ -5,6 +5,10 @@ module Liquid
     DECIMAL_REGEX = /\A-?\d+\.\d+\z/
     UNIX_TIMESTAMP_REGEX = /\A\d+\z/
 
+    def self.slice_collection(collection, from, to)
+      slice_collection_using_each(collection, from, to)
+    end
+
     # This is intentionally separate from slice_collection, whose Array-returning
     # behavior is used outside of the iteration tags.
     def self.slice_collection_for_iteration(
@@ -20,6 +24,18 @@ module Liquid
         else
           slice_range_using_each(collection, from, to, resource_limits, allow_endless: allow_endless)
         end
+      else
+        slice_collection(collection, from, to)
+      end
+    end
+
+    def self.slice_collection_using_each(collection, from, to)
+      segments = []
+      index    = 0
+
+      # Maintains Ruby 1.8.7 String#each behaviour on 1.9
+      if collection.is_a?(String)
+        return collection.empty? ? [] : [collection]
       end
     end
 
