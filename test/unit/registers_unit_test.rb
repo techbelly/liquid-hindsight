@@ -44,6 +44,30 @@ class RegistersUnitTest < Minitest::Test
     end
   end
 
+  def test_new_static_retains_static
+    static_register = Registers.new(a: 1, b: 2)
+    static_register[:b] = 22
+    static_register[:c] = 33
+
+    new_static_register = Registers.new(static_register)
+    new_static_register[:b] = 222
+
+    newest_static_register = Registers.new(new_static_register)
+    newest_static_register[:c] = 333
+
+    assert_equal(1, static_register[:a])
+    assert_equal(22, static_register[:b])
+    assert_equal(33, static_register[:c])
+
+    assert_equal(1, new_static_register[:a])
+    assert_equal(222, new_static_register[:b])
+    assert_nil(new_static_register[:c])
+
+    assert_equal(1, newest_static_register[:a])
+    assert_equal(2, newest_static_register[:b])
+    assert_equal(333, newest_static_register[:c])
+  end
+
   def test_multiple_instances_are_unique
     static_register_1 = Registers.new(a: 1, b: 2)
     static_register_1[:b] = 22
