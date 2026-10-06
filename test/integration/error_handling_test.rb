@@ -54,6 +54,14 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal(SyntaxError, template.errors.first.class)
   end
 
+  def test_argument
+    template = Liquid::Template.parse(' {{ errors.argument_error }} ')
+    assert_equal(' Liquid error: argument error ', template.render('errors' => ErrorDrop.new))
+
+    assert_equal(1, template.errors.size)
+    assert_equal(ArgumentError, template.errors.first.class)
+  end
+
   def test_missing_endtag_parse_time_error
     assert_match_syntax_error(/: 'for' tag was never closed\z/, ' {% for a in b %} ... ')
   end
