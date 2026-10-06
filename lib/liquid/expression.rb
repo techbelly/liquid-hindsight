@@ -44,7 +44,14 @@ module Liquid
           return markup[1..-2]
         end
 
-        inner_parse(markup, ss, nil).freeze
+        # Cache only exists during parsing
+        if cache
+          return cache[markup] if cache.key?(markup)
+
+          cache[markup] = inner_parse(markup, ss, cache).freeze
+        else
+          inner_parse(markup, ss, nil).freeze
+        end
       end
 
       def inner_parse(markup, ss, cache)

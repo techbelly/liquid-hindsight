@@ -15,6 +15,11 @@ class VariableUnitTest < Minitest::Test
     assert_equal('hello', var.name)
   end
 
+  def test_integer
+    var = create_variable(%( 1000 ))
+    assert_equal(1000, var.name)
+  end
+
   def test_string_with_special_chars
     var = create_variable(%( 'hello! $!@.;"ddasd" ' ))
     assert_equal('hello! $!@.;"ddasd" ', var.name)
