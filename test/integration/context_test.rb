@@ -360,6 +360,16 @@ class ContextTest < Minitest::Test
     assert_equal(resource_limits, subcontext.resource_limits)
   end
 
+  def test_new_isolated_subcontext_does_not_inherit_non_static_registers
+    registers = {
+      my_register: :my_value,
+    }
+    super_context = Context.new({}, {}, Registers.new(registers))
+    super_context.registers[:my_register] = :my_alt_value
+    subcontext                            = super_context.new_isolated_subcontext
+    assert_equal(:my_value, subcontext.registers[:my_register])
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do
