@@ -33,6 +33,20 @@ module Liquid
       def default
         @default ||= new
       end
+
+      # Sets the default environment instance for the duration of the block
+      #
+      # @param environment [Environment] The environment instance to use as the default for the
+      #   duration of the block.
+      # @yield
+      # @return [Object] The return value of the block.
+      def dangerously_override(environment)
+        original_default = @default
+        @default = environment
+        yield
+      ensure
+        @default = original_default
+      end
     end
 
     # Initializes a new environment instance.
@@ -47,6 +61,15 @@ module Liquid
       @file_system = BlankFileSystem.new
       @default_resource_limits = Const::EMPTY_HASH
       @strainer_template_class_cache = {}
+    end
+
+    # Registers a new tag with the environment.
+    #
+    # @param name [String] The name of the tag.
+    # @param klass [Liquid::Tag] The class that implements the tag.
+    # @return [void]
+    def register_tag(name, klass)
+      @tags[name] = klass
     end
   end
 end

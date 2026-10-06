@@ -20,6 +20,12 @@ module Liquid
 
     attr_reader :profiler
 
+    class << self
+      def tags
+        Environment.default.tags
+      end
+    end
+
     private
   end
 end
