@@ -290,6 +290,13 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_multiple_cycles
+    assert_template_result(
+      '1 2 1 1 2 3 1',
+      '{%cycle 1,2%} {%cycle 1,2%} {%cycle 1,2%} {%cycle 1,2,3%} {%cycle 1,2,3%} {%cycle 1,2,3%} {%cycle 1,2,3%}',
+    )
+  end
+
   def test_multiple_named_cycles
     assert_template_result(
       'one one two two one one',

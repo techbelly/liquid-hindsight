@@ -34,6 +34,10 @@ module Liquid
 
       val = context.evaluate(@variables[iteration])
 
+      if !val.is_a?(String)
+        val = val.to_s
+      end
+
       output << val
 
       iteration += 1
