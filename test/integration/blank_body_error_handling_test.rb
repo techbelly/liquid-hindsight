@@ -51,6 +51,10 @@ class BlankBodyErrorHandlingTest < Minitest::Test
     assert_equal(COMPARISON_ERROR, render_inline('{% if 5 > "x" %}{% comment %}c{% endcomment %}{% endif %}', error_mode: :strict2))
   end
 
+  def test_strict2_capture_if_body_shows_inline_error_text
+    assert_equal(COMPARISON_ERROR, render_inline('{% if 5 > "x" %}{% capture c %}text{% endcapture %}{% endif %}', error_mode: :strict2))
+  end
+
   def test_raised_errors_are_not_swallowed_by_blank_if_body
     [:lax, :strict, :strict2].each do |mode|
       assert_render_raises('{% if 5 > "x" %}{% endif %}', error_mode: mode, message: 'comparison of Integer with String failed')
