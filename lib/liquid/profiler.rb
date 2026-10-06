@@ -50,10 +50,40 @@ module Liquid
       attr_accessor :total_time
       alias_method :render_time, :total_time
       alias_method :partial, :template_name
+
+      def initialize(code: nil, template_name: nil, line_number: nil)
+        @code = code
+        @template_name = template_name
+        @line_number = line_number
+        @children = []
+      end
     end
 
     attr_reader :total_time
     alias_method :total_render_time, :total_time
+
+    def initialize
+      @root_children = []
+      @current_children = nil
+      @total_time = 0.0
+    end
+
+    def profile(template_name, &block)
+      # nested renders are done from a tag that already has a timing node
+      return yield if @current_children
+
+      root_children = @root_children
+      render_idx = root_children.length
+      begin
+        @current_children = root_children
+        profile_node(template_name, &block)
+      ensure
+        @current_children = nil
+        if (timing = root_children[render_idx])
+          @total_time += timing.total_time
+        end
+      end
+    end
 
     def each(&block)
       children.each(&block)
@@ -63,6 +93,24 @@ module Liquid
       children[idx]
     end
 
+    def profile_node(template_name, code: nil, line_number: nil)
+      timing = Timing.new(code: code, template_name: template_name, line_number: line_number)
+      parent_children = @current_children
+      start_time = monotonic_time
+      begin
+        @current_children = timing.children
+        yield
+      ensure
+        @current_children = parent_children
+        timing.total_time = monotonic_time - start_time
+        parent_children << timing
+      end
+    end
+
     private
+
+    def monotonic_time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
   end
 end

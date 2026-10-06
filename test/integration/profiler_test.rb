@@ -43,6 +43,13 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_profiling_times_the_entire_render
+    t = Template.parse("{% include 'a_template' %}", profile: true)
+    t.render!
+
+    assert(t.profiler.total_render_time >= 0, "Total render time was not calculated")
+  end
+
   class SleepTag < Liquid::Tag
     def initialize(tag_name, markup, parse_context)
       super
