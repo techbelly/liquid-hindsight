@@ -83,6 +83,15 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_include_tag_for
+    assert_template_result(
+      "Product: Draft 151cm Product: Element 155cm ",
+      "{% include 'product' for products %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
   def test_include_tag_with_local_variables
     assert_template_result(
       "Locale: test123 ",
