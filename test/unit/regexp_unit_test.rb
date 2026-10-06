@@ -35,4 +35,14 @@ class RegexpUnitTest < Minitest::Test
   def test_quoted_words_in_the_middle
     assert_equal(['arg1', 'arg2', '"arg 3"', 'arg4'], 'arg1 arg2 "arg 3" arg4   '.scan(QuotedFragment))
   end
+
+  def test_variable_parser
+    assert_equal(['var'],                               'var'.scan(VariableParser))
+    assert_equal(['[var]'],                             '[var]'.scan(VariableParser))
+    assert_equal(['var', 'method'],                     'var.method'.scan(VariableParser))
+    assert_equal(['var', '[method]'],                   'var[method]'.scan(VariableParser))
+    assert_equal(['var', '[method]', '[0]'],            'var[method][0]'.scan(VariableParser))
+    assert_equal(['var', '["method"]', '[0]'],          'var["method"][0]'.scan(VariableParser))
+    assert_equal(['var', '[method]', '[0]', 'method'],  'var[method][0].method'.scan(VariableParser))
+  end
 end # RegexpTest
