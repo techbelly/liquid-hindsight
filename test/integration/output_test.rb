@@ -48,4 +48,9 @@ class OutputTest < Minitest::Test
       "include" => { "menu" => "foo", "locale" => "bar" },
     })
   end
+
+  def test_variable_traversing
+    source = " {{car.bmw}} {{car.gm}} {{car.bmw}} "
+    assert_template_result(" good bad good ", source, @assigns)
+  end
 end # OutputTest
