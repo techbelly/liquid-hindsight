@@ -72,6 +72,12 @@ class VariableUnitTest < Minitest::Test
     assert_equal([['replace', ['foo', 'bar']], ['textileze', []]], var.filters)
   end
 
+  def test_symbol
+    var = create_variable("http://disney.com/logo.gif | image: 'med' ", error_mode: :lax)
+    assert_equal(VariableLookup.new('http://disney.com/logo.gif'), var.name)
+    assert_equal([['image', ['med']]], var.filters)
+  end
+
   def test_string_to_filter
     var = create_variable("'http://disney.com/logo.gif' | image: 'med' ")
     assert_equal('http://disney.com/logo.gif', var.name)
