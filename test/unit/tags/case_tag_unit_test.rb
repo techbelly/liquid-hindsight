@@ -31,6 +31,21 @@ class CaseTagUnitTest < Minitest::Test
     end
   end
 
+  def test_case_when_with_comma
+    template = <<~LIQUID
+      {%- case 1 -%}
+        {%- when 2, 1 -%}
+          one
+        {%- else -%}
+          two
+      {%- endcase -%}
+    LIQUID
+
+    with_error_modes(:lax, :strict, :strict2) do
+      assert_template_result("one", template)
+    end
+  end
+
   def test_case_when_with_or
     template = <<~LIQUID
       {%- case 1 -%}
