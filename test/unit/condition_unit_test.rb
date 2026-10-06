@@ -9,6 +9,18 @@ class ConditionUnitTest < Minitest::Test
     @context = Liquid::Context.new
   end
 
+  def test_contains_works_on_strings
+    assert_evaluates_true('bob', 'contains', 'o')
+    assert_evaluates_true('bob', 'contains', 'b')
+    assert_evaluates_true('bob', 'contains', 'bo')
+    assert_evaluates_true('bob', 'contains', 'ob')
+    assert_evaluates_true('bob', 'contains', 'bob')
+
+    assert_evaluates_false('bob', 'contains', 'bob2')
+    assert_evaluates_false('bob', 'contains', 'a')
+    assert_evaluates_false('bob', 'contains', '---')
+  end
+
   def test_invalid_comparation_operator
     assert_evaluates_argument_error(1, '~~', 0)
   end
