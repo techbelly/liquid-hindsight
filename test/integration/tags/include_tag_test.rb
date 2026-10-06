@@ -188,6 +188,17 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_including_with_strict_variables
+    env = Liquid::Environment.build(
+      file_system: StubFileSystem.new('simple' => 'simple'),
+    )
+
+    template = Liquid::Template.parse("{% include 'simple' %}", error_mode: :warn, environment: env)
+    template.render(nil, strict_variables: true)
+
+    assert_equal([], template.errors)
+  end
+
   def test_include_template_with_invalid_expression
     template = "{% include foo=>bar %}"
 
