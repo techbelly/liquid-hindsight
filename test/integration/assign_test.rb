@@ -64,6 +64,17 @@ class AssignTest < Minitest::Test
     refute_nil(t.resource_limits.assign_score)
   end
 
+  def test_assign_score_exceeding_limit_from_composite_object
+    t = Template.parse("{% assign foo = 'aaaa' | reverse %}")
+
+    t.resource_limits.assign_score_limit = 3
+    assert_equal("Liquid error: Memory limits exceeded", t.render)
+    assert(t.resource_limits.reached?)
+
+    t.resource_limits.assign_score_limit = 5
+    assert_equal("", t.render!)
+  end
+
   def test_assign_score_of_int
     assert_equal(1, assign_score_of(123))
   end
