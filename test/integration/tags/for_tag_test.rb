@@ -11,6 +11,28 @@ end
 class ForTagTest < Minitest::Test
   include Liquid
 
+  def test_for
+    assert_template_result(' yo  yo  yo  yo ', '{%for item in array%} yo {%endfor%}', { 'array' => [1, 2, 3, 4] })
+    assert_template_result('yoyo', '{%for item in array%}yo{%endfor%}', { 'array' => [1, 2] })
+    assert_template_result(' yo ', '{%for item in array%} yo {%endfor%}', { 'array' => [1] })
+    assert_template_result('', '{%for item in array%}{%endfor%}', { 'array' => [1, 2] })
+    expected = <<HERE
+
+  yo
+
+  yo
+
+  yo
+
+HERE
+    template = <<~HERE
+      {%for item in array%}
+        yo
+      {%endfor%}
+    HERE
+    assert_template_result(expected, template, { 'array' => [1, 2, 3] })
+  end
+
   def test_for_reversed
     assigns = { 'array' => [1, 2, 3] }
     assert_template_result('321', '{%for item in array reversed %}{{item}}{%endfor%}', assigns)
