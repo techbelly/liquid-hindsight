@@ -376,6 +376,13 @@ class ContextTest < Minitest::Test
     assert_equal(:my_value, subcontext.registers[:my_register])
   end
 
+  def test_new_isolated_subcontext_registers_do_not_pollute_context
+    super_context                      = Context.build(registers: { my_register: :my_value })
+    subcontext                         = super_context.new_isolated_subcontext
+    subcontext.registers[:my_register] = :my_alt_value
+    assert_equal(:my_value, super_context.registers[:my_register])
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do
