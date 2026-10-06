@@ -38,6 +38,16 @@ end
 class TemplateTest < Minitest::Test
   include Liquid
 
+  def test_warnings_is_not_exponential_time
+    str = "false"
+    100.times do
+      str = "{% if true %}true{% else %}#{str}{% endif %}"
+    end
+
+    t = Template.parse(str)
+    assert_equal([], Timeout.timeout(1) { t.warnings })
+  end
+
   def test_raises_error_with_invalid_utf8
     e = assert_raises(TemplateEncodingError) do
       Template.parse(<<~LIQUID)

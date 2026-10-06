@@ -77,6 +77,8 @@ module Liquid
       ensure
         parse_context.depth -= 1
       end
+
+      true
     end
   end
 end

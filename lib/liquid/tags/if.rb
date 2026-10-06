@@ -29,13 +29,21 @@ module Liquid
     def parse(tokens)
       while parse_body(@blocks.last.attachment, tokens)
       end
+      @blocks.reverse_each do |block|
+        block.attachment.remove_blank_strings if blank?
+        block.attachment.freeze
+      end
     end
 
     ELSE_TAG_NAMES = ['elsif', 'else'].freeze
     private_constant :ELSE_TAG_NAMES
 
     def unknown_tag(tag, markup, tokens)
-      super
+      if ELSE_TAG_NAMES.include?(tag)
+        push_block(tag, markup)
+      else
+        super
+      end
     end
 
     private
