@@ -60,6 +60,8 @@ module Liquid
           return block.attachment.render_to_output_buffer(context, output)
         end
       end
+
+      output
     end
 
     private
