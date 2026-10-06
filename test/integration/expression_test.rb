@@ -50,6 +50,27 @@ class ExpressionTest < Minitest::Test
     )
   end
 
+  def test_expression_cache
+    skip("Liquid-C does not support Expression caching") if defined?(Liquid::C) && Liquid::C.enabled
+
+    cache = {}
+    template = <<~LIQUID
+      {% assign x = 1 %}
+      {{ x }}
+      {% assign x = 2 %}
+      {{ x }}
+      {% assign y = 1 %}
+      {{ y }}
+    LIQUID
+
+    Liquid::Template.parse(template, expression_cache: cache).render
+
+    assert_equal(
+      ["1", "2", "x", "y"],
+      cache.to_a.map { _1[0] }.sort,
+    )
+  end
+
   def test_safe_parse_with_variable_lookup
     parse_context = Liquid::ParseContext.new
     parser = parse_context.new_parser('product.title')
