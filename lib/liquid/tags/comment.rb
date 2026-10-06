@@ -48,6 +48,8 @@ module Liquid
           end
 
           case tag_name
+          when "raw"
+            parse_raw_tag_body(tokenizer)
           when "comment"
             comment_tag_depth += 1
           when "endcomment"
@@ -63,6 +65,12 @@ module Liquid
         raise_tag_never_closed(block_name)
       ensure
         parse_context.depth -= 1
+      end
+    end
+
+    def parse_raw_tag_body(tokenizer)
+      while (token = tokenizer.send(:shift))
+        return if token =~ BlockBody::FullTokenPossiblyInvalid && "endraw" == Regexp.last_match(2)
       end
     end
   end
