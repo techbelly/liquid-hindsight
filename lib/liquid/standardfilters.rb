@@ -362,6 +362,18 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Strips all newline characters (line breaks) from a string.
+    # @liquid_syntax string | strip_newlines
+    # @liquid_return [string]
+    def strip_newlines(input)
+      input = Utils.to_s(input)
+      input.gsub(/\r?\n/, '')
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Combines all of the items in an array into a single string, separated by a space.
