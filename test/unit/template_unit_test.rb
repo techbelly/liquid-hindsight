@@ -11,6 +11,15 @@ class TemplateUnitTest < Minitest::Test
     assert_instance_of(I18n, t.root.nodelist[0].options[:locale])
   end
 
+  def test_sets_default_localization_in_context_with_quick_initialization
+    t = Template.new
+    t.parse('{%comment%}{%endcomment%}', locale: I18n.new(fixture("en_locale.yml")))
+
+    locale = t.root.nodelist[0].options[:locale]
+    assert_instance_of(I18n, locale)
+    assert_equal(fixture("en_locale.yml"), locale.path)
+  end
+
   class FakeTag; end
   def test_tags_can_be_looped_over
     with_custom_tag('fake', FakeTag) do
