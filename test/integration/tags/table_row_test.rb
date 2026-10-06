@@ -231,4 +231,17 @@ class TableRowTest < Minitest::Test
       { 'numbers' => range },
     )
   end
+
+  def test_range_subclass_custom_to_a_is_not_used
+    range = Class.new(Range) do
+      def to_a
+      end
+    end.new(1, 3)
+
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">1</td><td class=\"col2\">2</td><td class=\"col3\">3</td></tr>\n",
+      '{% tablerow i in numbers %}{{ i }}{% endtablerow %}',
+      { 'numbers' => range },
+    )
+  end
 end
