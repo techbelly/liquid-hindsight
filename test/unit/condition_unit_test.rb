@@ -214,6 +214,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new('empty_hash'), '==', blank_literal)
   end
 
+  def test_not_blank_with_string_content
+    # A string with actual content is not blank.
+    # This is the expected behavior for most template string comparisons.
+    @context['string'] = 'hello'
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('string'), '==', blank_literal)
+  end
+
   def test_not_blank_with_non_empty_array
     # An array with elements has content, so it's not blank.
     # Enables patterns like {% unless products == blank %}Show products{% endunless %}
