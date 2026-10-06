@@ -130,6 +130,8 @@ module Liquid
           end
         end
       end
+
+      "{{"
     end
 
     def next_tag_token
