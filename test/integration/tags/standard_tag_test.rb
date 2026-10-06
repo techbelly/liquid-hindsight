@@ -113,6 +113,29 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_case_with_else
+    assigns = { 'condition' => 5 }
+    assert_template_result(
+      ' hit ',
+      '{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => 6 }
+    assert_template_result(
+      ' else ',
+      '{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => 6 }
+    assert_template_result(
+      ' else ',
+      '{% case condition %} {% when 5 %} hit {% else %} else {% endcase %}',
+      assigns,
+    )
+  end
+
   def test_case_on_size
     assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [] })
     assert_template_result('1', '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1] })

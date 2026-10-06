@@ -66,6 +66,11 @@ module Liquid
       execute_else_block = true
 
       @blocks.each do |block|
+        if block.else?
+          block.attachment.render_to_output_buffer(context, output) if execute_else_block
+          next
+        end
+
         result = Liquid::Utils.to_liquid_value(
           block.evaluate(context),
         )
