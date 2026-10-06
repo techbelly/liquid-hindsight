@@ -67,6 +67,18 @@ module Liquid
       !@interrupts.empty?
     end
 
+    # Push new local scope on the stack. use <tt>Context#stack</tt> instead
+    def push(new_scope = {})
+      @scopes.unshift(new_scope)
+      check_overflow
+    end
+
+    # Pop from the stack. use <tt>Context#stack</tt> instead
+    def pop
+      raise ContextError if @scopes.size == 1
+      @scopes.shift
+    end
+
     protected
 
     attr_writer :base_scope_depth, :warnings, :errors, :strainer, :filters, :disabled_tags
@@ -74,6 +86,14 @@ module Liquid
     private
 
     attr_reader :base_scope_depth
+
+    def check_overflow
+      raise StackLevelError, "Nesting too deep" if overflow?
+    end
+
+    def overflow?
+      base_scope_depth + @scopes.length > Block::MAX_DEPTH
+    end
 
     def squash_instance_assigns_with_environments
       @scopes.last.each_key do |k|
