@@ -23,4 +23,8 @@ class RegexpUnitTest < Minitest::Test
     assert_equal(['<tr></tr>'], '<tr></tr>'.scan(QuotedFragment))
     assert_equal(['<style', 'class="hello">', '</style>'], %(<style class="hello">' </style>).scan(QuotedFragment))
   end
+
+  def test_double_quoted_words
+    assert_equal(['arg1', 'arg2', '"arg 3"'], 'arg1 arg2 "arg 3"'.scan(QuotedFragment))
+  end
 end # RegexpTest
