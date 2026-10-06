@@ -682,6 +682,11 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result('abc', "{{ source | strip_newlines }}", { 'source' => "a\r\nb\nc" })
   end
 
+  def test_newlines_to_br
+    assert_template_result("a<br />\nb<br />\nc", "{{ source | newline_to_br }}", { 'source' => "a\nb\nc" })
+    assert_template_result("a<br />\nb<br />\nc", "{{ source | newline_to_br }}", { 'source' => "a\r\nb\nc" })
+  end
+
   def test_concat
     assert_equal([1, 2, 3, 4], @filters.concat([1, 2], [3, 4]))
     assert_equal([1, 2, 'a'],  @filters.concat([1, 2], ['a']))

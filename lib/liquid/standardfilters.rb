@@ -609,6 +609,18 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Converts newlines (`\n`) in a string to HTML line breaks (`<br>`).
+    # @liquid_syntax string | newline_to_br
+    # @liquid_return [string]
+    def newline_to_br(input)
+      input = Utils.to_s(input)
+      input.gsub(/\r?\n/, "<br />\n")
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category date
     # @liquid_summary
     #   Formats a date according to a specified format string.
