@@ -72,6 +72,7 @@ module Liquid
         when token.start_with?(VARSTART)
           whitespace_handler(token, parse_context)
           @nodelist << create_variable(token, parse_context)
+          @blank = false
         else
           if parse_context.trim_whitespace
           end
