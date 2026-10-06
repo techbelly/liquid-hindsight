@@ -50,6 +50,18 @@ class CycleTagTest < Minitest::Test
     assert_template_result("112233", template)
   end
 
+  def test_unnamed_cycle_have_independent_counters_when_used_with_lookups
+    template = <<~LIQUID
+      {%- assign a = "1" -%}
+      {%- for i in (1..3) -%}
+        {%- cycle a, "2" -%}
+        {%- cycle a, "2" -%}
+      {%- endfor -%}
+    LIQUID
+
+    assert_template_result("112211", template)
+  end
+
   def test_unnamed_cycle_dependent_counter_when_used_with_literal_values
     template = <<~LIQUID
       {%- cycle "1", "2" -%}
