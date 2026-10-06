@@ -58,6 +58,10 @@ module Liquid
       @else_block = new_body
     end
 
+    def render_to_output_buffer(context, output)
+      segment = collection_segment(context)
+    end
+
     protected
 
     def lax_parse(markup)
@@ -98,6 +102,17 @@ module Liquid
 
     def strict2_parse(markup)
       strict_parse(markup)
+    end
+
+    def collection_segment(context)
+      offsets = context.registers[:for] ||= {}
+
+      from = if @from == :continue
+        offsets[@name].to_i
+      else
+        from_value = context.evaluate(@from)
+        Utils.to_integer(from_value)
+      end
     end
 
     def set_attribute(key, expr, safe: false)
