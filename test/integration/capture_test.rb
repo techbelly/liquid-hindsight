@@ -35,6 +35,12 @@ class CaptureTest < Minitest::Test
     assert_template_result("test-string", template_source)
   end
 
+  def test_increment_assign_score_by_bytes_not_characters
+    t = Template.parse("{% capture foo %}すごい{% endcapture %}")
+    t.render!
+    assert_equal(9, t.resource_limits.assign_score)
+  end
+
   def test_capture_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% capture (x[y %}hello{% endcapture %}", error_mode: :strict2)
