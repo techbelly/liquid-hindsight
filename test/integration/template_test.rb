@@ -241,6 +241,20 @@ class TemplateTest < Minitest::Test
     end
   end
 
+  def test_undefined_filters
+    t = Template.parse("{{a}} {{x | upcase | somefilter1 | somefilter2 | somefilter3}}")
+    filters = Module.new do
+      def somefilter3(v)
+      end
+    end
+    result = t.render({ 'a' => 123, 'x' => 'foo' }, filters: [filters], strict_filters: true)
+
+    assert_equal('123 ', result)
+    assert_equal(1, t.errors.count)
+    assert_instance_of(Liquid::UndefinedFilter, t.errors[0])
+    assert_equal('Liquid error: undefined filter somefilter1', t.errors[0].message)
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
