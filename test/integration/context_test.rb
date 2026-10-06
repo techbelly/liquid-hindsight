@@ -306,6 +306,14 @@ class ContextTest < Minitest::Test
     assert_template_result('freestyle', '{{ products[nested.var].last }}', assigns)
   end
 
+  def test_hash_notation_only_for_hash_access
+    assigns = { "array" => [1, 2, 3, 4, 5] }
+    assert_template_result("1", "{{ array.first }}", assigns)
+    assert_template_result("pass", '{% if array["first"] == nil %}pass{% endif %}', assigns)
+
+    assert_template_result("Hello", '{{ hash["first"] }}', { "hash" => { "first" => "Hello" } })
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
