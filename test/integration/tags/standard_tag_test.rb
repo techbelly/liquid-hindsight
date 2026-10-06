@@ -113,6 +113,15 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_case_on_size
+    assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [] })
+    assert_template_result('1', '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1] })
+    assert_template_result('2', '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1] })
+    assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1] })
+    assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1, 1] })
+    assert_template_result('',  '{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}', { 'a' => [1, 1, 1, 1, 1] })
+  end
+
   def test_assign
     assert_template_result('variable', '{% assign a = "variable"%}{{a}}')
   end
