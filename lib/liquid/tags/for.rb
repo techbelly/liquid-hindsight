@@ -113,6 +113,15 @@ module Liquid
         from_value = context.evaluate(@from)
         Utils.to_integer(from_value)
       end
+
+      collection = context.evaluate(@collection_name)
+
+      limit_value = context.evaluate(@limit)
+      to = if limit_value.nil?
+        nil
+      else
+        Utils.to_integer(limit_value) + from
+      end
     end
 
     def set_attribute(key, expr, safe: false)
