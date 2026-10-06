@@ -190,6 +190,12 @@ class DropsTest < Minitest::Test
     assert_equal('test', Liquid::Template.parse("{% assign header_gif = 'test'%}{{header_gif}}").render!('context' => ContextDrop.new))
   end
 
+  def test_scope_from_tags
+    assert_equal('1', Liquid::Template.parse('{% for i in context.scopes_as_array %}{{i}}{% endfor %}').render!('context' => ContextDrop.new, 'dummy' => [1]))
+    assert_equal('12', Liquid::Template.parse('{%for a in dummy%}{% for i in context.scopes_as_array %}{{i}}{% endfor %}{% endfor %}').render!('context' => ContextDrop.new, 'dummy' => [1]))
+    assert_equal('123', Liquid::Template.parse('{%for a in dummy%}{%for a in dummy%}{% for i in context.scopes_as_array %}{{i}}{% endfor %}{% endfor %}{% endfor %}').render!('context' => ContextDrop.new, 'dummy' => [1]))
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
