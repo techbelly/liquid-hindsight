@@ -79,6 +79,12 @@ class LiquidTagTest < Minitest::Test
     LIQUID
   end
 
+  def test_nested_liquid_tags_on_same_line
+    assert_template_result('good', <<~LIQUID)
+      {%- liquid liquid liquid echo "good" -%}
+    LIQUID
+  end
+
   def test_next_liquid_with_unclosed_if_tag
     assert_match_syntax_error("Liquid syntax error (line 2): 'if' tag was never closed", <<~LIQUID)
       {%- liquid
