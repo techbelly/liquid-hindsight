@@ -115,6 +115,11 @@ class DropsTest < Minitest::Test
     assert_equal(' text1 ', output)
   end
 
+  def test_catchall_unknown_method
+    output = Liquid::Template.parse(' {{ product.catchall.unknown }} ').render!('product' => ProductDrop.new)
+    assert_equal(' catchall_method: unknown ', output)
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
