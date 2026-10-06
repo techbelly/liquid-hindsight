@@ -446,6 +446,36 @@ class TrimModeTest < Minitest::Test
     assert_template_result(expected, text)
   end
 
+  def test_complex_trim_output
+    text = <<-END_TEMPLATE
+      <div>
+        <p>
+          {{- 'John' -}}
+          {{- '30' -}}
+        </p>
+        <b>
+          {{ 'John' -}}
+          {{- '30' }}
+        </b>
+        <i>
+          {{- 'John' }}
+          {{ '30' -}}
+        </i>
+      </div>
+    END_TEMPLATE
+    expected = <<-END_EXPECTED
+      <div>
+        <p>John30</p>
+        <b>
+          John30
+        </b>
+        <i>John
+          30</i>
+      </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+  end
+
   def test_trim_blank
     assert_template_result('foobar', 'foo {{-}} bar')
   end
