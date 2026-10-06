@@ -10,6 +10,12 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('hello'), var.name)
   end
 
+  def test_string_to_filter
+    var = create_variable("'http://disney.com/logo.gif' | image: 'med' ")
+    assert_equal('http://disney.com/logo.gif', var.name)
+    assert_equal([['image', ['med']]], var.filters)
+  end
+
   def test_string_single_quoted
     var = create_variable(%( "hello" ))
     assert_equal('hello', var.name)
