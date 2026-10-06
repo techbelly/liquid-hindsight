@@ -54,6 +54,12 @@ class TemplateTest < Minitest::Test
     assert_equal([], Timeout.timeout(1) { t.warnings })
   end
 
+  def test_instance_assigns_persist_on_same_template_parsing_between_renders
+    t = Template.new.parse("{{ foo }}{% assign foo = 'foo' %}{{ foo }}")
+    assert_equal('foo', t.render!)
+    assert_equal('foofoo', t.render!)
+  end
+
   def test_custom_assigns_do_not_persist_on_same_template
     t = Template.new
     assert_equal('from custom assigns', t.parse("{{ foo }}").render!('foo' => 'from custom assigns'))
