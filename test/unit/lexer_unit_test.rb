@@ -51,6 +51,13 @@ class LexerUnitTest < Minitest::Test
     assert_equal([[:number, '2'], [:id, 'foo'], [:end_of_string]], tokenize('2foo'))
   end
 
+  def test_negative_numbers
+    assert_equal(
+      [[:id, 'foo'], [:pipe, '|'], [:id, 'default'], [:colon, ":"], [:number, '-1'], [:end_of_string]],
+      tokenize("foo | default: -1"),
+    )
+  end
+
   def test_greater_than_two_digits
     assert_equal(
       [[:id, 'foo'], [:comparison, '>'], [:number, '12'], [:end_of_string]],

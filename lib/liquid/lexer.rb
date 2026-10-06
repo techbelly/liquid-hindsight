@@ -114,7 +114,13 @@ module Liquid
           if (special = SPECIAL_TABLE[peeked])
             ss.scan_byte
             if special == DASH
-              output << special
+              # Special case for negative numbers
+              if (peeked_byte = ss.peek_byte) && NUMBER_TABLE[peeked_byte]
+                ss.pos -= 1
+                output << [:number, ss.scan(NUMBER_LITERAL)]
+              else
+                output << special
+              end
             else
               output << special
             end
