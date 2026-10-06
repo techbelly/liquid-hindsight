@@ -15,6 +15,11 @@ class StatementsTest < Minitest::Test
     assert_template_result('  false  ', text)
   end
 
+  def test_true_lq_true
+    text = ' {% if 0 > 0 %} true {% else %} false {% endif %} '
+    assert_template_result('  false  ', text)
+  end
+
   def test_one_lq_zero
     text = ' {% if 1 > 0 %} true {% else %} false {% endif %} '
     assert_template_result('  true  ', text)
