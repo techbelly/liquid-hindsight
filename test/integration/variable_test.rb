@@ -30,4 +30,9 @@ class VariableTest < Minitest::Test
   def test_ignore_unknown
     assert_template_result("", "{{ test }}")
   end
+
+  def test_hash_scoping
+    assert_template_result('worked', "{{ test.test }}", { 'test' => { 'test' => 'worked' } })
+    assert_template_result('worked', "{{ test . test }}", { 'test' => { 'test' => 'worked' } })
+  end
 end
