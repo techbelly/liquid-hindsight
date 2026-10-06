@@ -7,6 +7,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_render_hash_with_string_keys_and_values
+    assert_template_result("{\"key1\"=>\"value1\", \"key2\"=>\"value2\"}", "{{ my_hash }}", { "my_hash" => { "key1" => "value1", "key2" => "value2" } })
+  end
+
   def test_render_hash_with_symbol_keys_and_integer_values
     assert_template_result("{:key1=>1, :key2=>2}", "{{ my_hash }}", { "my_hash" => { key1: 1, key2: 2 } })
   end
