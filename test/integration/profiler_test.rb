@@ -196,6 +196,15 @@ class ProfilerTest < Minitest::Test
     assert_equal(2, t.profiler[0].children.length)
   end
 
+  def test_profiling_marks_children_of_for_blocks
+    t = Template.parse("{% for item in collection %} {{ item }} {% endfor %}", profile: true)
+    t.render!("collection" => ["one", "two"])
+
+    assert_equal(1, t.profiler.length)
+    # Will profile each invocation of the for block
+    assert_equal(2, t.profiler[0].children.length)
+  end
+
   def test_profiling_supports_total_time
     t = Template.parse("{% if true %} {{ test }} {% endif %}", profile: true)
     output = t.render!("test" => TestDrop.new("one"))
