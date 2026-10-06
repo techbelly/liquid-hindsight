@@ -395,6 +395,23 @@ class TrimModeTest < Minitest::Test
     assert_template_result(expected, text)
   end
 
+  def test_whitespace_trim_output
+    text = <<-END_TEMPLATE
+      <div>
+        <p>
+          {{- 'John' -}},
+          {{- '30' -}}
+        </p>
+      </div>
+    END_TEMPLATE
+    expected = <<-END_EXPECTED
+      <div>
+        <p>John,30</p>
+      </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+  end
+
   def test_whitespace_trim_tags
     text = <<-END_TEMPLATE
       <div>
