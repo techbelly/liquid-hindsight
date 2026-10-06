@@ -677,6 +677,15 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_sum_with_unindexable_values
+    input = [1, true, nil, { "quantity" => 2 }]
+
+    assert_equal(1, @filters.sum(input))
+    assert_raises(Liquid::ArgumentError, "cannot select the property 'quantity'") do
+      @filters.sum(input, "quantity")
+    end
+  end
+
   def test_uniq_with_to_liquid_value
     input = [StringDrop.new("foo"), StringDrop.new("bar"), "foo"]
     expected = [StringDrop.new("foo"), StringDrop.new("bar")]
