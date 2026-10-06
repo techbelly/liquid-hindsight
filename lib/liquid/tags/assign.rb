@@ -66,6 +66,9 @@ module Liquid
     private
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [@node.from]
+      end
     end
   end
 end

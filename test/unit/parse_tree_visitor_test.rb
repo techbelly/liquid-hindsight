@@ -40,6 +40,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_assign
+    assert_equal(
+      ["test"],
+      visit(%({% assign x = test %})),
+    )
+  end
+
   private
 
   def traversal(template)
