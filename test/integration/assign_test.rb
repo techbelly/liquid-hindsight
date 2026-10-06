@@ -31,6 +31,10 @@ class AssignTest < Minitest::Test
     assert_template_result('result', source, { 'a' => { 'b' => 'result' } })
   end
 
+  def test_assign_score_of_int
+    assert_equal(1, assign_score_of(123))
+  end
+
   def test_assign_score_of_string_counts_bytes
     assert_equal(3, assign_score_of('123'))
     assert_equal(5, assign_score_of('12345'))
