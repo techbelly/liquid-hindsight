@@ -35,6 +35,20 @@ module Liquid
     )
     STRIP_HTML_TAGS = /<.*?>/m
 
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
+    #   Returns the size of a string or array.
+    # @liquid_description
+    #   The size of a string is the number of characters that the string includes. The size of an array is the number of items
+    #   in the array.
+    # @liquid_syntax variable | size
+    # @liquid_return [number]
+    def size(input)
+      input.respond_to?(:size) ? input.size : 0
+    end
+
     private
 
     attr_reader :context

@@ -9,6 +9,10 @@ module Liquid
   # The Strainer only allows method calls defined in filters given to it via StrainerFactory.add_global_filter,
   # Context#add_filters or Template.register_filter
   class StrainerTemplate
+    def initialize(context)
+      @context = context
+    end
+
     class << self
       def add_filter(filter)
         return if include?(filter)
