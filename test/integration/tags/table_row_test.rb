@@ -81,4 +81,21 @@ class TableRowTest < Minitest::Test
       assert_equal("Liquid syntax error: Invalid attribute 'invalid1' in tablerow loop. Valid attributes are cols, limit, offset, and range in \"i in (1..10) invalid1: 5, invalid2: 10\"", error.message)
     end
   end
+
+  def test_tablerow_with_invalid_expression_strict_vs_strict2
+    template = '{% tablerow i in (1..5) limit: foo=>bar %}{{ i }}{% endtablerow %}'
+
+    with_error_modes(:lax, :strict) do
+      expected = <<~OUTPUT
+        <tr class="row1">
+        </tr>
+      OUTPUT
+      assert_template_result(expected, template)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(SyntaxError) { Template.parse(template) }
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
 end
