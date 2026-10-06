@@ -178,6 +178,15 @@ class ConditionUnitTest < Minitest::Test
   # - Arrays and Hashes are blank if empty
   # - true and numbers are never blank
 
+  def test_blank_with_empty_array
+    # Empty arrays have no elements, so they are blank.
+    # Useful for checking if a collection has items: {% if products == blank %}
+    @context['empty_array'] = []
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('empty_array'), '==', blank_literal)
+  end
+
   def test_blank_with_empty_hash
     # Empty hashes have no key-value pairs, so they are blank.
     # Useful for checking if settings/options exist: {% if settings == blank %}
