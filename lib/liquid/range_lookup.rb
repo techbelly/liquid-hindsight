@@ -41,6 +41,8 @@ module Liquid
         input
       when NilClass, String
         input.to_i
+      else
+        Utils.to_integer(input)
       end
     end
 
