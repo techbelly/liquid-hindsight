@@ -20,6 +20,12 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_argument_error('1', '<=', 0)
   end
 
+  def test_contains_returns_false_for_nil_operands
+    @context = Liquid::Context.new
+    assert_evaluates_false(VariableLookup.new('not_assigned'), 'contains', '0')
+    assert_evaluates_false(0, 'contains', VariableLookup.new('not_assigned'))
+  end
+
   def test_contains_return_false_on_wrong_data_type
     assert_evaluates_false(1, 'contains', 0)
   end
