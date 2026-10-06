@@ -74,4 +74,12 @@ class EnvironmentFilterTest < Minitest::Test
     assert_kind_of(b, strainer)
     assert_kind_of(Liquid::StandardFilters, strainer)
   end
+
+  def test_add_global_filter_clears_cache
+    assert_equal('input', @environment.create_strainer(@context).invoke('late_added_filter', 'input'))
+
+    @environment.register_filter(LateAddedFilter)
+
+    assert_equal('filtered', @environment.create_strainer(nil).invoke('late_added_filter', 'input'))
+  end
 end
