@@ -152,6 +152,14 @@ class ContextTest < Minitest::Test
     assert_equal('1', @context['callcount'])
   end
 
+  def test_access_to_context_from_proc
+    @context.registers[:magic] = 345392
+
+    @context['magic'] = proc { @context.registers[:magic] }
+
+    assert_equal(345392, @context['magic'])
+  end
+
   def test_to_liquid_and_context_at_first_level
     @context['category'] = Category.new("foobar")
     assert_kind_of(CategoryDrop, @context['category'])
