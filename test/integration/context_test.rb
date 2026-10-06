@@ -353,6 +353,13 @@ class ContextTest < Minitest::Test
     assert_equal('my value', subcontext['my_environment_value'])
   end
 
+  def test_new_isolated_subcontext_inherits_resource_limits
+    resource_limits = ResourceLimits.new({})
+    super_context   = Context.new({}, {}, {}, false, resource_limits)
+    subcontext      = super_context.new_isolated_subcontext
+    assert_equal(resource_limits, subcontext.resource_limits)
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do
