@@ -268,6 +268,20 @@ class ContextTest < Minitest::Test
     assert_template_result("FF9999", "{{ colors.Red[3] }}", assigns)
   end
 
+  def test_try_first
+    assigns = { 'test' => [1, 2, 3, 4, 5] }
+    assert_template_result("1", "{{ test.first }}", assigns)
+    assert_template_result("pass", "{% if test.last == 5 %}pass{% endif %}", assigns)
+
+    assigns = { "test" => { "test" => [1, 2, 3, 4, 5] } }
+    assert_template_result("1", "{{ test.test.first }}", assigns)
+    assert_template_result("5", "{{ test.test.last }}", assigns)
+
+    assigns = { "test" => [1] }
+    assert_template_result("1", "{{ test.first }}", assigns)
+    assert_template_result("1", "{{ test.last }}", assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
