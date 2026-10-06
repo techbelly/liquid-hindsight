@@ -32,7 +32,11 @@ module Liquid
     end
 
     def lax_parse(markup)
-      raise SyntaxError, options[:locale].t("errors.syntax.capture")
+      if markup =~ Syntax
+        @to = Regexp.last_match(1)
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.capture")
+      end
     end
 
     def strict_parse(markup)
@@ -43,6 +47,10 @@ module Liquid
       p = @parse_context.new_parser(markup.strip)
       @to = p.consume(:id)
       p.consume(:end_of_string)
+    end
+
+    def blank?
+      true
     end
   end
 end

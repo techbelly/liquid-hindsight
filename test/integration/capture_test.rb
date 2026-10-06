@@ -22,4 +22,9 @@ class CaptureTest < Minitest::Test
       Liquid::Template.parse("{% capture 1abc %}hello{% endcapture %}", error_mode: :strict2)
     end
   end
+
+  def test_capture_allows_invalid_names_in_lax
+    t = Liquid::Template.parse("{% capture (x[y %}hello{% endcapture %}", error_mode: :lax)
+    assert_equal("(x[y", t.root.nodelist.first.to)
+  end
 end
