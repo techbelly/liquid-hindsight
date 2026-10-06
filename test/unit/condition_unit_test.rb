@@ -214,6 +214,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new('empty_hash'), '==', blank_literal)
   end
 
+  def test_blank_with_nil
+    # nil represents "nothing" and is the canonical blank value.
+    # Unassigned variables resolve to nil, so this enables: {% if missing_var == blank %}
+    @context['nil_value'] = nil
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('nil_value'), '==', blank_literal)
+  end
+
   def test_blank_with_false
     # false is considered blank to match ActiveSupport semantics.
     # This allows {% if some_flag == blank %} to work when flag is false.
