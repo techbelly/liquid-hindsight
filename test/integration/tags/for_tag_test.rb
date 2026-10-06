@@ -63,6 +63,19 @@ class ForTagTest < Minitest::Test
     assert_equal("Liquid error: invalid integer", exception.message)
   end
 
+  def test_for_with_break_after_nested_loop
+    source = <<~LIQUID.chomp
+      {% for i in (1..2) -%}
+        {% for j in (1..2) -%}
+          {{ i }}-{{ j }},
+        {%- endfor -%}
+        {% break -%}
+      {% endfor -%}
+      after
+    LIQUID
+    assert_template_result("1-1,1-2,after", source)
+  end
+
   def test_inner_for_over_empty_input
     assert_template_result('oo', '{% for a in (1..2) %}o{% for b in empty %}{% endfor %}{% endfor %}')
   end
