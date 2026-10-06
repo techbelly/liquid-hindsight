@@ -68,4 +68,8 @@ class VariableTest < Minitest::Test
     end
     assert_equal("Unknown variable 'test'", e.message)
   end
+
+  def test_multiline_variable
+    assert_template_result("worked", "{{\ntest\n}}", { "test" => "worked" })
+  end
 end
