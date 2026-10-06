@@ -194,6 +194,18 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([], @filters.sort_natural([], "a"))
   end
 
+  def test_sort_natural_invalid_property
+    foo = [
+      [1],
+      [2],
+      [3],
+    ]
+
+    assert_raises(Liquid::ArgumentError) do
+      @filters.sort_natural(foo, "bar")
+    end
+  end
+
   def test_legacy_sort_hash
     assert_equal([{ a: 1, b: 2 }], @filters.sort(a: 1, b: 2))
   end

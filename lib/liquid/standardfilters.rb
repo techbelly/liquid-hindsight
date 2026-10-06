@@ -216,6 +216,14 @@ module Liquid
       ary = InputIterator.new(input, context)
 
       return [] if ary.empty?
+
+      if ary.all? { |el| el.respond_to?(:[]) }
+        begin
+          ary.sort { |a, b| nil_safe_casecmp(a[property], b[property]) }
+        rescue TypeError
+          raise_property_error(property)
+        end
+      end
     end
 
     # @liquid_public_docs
