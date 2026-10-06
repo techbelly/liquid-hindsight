@@ -41,10 +41,6 @@ module Liquid
 
       @offset += 1
 
-      if @line_number
-        @line_number += @for_liquid_tag ? 1 : token.count("\n")
-      end
-
       token
     end
 
@@ -59,11 +55,23 @@ module Liquid
 
     def shift_normal
       token = next_token
+
+      return unless token
+
+      token
     end
 
     def next_token
       # possible states: :text, :tag, :variable
       byte_a = @ss.peek_byte
+
+      if byte_a == OPEN_CURLEY
+        @ss.scan_byte
+
+        byte_b = @ss.peek_byte
+
+        @ss.pos -= 1
+      end
 
       next_text_token
     end
@@ -72,6 +80,9 @@ module Liquid
       start = @ss.pos
 
       unless @ss.skip_until(TAG_OR_VARIABLE_START)
+        token = @ss.rest
+        @ss.terminate
+        return token
       end
 
     rescue ::ArgumentError => e
