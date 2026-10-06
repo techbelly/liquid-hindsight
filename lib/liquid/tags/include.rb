@@ -82,6 +82,12 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [
+          @node.template_name_expr,
+          @node.variable_name_expr,
+        ] + @node.attributes.values
+      end
     end
   end
 end
