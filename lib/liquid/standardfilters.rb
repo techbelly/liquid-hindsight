@@ -784,6 +784,22 @@ module Liquid
     # @liquid_type filter
     # @liquid_category math
     # @liquid_summary
+    #   Rounds a number to the nearest integer.
+    # @liquid_syntax number | round
+    # @liquid_return [number]
+    def round(input, n = 0)
+      result = Utils.to_number(input).round(Utils.to_number(n))
+      result = result.to_f if result.is_a?(BigDecimal)
+      result = result.to_i if n == 0
+      result
+    rescue ::FloatDomainError => e
+      raise Liquid::FloatDomainError, e.message
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
     #   Rounds a number up to the nearest integer.
     # @liquid_syntax number | ceil
     # @liquid_return [number]
