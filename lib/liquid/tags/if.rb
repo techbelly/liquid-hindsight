@@ -92,6 +92,14 @@ module Liquid
       condition = Condition.new(parse_expression(Regexp.last_match(1)), Regexp.last_match(2), parse_expression(Regexp.last_match(3)))
 
       until expressions.empty?
+        operator = expressions.pop.to_s.strip
+
+        raise SyntaxError, options[:locale].t("errors.syntax.if") unless expressions.pop.to_s =~ Syntax
+
+        new_condition = Condition.new(parse_expression(Regexp.last_match(1)), Regexp.last_match(2), parse_expression(Regexp.last_match(3)))
+        raise SyntaxError, options[:locale].t("errors.syntax.if") unless BOOLEAN_OPERATORS.include?(operator)
+        new_condition.send(operator, condition)
+        condition = new_condition
       end
 
       condition
