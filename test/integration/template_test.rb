@@ -219,6 +219,22 @@ class TemplateTest < Minitest::Test
     end
   end
 
+  def test_cumulative_render_score_tracks_across_partials_without_limit
+    file_system = StubFileSystem.new(
+      'loop' => '{% for a in (1..10) %} foo {% endfor %}',
+    )
+    environment = Liquid::Environment.build(file_system: file_system)
+    t = Template.parse(
+      '{% render "loop" %}{% render "loop" %}{% render "loop" %}',
+      environment: environment,
+    )
+    t.render!
+    assert(
+      t.resource_limits.cumulative_render_score > t.resource_limits.render_score,
+      "cumulative should exceed per-template score after multiple partials",
+    )
+  end
+
   def test_can_use_drop_as_context
     t = Template.new
     t.registers['lulz'] = 'haha'
