@@ -324,6 +324,18 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ a: 1, b: 2 }], @filters.reverse(a: 1, b: 2))
   end
 
+  def test_map_returns_empty_on_2d_input_array
+    foo = [
+      [1],
+      [2],
+      [3],
+    ]
+
+    assert_raises(Liquid::ArgumentError) do
+      @filters.map(foo, "bar")
+    end
+  end
+
   def test_map_returns_input_with_no_property
     foo = [
       [1],
