@@ -5,6 +5,46 @@ require 'test_helper'
 class LiquidTagTest < Minitest::Test
   include Liquid
 
+  def test_liquid_tag
+    assert_template_result('1 2 3', <<~LIQUID, { 'array' => [1, 2, 3] })
+      {%- liquid
+        echo array | join: " "
+      -%}
+    LIQUID
+
+    assert_template_result('1 2 3', <<~LIQUID, { 'array' => [1, 2, 3] })
+      {%- liquid
+        for value in array
+          echo value
+          unless forloop.last
+            echo " "
+          endunless
+        endfor
+      -%}
+    LIQUID
+
+    assert_template_result('4 8 12 6', <<~LIQUID, { 'array' => [1, 2, 3] })
+      {%- liquid
+        for value in array
+          assign double_value = value | times: 2
+          echo double_value | times: 2
+          unless forloop.last
+            echo " "
+          endunless
+        endfor
+
+        echo " "
+        echo double_value
+      -%}
+    LIQUID
+
+    assert_template_result('abc', <<~LIQUID)
+      {%- liquid echo "a" -%}
+      b
+      {%- liquid echo "c" -%}
+    LIQUID
+  end
+
   def test_liquid_tag_errors
     assert_match_syntax_error("syntax error (line 1): Unknown tag 'error'", <<~LIQUID)
       {%- liquid error no such tag -%}
