@@ -209,6 +209,16 @@ class StandardTagTest < Minitest::Test
     )
   end
 
+  def test_assign_from_case
+    # Example from the shopify forums
+    code = "{% case collection.handle %}{% when 'menswear-jackets' %}{% assign ptitle = 'menswear' %}{% when 'menswear-t-shirts' %}{% assign ptitle = 'menswear' %}{% else %}{% assign ptitle = 'womenswear' %}{% endcase %}{{ ptitle }}"
+    assert_template_result("menswear",   code, { "collection" => { 'handle' => 'menswear-jackets' } })
+    assert_template_result("menswear",   code, { "collection" => { 'handle' => 'menswear-t-shirts' } })
+    assert_template_result("womenswear", code, { "collection" => { 'handle' => 'x' } })
+    assert_template_result("womenswear", code, { "collection" => { 'handle' => 'y' } })
+    assert_template_result("womenswear", code, { "collection" => { 'handle' => 'z' } })
+  end
+
   def test_case_when_or
     code = '{% case condition %}{% when 1 or 2 or 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}'
     assert_template_result(' its 1 or 2 or 3 ', code, { 'condition' => 1 })
