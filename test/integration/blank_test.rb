@@ -63,4 +63,8 @@ class BlankTest < Minitest::Test
       {% if true %} but this is not {% endif %}'),
     )
   end
+
+  def test_assigns_are_blank
+    assert_template_result("", wrap(' {% assign foo = "bar" %} '))
+  end
 end
