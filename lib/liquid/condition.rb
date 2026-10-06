@@ -82,14 +82,6 @@ module Liquid
     private
 
     def equal_variables(left, right)
-      if left.is_a?(MethodLiteral)
-        return call_method_literal(left, right)
-      end
-
-      if right.is_a?(MethodLiteral)
-        return call_method_literal(right, left)
-      end
-
       left == right
     end
 
