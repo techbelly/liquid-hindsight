@@ -570,6 +570,15 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('빈', @filters.last('고스트빈'))
   end
 
+  def test_first_last_on_strings_via_template
+    # Integration test to verify the filter works end-to-end in templates.
+    # Empty strings return empty output (nil renders as empty string).
+    assert_template_result('f', '{{ name | first }}', { 'name' => 'foo' })
+    assert_template_result('o', '{{ name | last }}', { 'name' => 'foo' })
+    assert_template_result('', '{{ name | first }}', { 'name' => '' })
+    assert_template_result('', '{{ name | last }}', { 'name' => '' })
+  end
+
   def test_concat
     assert_equal([1, 2, 3, 4], @filters.concat([1, 2], [3, 4]))
     assert_equal([1, 2, 'a'],  @filters.concat([1, 2], ['a']))
