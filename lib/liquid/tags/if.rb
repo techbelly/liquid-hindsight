@@ -34,6 +34,10 @@ module Liquid
     ELSE_TAG_NAMES = ['elsif', 'else'].freeze
     private_constant :ELSE_TAG_NAMES
 
+    def unknown_tag(tag, markup, tokens)
+      super
+    end
+
     private
 
     def push_block(tag, markup)
