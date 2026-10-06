@@ -142,6 +142,14 @@ class ContextTest < Minitest::Test
     assert_equal('test', @context['test'])
   end
 
+  def test_add_item_in_inner_scope
+    @context.push
+    @context['test'] = 'test'
+    assert_equal('test', @context['test'])
+    @context.pop
+    assert_nil(@context['test'])
+  end
+
   def test_merge
     @context.merge("test" => "test")
     assert_equal('test', @context['test'])
