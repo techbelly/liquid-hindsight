@@ -108,6 +108,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('&lt;strong&gt;Hulk&lt;/strong&gt;', @filters.escape_once('&lt;strong&gt;Hulk</strong>'))
   end
 
+  def test_base64_encode
+    assert_equal('b25lIHR3byB0aHJlZQ==', @filters.base64_encode('one two three'))
+    assert_equal('', @filters.base64_encode(nil))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))
