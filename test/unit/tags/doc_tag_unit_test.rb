@@ -109,6 +109,23 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(false, doc_tag.blank?)
   end
 
+  def test_doc_tag_nodelist_returns_array_with_body
+    doc_content = "Documentation content\n@param {string} foo"
+    template_source = "{% doc %}#{doc_content}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal([doc_content], doc_tag.nodelist)
+    assert_equal(1, doc_tag.nodelist.length)
+    assert_equal(doc_content, doc_tag.nodelist.first)
+  end
+
   private
 
   def traversal(template)
