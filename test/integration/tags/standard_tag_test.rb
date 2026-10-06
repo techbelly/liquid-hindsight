@@ -276,6 +276,10 @@ class StandardTagTest < Minitest::Test
     assert_template_result('', '{% assign a = ""%}{{a}}')
   end
 
+  def test_assign_is_global
+    assert_template_result('variable', '{%for i in (1..2) %}{% assign a = "variable"%}{% endfor %}{{a}}')
+  end
+
   def test_case_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result('',  '{% case false %}{% when %}true{% endcase %}', {})
