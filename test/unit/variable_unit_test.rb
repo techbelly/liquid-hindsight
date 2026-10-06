@@ -119,6 +119,12 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('test.test'), var.name)
   end
 
+  def test_filter_with_keyword_arguments
+    var = create_variable(%( hello | things: greeting: "world", farewell: 'goodbye'))
+    assert_equal(VariableLookup.new('hello'), var.name)
+    assert_equal([['things', [], { 'greeting' => 'world', 'farewell' => 'goodbye' }]], var.filters)
+  end
+
   def test_strict_filter_argument_parsing
     with_error_modes(:strict) do
       assert_raises(SyntaxError) do

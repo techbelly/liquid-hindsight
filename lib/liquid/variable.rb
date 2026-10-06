@@ -70,7 +70,12 @@ module Liquid
       filter_args  = []
       keyword_args = nil
       unparsed_args.each do |a|
-        filter_args << parse_context.parse_expression(a)
+        if (matches = a.match(JustTagAttributes))
+          keyword_args           ||= {}
+          keyword_args[matches[1]] = parse_context.parse_expression(matches[2])
+        else
+          filter_args << parse_context.parse_expression(a)
+        end
       end
       result = [filter_name, filter_args]
       result << keyword_args if keyword_args
