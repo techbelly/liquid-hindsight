@@ -19,5 +19,16 @@ module Liquid
   # @liquid_syntax_keyword condition The condition to evaluate.
   # @liquid_syntax_keyword expression The expression to render unless the condition is met.
   class Unless < If
+    def render_to_output_buffer(context, output)
+      # First condition is interpreted backwards ( if not )
+      first_block = @blocks.first
+      result = Liquid::Utils.to_liquid_value(
+        first_block.evaluate(context),
+      )
+
+      unless result
+        return first_block.attachment.render_to_output_buffer(context, output)
+      end
+    end
   end
 end

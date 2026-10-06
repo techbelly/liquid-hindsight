@@ -937,6 +937,18 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, "{{ array | has: 'ok', true }}", { "array" => array })
   end
 
+  def test_has_with_empty_arrays
+    template = <<~LIQUID
+      {%- assign has_product = products | has: 'title.content', 'Not found' -%}
+      {%- unless has_product -%}
+        Product not found.
+      {%- endunless -%}
+    LIQUID
+    expected_output = "Product not found."
+
+    assert_template_result(expected_output, template, { "products" => [] })
+  end
+
   def test_has_with_false_value
     array = [
       { "handle" => "alpha", "ok" => true },
