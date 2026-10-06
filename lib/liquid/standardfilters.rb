@@ -808,6 +808,21 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Limits a number to a maximum value.
+    # @liquid_syntax number | at_most
+    # @liquid_return [number]
+    def at_most(input, n)
+      max_value = Utils.to_number(n)
+
+      result = Utils.to_number(input)
+      result = max_value if max_value < result
+      result.is_a?(BigDecimal) ? result.to_f : result
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category default
     # @liquid_summary
     #   Sets a default value for any variable whose value is one of the following:
