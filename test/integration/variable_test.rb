@@ -21,4 +21,8 @@ class VariableTest < Minitest::Test
 
     assert_template_result('one', '{% if a contains x %}one{% endif %}', { 'a' => [1], 'x' => IntegerDrop.new(1) })
   end
+
+  def test_ignore_unknown
+    assert_template_result("", "{{ test }}")
+  end
 end
