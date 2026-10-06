@@ -70,6 +70,11 @@ module Liquid
 
         byte_b = @ss.peek_byte
 
+        if byte_b == PERCENTAGE
+          @ss.scan_byte
+          return next_tag_token
+        end
+
         @ss.pos -= 1
       end
 
@@ -85,9 +90,18 @@ module Liquid
         return token
       end
 
+      pos = @ss.pos -= 2
+      @source.byteslice(start, pos - start)
     rescue ::ArgumentError => e
       if e.message == "invalid byte sequence in #{@ss.string.encoding}"
         raise SyntaxError, "Invalid byte sequence in #{@ss.string.encoding}"
+      end
+    end
+
+    def next_tag_token
+      start = @ss.pos - 2
+      if (len = @ss.skip_until(TAG_END))
+        @source.byteslice(start, len + 2)
       end
     end
   end
