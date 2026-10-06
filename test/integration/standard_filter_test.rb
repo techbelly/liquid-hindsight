@@ -378,6 +378,18 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(expectation, @filters.where(input, "be"))
   end
 
+  def test_where_non_boolean_value
+    input = [
+      { "message" => "Bonjour!", "language" => "French" },
+      { "message" => "Hello!", "language" => "English" },
+      { "message" => "Hallo!", "language" => "German" },
+    ]
+
+    assert_equal([{ "message" => "Bonjour!", "language" => "French" }], @filters.where(input, "language", "French"))
+    assert_equal([{ "message" => "Hallo!", "language" => "German" }], @filters.where(input, "language", "German"))
+    assert_equal([{ "message" => "Hello!", "language" => "English" }], @filters.where(input, "language", "English"))
+  end
+
   def test_where_no_target_value
     input = [
       { "foo" => false },
