@@ -74,6 +74,13 @@ class ErrorHandlingTest < Minitest::Test
     end
   end
 
+  def test_lax_unrecognized_operator
+    template = Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ', error_mode: :lax)
+    assert_equal(' Liquid error: Unknown operator =! ', template.render)
+    assert_equal(1, template.errors.size)
+    assert_equal(Liquid::ArgumentError, template.errors.first.class)
+  end
+
   def test_with_line_numbers_adds_numbers_to_parser_errors
     source = <<~LIQUID
       foobar
