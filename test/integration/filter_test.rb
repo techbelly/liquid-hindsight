@@ -96,6 +96,15 @@ class FiltersTest < Minitest::Test
   def test_nonexistent_filter_is_ignored
     assert_template_result("1000", "{{ var | xyzzy }}", { "var" => 1000 })
   end
+
+  def test_liquid_argument_error
+    source = "{{ '' | size: 'too many args' }}"
+    exc = assert_raises(Liquid::ArgumentError) do
+      Template.parse(source).render!
+    end
+    assert_match(/\ALiquid error: wrong number of arguments /, exc.message)
+    assert_equal(exc.message, Template.parse(source).render)
+  end
 end
 
 class TestObject < Liquid::Drop
