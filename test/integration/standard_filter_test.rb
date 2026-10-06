@@ -477,6 +477,11 @@ class StandardFiltersTest < Minitest::Test
     )
   end
 
+  def test_map_doesnt_call_arbitrary_stuff
+    assert_template_result("", '{{ "foo" | map: "__id__" }}')
+    assert_template_result("", '{{ "foo" | map: "inspect" }}')
+  end
+
   def test_sort_calls_to_liquid
     t = TestThing.new
     Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
