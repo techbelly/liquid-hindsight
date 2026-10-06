@@ -116,6 +116,20 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_includes_will_not_render_inside_nested_sibling_tags
+    assert_template_result(
+      "Liquid error (test_include line 1): include usage is not allowed in this context" \
+        "Liquid error (nested_render_with_sibling_include line 1): include usage is not allowed in this context",
+      '{% render "nested_render_with_sibling_include" %}',
+      partials: {
+        'foo' => 'bar',
+        'nested_render_with_sibling_include' => '{% render "test_include" %}{% include "foo" %}',
+        'test_include' => '{% include "foo" %}',
+      },
+      render_errors: true,
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
