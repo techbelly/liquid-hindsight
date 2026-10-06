@@ -105,6 +105,11 @@ end
 class DropsTest < Minitest::Test
   include Liquid
 
+  def test_product_drop
+    tpl = Liquid::Template.parse('  ')
+    assert_equal('  ', tpl.render!('product' => ProductDrop.new))
+  end
+
   def test_invokable_methods
     assert_equal(%w(to_liquid catchall context texts).to_set, ProductDrop.invokable_methods)
     assert_equal(%w(to_liquid scopes_as_array loop_pos scopes).to_set, ContextDrop.invokable_methods)
