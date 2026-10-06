@@ -126,6 +126,7 @@ module Liquid
 
           if tag_name == 'liquid'
             parse_liquid_tag(markup, parse_context)
+            next
           end
 
           unless (tag = parse_context.environment.tag_for_name(tag_name))
