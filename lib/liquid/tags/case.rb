@@ -114,6 +114,17 @@ module Liquid
 
     def parse_strict2_when(markup, body)
       parser = @parse_context.new_parser(markup)
+
+      loop do
+        expr = Condition.parse_expression(parse_context, parser.expression, safe: true)
+        block = Condition.new(@left, '==', expr)
+        block.attach(body)
+        @blocks << block
+
+        break unless parser.id?('or') || parser.consume?(:comma)
+      end
+
+      parser.consume(:end_of_string)
     end
 
     def parse_lax_when(markup, body)
