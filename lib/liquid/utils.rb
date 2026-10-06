@@ -79,6 +79,13 @@ module Liquid
       end
     end
 
+    def self.to_number(obj)
+      case obj
+      when Numeric
+        obj
+      end
+    end
+
     def self.to_date(obj)
       return obj if obj.respond_to?(:strftime)
 

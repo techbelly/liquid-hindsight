@@ -592,6 +592,34 @@ module Liquid
       array.last if array.respond_to?(:last)
     end
 
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
+    #   Returns the sum of all elements in an array.
+    # @liquid_syntax array | sum
+    # @liquid_return [number]
+    def sum(input, property = nil)
+      ary = InputIterator.new(input, context)
+      return 0 if ary.empty?
+
+      values_for_sum = ary.map do |item|
+        if property.nil?
+          item
+        elsif item.respond_to?(:[])
+          item[property]
+        end
+      rescue TypeError
+        raise_property_error(property)
+      end
+
+      result = InputIterator.new(values_for_sum, context).sum do |item|
+        Utils.to_number(item)
+      end
+
+      result.is_a?(BigDecimal) ? result.to_f : result
+    end
+
     private
 
     attr_reader :context
