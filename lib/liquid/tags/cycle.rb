@@ -33,10 +33,41 @@ module Liquid
     end
 
     def lax_parse(markup)
-      raise SyntaxError, options[:locale].t("errors.syntax.cycle")
+      case markup
+      when SimpleSyntax
+        @variables = variables_from_string(markup)
+        @name      = @variables.to_s
+        @is_named = !@name.match?(UNNAMED_CYCLE_PATTERN)
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.cycle")
+      end
+    end
+
+    def variables_from_string(markup)
+      markup.split(',').collect do |var|
+        var =~ /\s*(#{QuotedFragment})\s*/o
+        next unless Regexp.last_match(1)
+
+        var = parse_expression(Regexp.last_match(1))
+        maybe_dup_lookup(var)
+      end.compact
+    end
+
+    # For backwards compatibility, whenever a lookup is used in an unnamed cycle,
+    # we make it so that the @variables.to_s produces different strings for cycles
+    # called with the same arguments (since @variables.to_s is used as the cycle counter key)
+    # This makes it so {% cycle a, b %} and {% cycle a, b %} have independent counters even if a and b share value.
+    # This is not true for literal values, {% cycle "a", "b" %} and {% cycle "a", "b" %} share the same counter.
+    # I was really scratching my head about this one, but migrating away from this would be more headache
+    # than it's worth. So we're keeping this quirk for now.
+    def maybe_dup_lookup(var)
+      var.is_a?(VariableLookup) ? var.dup : var
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        Array(@node.variables)
+      end
     end
   end
 end
