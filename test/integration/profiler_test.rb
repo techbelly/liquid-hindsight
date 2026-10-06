@@ -98,4 +98,19 @@ class ProfilerTest < Minitest::Test
       assert_equal("a_template", child.partial)
     end
   end
+
+  def test_profiling_supports_multiple_templates
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}\n{% include 'b_template' %}", profile: true)
+    t.render!
+
+    a_template = t.profiler[1]
+    a_template.children.each do |child|
+      assert_equal("a_template", child.partial)
+    end
+
+    b_template = t.profiler[2]
+    b_template.children.each do |child|
+      assert_equal("b_template", child.partial)
+    end
+  end
 end
