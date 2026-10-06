@@ -192,6 +192,13 @@ class TemplateTest < Minitest::Test
     assert(exception.is_a?(Liquid::ZeroDivisionError))
   end
 
+  def test_global_filter_option_on_render
+    global_filter_proc = ->(output) { "#{output} filtered" }
+    rendered_template  = Template.parse("{{name}}").render({ "name" => "bob" }, global_filter: global_filter_proc)
+
+    assert_equal('bob filtered', rendered_template)
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
