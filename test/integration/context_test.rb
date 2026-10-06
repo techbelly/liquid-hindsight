@@ -133,6 +133,12 @@ class ContextTest < Minitest::Test
     assert_equal('Hello', @context['dynamic'])
   end
 
+  def test_lambda_as_variable
+    @context['dynamic'] = proc { 'Hello' }
+
+    assert_equal('Hello', @context['dynamic'])
+  end
+
   def test_to_liquid_and_context_at_first_level
     @context['category'] = Category.new("foobar")
     assert_kind_of(CategoryDrop, @context['category'])
