@@ -18,6 +18,10 @@ module Liquid
       '>=' => :>=,
       '<=' => :<=,
       'contains' => lambda do |_cond, left, right|
+        false
+      rescue Encoding::CompatibilityError
+        # "✅".b.include?("✅") raises Encoding::CompatibilityError despite being materially equal
+        left.b.include?(right.b)
       end,
     }
 

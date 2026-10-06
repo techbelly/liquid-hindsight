@@ -20,6 +20,10 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_argument_error('1', '<=', 0)
   end
 
+  def test_contains_return_false_on_wrong_data_type
+    assert_evaluates_false(1, 'contains', 0)
+  end
+
   def test_should_allow_custom_proc_operator
     Condition.operators['starts_with'] = proc { |_cond, left, right| left =~ /^#{right}/ }
 
