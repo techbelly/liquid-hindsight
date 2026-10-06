@@ -96,6 +96,14 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_decrement_is_isolated_between_renders
+    assert_template_result(
+      '-1-2-1',
+      '{% decrement port %}{% decrement port %}{% render "decr" %}',
+      partials: { 'decr' => '{% decrement port %}' },
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
