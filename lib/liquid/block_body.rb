@@ -27,6 +27,11 @@ module Liquid
       parse_for_document(tokenizer, parse_context, &block)
     end
 
+    def freeze
+      @nodelist.freeze
+      super
+    end
+
     # @api private
     def self.raise_missing_tag_terminator(token, parse_context)
       raise SyntaxError, parse_context.locale.t("errors.syntax.tag_termination", token: token, tag_end: TagEnd.inspect)
@@ -82,6 +87,8 @@ module Liquid
         end
         parse_context.line_number = tokenizer.line_number
       end
+
+      yield nil, nil
     end
 
     def whitespace_handler(token, parse_context)
