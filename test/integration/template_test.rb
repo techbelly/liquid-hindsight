@@ -181,6 +181,17 @@ class TemplateTest < Minitest::Test
     assert_equal('<!-- error -->', output)
   end
 
+  def test_exception_renderer_that_raises
+    exception = nil
+    assert_raises(Liquid::ZeroDivisionError) do
+      Template.parse("{{ 1 | divided_by: 0 }}").render({}, exception_renderer: ->(e) {
+                                                                                 exception = e
+                                                                                 raise
+                                                                               })
+    end
+    assert(exception.is_a?(Liquid::ZeroDivisionError))
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
