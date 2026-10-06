@@ -38,6 +38,12 @@ end
 class TemplateTest < Minitest::Test
   include Liquid
 
+  def test_instance_assigns_persist_on_same_template_object_between_parses
+    t = Template.new
+    assert_equal('from instance assigns', t.parse("{% assign foo = 'from instance assigns' %}{{ foo }}").render!)
+    assert_equal('from instance assigns', t.parse("{{ foo }}").render!)
+  end
+
   def test_warnings_is_not_exponential_time
     str = "false"
     100.times do
