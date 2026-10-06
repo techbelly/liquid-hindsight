@@ -56,6 +56,8 @@ module Liquid
       result = nil
       loop do
         result = interpret_condition(condition.left, condition.right, condition.operator, context)
+
+        break
       end
       result
     end
@@ -93,7 +95,9 @@ module Liquid
 
       operation = self.class.operators[op] || raise(Liquid::ArgumentError, "Unknown operator #{op}")
 
-      if left.respond_to?(operation) && right.respond_to?(operation) && !left.is_a?(Hash) && !right.is_a?(Hash)
+      if operation.respond_to?(:call)
+        operation.call(self, left, right)
+      elsif left.respond_to?(operation) && right.respond_to?(operation) && !left.is_a?(Hash) && !right.is_a?(Hash)
         begin
           left.send(operation, right)
         rescue ::ArgumentError => e
