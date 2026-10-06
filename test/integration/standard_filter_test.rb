@@ -487,6 +487,16 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("woot: 1", '{{ foo | map: "whatever" }}', { "foo" => [t] })
   end
 
+  def test_map_calls_context=
+    model = TestModel.new(value: :test)
+
+    template = Template.parse('{{ foo | map: "registers" }}')
+    template.registers[:test] = 1234
+    template.assigns['foo'] = [model]
+
+    assert_template_result("{:test=>1234}", template.render!)
+  end
+
   def test_sort_calls_to_liquid
     t = TestThing.new
     Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
