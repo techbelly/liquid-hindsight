@@ -56,4 +56,16 @@ class VariableTest < Minitest::Test
     assert_equal('Goodbye Brian', template.render!('name' => 'Brian'))
     assert_equal({ 'greeting' => 'Goodbye' }, template.assigns)
   end
+
+  def test_hash_with_default_proc
+    template        = Template.parse(%(Hello {{ test }}))
+    assigns         = Hash.new { |_h, k| raise "Unknown variable '#{k}'" }
+    assigns['test'] = 'Tobi'
+    assert_equal('Hello Tobi', template.render!(assigns))
+    assigns.delete('test')
+    e = assert_raises(RuntimeError) do
+      template.render!(assigns)
+    end
+    assert_equal("Unknown variable 'test'", e.message)
+  end
 end
