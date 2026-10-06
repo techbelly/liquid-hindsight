@@ -88,6 +88,13 @@ module Liquid
 
         return false if byte != DASH && (byte < ZERO || byte > NINE)
 
+        if byte == DASH
+          peek_byte = ss.peek_byte
+
+          # if it starts with a dash, the next byte must be a digit
+          return false if peek_byte.nil? || !(peek_byte >= ZERO && peek_byte <= NINE)
+        end
+
         # The markup could be a float with multiple dots
         first_dot_pos = nil
         num_end_pos = nil
@@ -97,6 +104,22 @@ module Liquid
 
           # we found our number and now we are just scanning the rest of the string
           next if num_end_pos
+
+          if byte == DOT
+            if first_dot_pos.nil?
+              first_dot_pos = ss.pos
+            else
+              # we found another dot, so we know that the number ends here
+              num_end_pos = ss.pos - 1
+            end
+          end
+        end
+
+        num_end_pos = markup.length if ss.eos?
+
+        if num_end_pos
+          # number ends with a number "123.123"
+          markup.byteslice(0, num_end_pos).to_f
         end
       end
     end

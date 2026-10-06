@@ -23,6 +23,25 @@ class ExpressionTest < Minitest::Test
     assert_expression_result(12, "012")
   end
 
+  def test_float
+    assert_template_result("-17.42", "{{ -17.42 }}")
+    assert_template_result("2.5", "{{ 2.5 }}")
+
+    with_error_modes(:lax) do
+      assert_expression_result(0.0, "0.....5")
+      assert_expression_result(0.0, "-0..1")
+    end
+
+    assert_expression_result(1.5, "1.5")
+
+    # this is a unfortunate quirky behavior of Liquid
+    result = Expression.parse(".5")
+    assert_kind_of(Liquid::VariableLookup, result)
+
+    result = Expression.parse("-.5")
+    assert_kind_of(Liquid::VariableLookup, result)
+  end
+
   def test_range
     assert_template_result("3..4", "{{ ( 3 .. 4 ) }}")
     assert_expression_result(1..2, "(1..2)")
