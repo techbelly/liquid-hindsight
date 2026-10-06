@@ -77,6 +77,8 @@ module Liquid
     def assign_score_of(val)
       if val.instance_of?(String)
         val.bytesize
+      else
+        1
       end
     end
 

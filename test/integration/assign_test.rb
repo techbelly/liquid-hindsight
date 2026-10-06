@@ -69,6 +69,10 @@ class AssignTest < Minitest::Test
     end
   end
 
+  def test_assign_allows_invalid_names_in_lax
+    assert_template_result("1234", "{% assign (a(b(c) = 1234 %}{{ self['(a(b(c)'] }}", error_mode: :lax)
+  end
+
   def test_assign_with_filter_in_strict2
     assert_template_result("HELLO", "{% assign my_var = 'hello' | upcase %}{{ my_var }}", error_mode: :strict2)
   end
