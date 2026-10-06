@@ -16,6 +16,11 @@ module Liquid
       @body.freeze
     end
 
+    # For backwards compatibility
+    def render(context)
+      @body.render(context)
+    end
+
     def blank?
       @blank
     end
