@@ -117,6 +117,11 @@ module Liquid
       end
     end
 
+    def render!(*args)
+      @rethrow_errors = true
+      render(*args)
+    end
+
     private
 
     def configure_options(options)

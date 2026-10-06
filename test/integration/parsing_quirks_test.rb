@@ -5,6 +5,11 @@ require 'test_helper'
 class ParsingQuirksTest < Minitest::Test
   include Liquid
 
+  def test_parsing_css
+    text = " div { font-weight: bold; } "
+    assert_equal(text, Template.parse(text).render!)
+  end
+
   def test_raise_on_single_close_bracet
     assert_raises(SyntaxError) do
       Template.parse("text {{method} oh nos!")
