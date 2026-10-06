@@ -46,4 +46,14 @@ class VariableTest < Minitest::Test
     template.assigns['test'] = 'worked'
     assert_equal('worked', template.render!)
   end
+
+  def test_reuse_parsed_template
+    template                     = Template.parse(%({{ greeting }} {{ name }}))
+    template.assigns['greeting'] = 'Goodbye'
+    assert_equal('Hello Tobi', template.render!('greeting' => 'Hello', 'name' => 'Tobi'))
+    assert_equal('Hello ', template.render!('greeting' => 'Hello', 'unknown' => 'Tobi'))
+    assert_equal('Hello Brian', template.render!('greeting' => 'Hello', 'name' => 'Brian'))
+    assert_equal('Goodbye Brian', template.render!('name' => 'Brian'))
+    assert_equal({ 'greeting' => 'Goodbye' }, template.assigns)
+  end
 end
