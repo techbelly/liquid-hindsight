@@ -85,6 +85,17 @@ module Liquid
     # @api private
     def self.render_node(context, output, node)
       node.render_to_output_buffer(context, output)
+    rescue => exc
+      blank_tag = !node.instance_of?(Variable) && node.blank?
+      rescue_render_node(context, output, node.line_number, exc, blank_tag)
+    end
+
+    # @api private
+    def self.rescue_render_node(context, output, line_number, exc, blank_tag)
+      case exc
+      when MemoryError
+        raise
+      end
     end
 
     private def parse_liquid_tag(markup, parse_context)
