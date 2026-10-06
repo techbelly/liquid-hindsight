@@ -117,9 +117,21 @@ module Liquid
         # Emulate ActiveSupport's blank?/empty? to make Liquid invariant
         # to whether ActiveSupport is loaded or not
         case method_name
+        when :blank?
+          liquid_blank?(value)
         when :empty?
           liquid_empty?(value)
         end
+      end
+    end
+
+    # Implement blank? semantics matching ActiveSupport
+    # blank? returns true for nil, false, empty strings, whitespace-only strings,
+    # empty arrays, and empty hashes
+    def liquid_blank?(value)
+      case value
+      when Array, Hash
+        value.empty?
       end
     end
 

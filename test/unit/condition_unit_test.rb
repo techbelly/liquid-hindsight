@@ -178,6 +178,15 @@ class ConditionUnitTest < Minitest::Test
   # - Arrays and Hashes are blank if empty
   # - true and numbers are never blank
 
+  def test_not_blank_with_non_empty_hash
+    # A hash with key-value pairs has content, so it's not blank.
+    # Useful for checking if configuration exists: {% if config != blank %}
+    @context['hash'] = { 'a' => 1 }
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('hash'), '==', blank_literal)
+  end
+
   # Tests for empty? comparison without ActiveSupport
   #
   # empty? is distinct from blank? - it only checks if a collection has zero elements.
