@@ -49,6 +49,20 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_recursively_included_template_does_not_produce_endless_loop
+    infinite_file_system = Class.new do
+      def read_template_file(_template_path)
+        "-{% include 'loop' %}"
+      end
+    end
+
+    env = Liquid::Environment.build(file_system: infinite_file_system.new)
+
+    assert_raises(Liquid::StackLevelError) do
+      Template.parse("{% include 'loop' %}", environment: env).render!
+    end
+  end
+
   def test_custom_include_tag
     original_tag = Liquid::Template.tags['include']
     Liquid::Template.tags['include'] = CustomInclude
