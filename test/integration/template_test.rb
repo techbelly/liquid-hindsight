@@ -206,6 +206,14 @@ class TemplateTest < Minitest::Test
     assert_equal('BOB filtered', rendered_template)
   end
 
+  def test_nil_value_does_not_raise
+    t      = Template.parse("some{{x}}thing", error_mode: :strict)
+    result = t.render!({ 'x' => nil }, strict_variables: true)
+
+    assert_equal(0, t.errors.count)
+    assert_equal('something', result)
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
