@@ -86,6 +86,10 @@ module Liquid
 
     private
 
+    def strict2_parse(markup)
+      parser = @parse_context.new_parser(markup)
+    end
+
     def strict_parse(markup)
       lax_parse(markup)
     end
