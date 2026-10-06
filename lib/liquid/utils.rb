@@ -6,7 +6,11 @@ module Liquid
     UNIX_TIMESTAMP_REGEX = /\A\d+\z/
 
     def self.slice_collection(collection, from, to)
-      slice_collection_using_each(collection, from, to)
+      if (from != 0 || !to.nil?) && collection.respond_to?(:load_slice)
+        collection.load_slice(from, to)
+      else
+        slice_collection_using_each(collection, from, to)
+      end
     end
 
     # This is intentionally separate from slice_collection, whose Array-returning
