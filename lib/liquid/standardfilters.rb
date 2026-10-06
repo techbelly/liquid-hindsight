@@ -62,6 +62,17 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Converts a string to all uppercase characters.
+    # @liquid_syntax string | upcase
+    # @liquid_return [string]
+    def upcase(input)
+      Utils.to_s(input).upcase
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.
