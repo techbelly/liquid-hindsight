@@ -50,4 +50,9 @@ class EnvironmentFilterTest < Minitest::Test
     assert_nil(strainer.invoke("private_filter"))
     assert_nil(strainer.invoke("undef_the_filter"))
   end
+
+  def test_strainer_returns_first_argument_if_no_method_and_arguments_given
+    strainer = @environment.create_strainer(@context)
+    assert_equal("password", strainer.invoke("undef_the_method", "password"))
+  end
 end
