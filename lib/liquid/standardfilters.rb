@@ -356,6 +356,14 @@ module Liquid
       raise Liquid::ArgumentError, "cannot select the property '#{Utils.to_s(property)}'"
     end
 
+    def nil_safe_compare(a, b)
+      result = a <=> b
+
+      if result
+        result
+      end
+    end
+
     class InputIterator
       include Enumerable
 
