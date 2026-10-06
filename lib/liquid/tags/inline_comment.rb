@@ -16,5 +16,13 @@ module Liquid
         raise SyntaxError, options[:locale].t("errors.syntax.inline_comment_invalid")
       end
     end
+
+    def render_to_output_buffer(_context, output)
+      output
+    end
+
+    def blank?
+      true
+    end
   end
 end
