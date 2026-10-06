@@ -24,6 +24,13 @@ class TokenizerTest < Minitest::Test
     assert_equal(['  ', '{% comment %}', ' ', '{% endcomment %}', ' '], tokenize("  {% comment %} {% endcomment %} "))
   end
 
+  def test_calculate_line_numbers_per_token_with_profiling
+    assert_equal([1],       tokenize_line_numbers("{{funk}}"))
+    assert_equal([1, 1, 1], tokenize_line_numbers(" {{funk}} "))
+    assert_equal([1, 2, 2], tokenize_line_numbers("\n{{funk}}\n"))
+    assert_equal([1, 1, 3], tokenize_line_numbers(" {{\n funk \n}} "))
+  end
+
   def test_tokenize_with_nil_source_returns_empty_array
     assert_equal([], tokenize(nil))
   end
@@ -47,6 +54,14 @@ class TokenizerTest < Minitest::Test
   def tokenize_line_numbers(source)
     tokenizer    = new_tokenizer(source, start_line_number: 1)
     line_numbers = []
+    loop do
+      line_number = tokenizer.line_number
+      if tokenizer.send(:shift)
+        line_numbers << line_number
+      else
+        break
+      end
+    end
     line_numbers
   end
 end

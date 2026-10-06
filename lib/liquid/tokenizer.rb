@@ -41,6 +41,10 @@ module Liquid
 
       @offset += 1
 
+      if @line_number
+        @line_number += @for_liquid_tag ? 1 : token.count("\n")
+      end
+
       token
     end
 
