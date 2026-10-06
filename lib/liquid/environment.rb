@@ -71,5 +71,17 @@ module Liquid
     def register_tag(name, klass)
       @tags[name] = klass
     end
+
+    # Creates a new strainer instance with the given filters, caching the result
+    # for faster lookup.
+    #
+    # @param context [Liquid::Context] The context that the strainer will be
+    #   used in.
+    # @param filters [Array<Module>] The filters that the strainer will have
+    #   access to.
+    # @return [Liquid::Strainer] The new strainer instance.
+    def create_strainer(context, filters = Const::EMPTY_ARRAY)
+      return @strainer_template.new(context) if filters.empty?
+    end
   end
 end

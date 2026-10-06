@@ -54,6 +54,10 @@ module Liquid
     end
     # rubocop:enable Metrics/ParameterLists
 
+    def strainer
+      @strainer ||= @environment.create_strainer(self, @filters)
+    end
+
     def apply_global_filter(obj)
       global_filter.nil? ? obj : global_filter.call(obj)
     end
