@@ -30,6 +30,13 @@ module Liquid
       raise_limits_reached if @cumulative_render_score_limit && @cumulative_render_score > @cumulative_render_score_limit
     end
 
+    def increment_assign_score(amount)
+      @assign_score += amount
+      @cumulative_assign_score += amount
+      raise_limits_reached if @assign_score_limit && @assign_score > @assign_score_limit
+      raise_limits_reached if @cumulative_assign_score_limit && @cumulative_assign_score > @cumulative_assign_score_limit
+    end
+
     def raise_limits_reached
       @reached_limit = true
       raise MemoryError, "Memory limits exceeded"

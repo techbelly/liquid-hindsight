@@ -55,6 +55,17 @@ class ResourceLimitsUnitTest < Minitest::Test
     assert(limits.reached?)
   end
 
+  def test_cumulative_assign_score_limit_raises
+    limits = Liquid::ResourceLimits.new(cumulative_assign_score_limit: 15)
+    limits.increment_assign_score(8)
+    limits.reset
+
+    assert_raises(Liquid::MemoryError) do
+      limits.increment_assign_score(8)
+    end
+    assert(limits.reached?)
+  end
+
   def test_per_template_limits_still_work_with_cumulative
     limits = Liquid::ResourceLimits.new(
       render_score_limit: 50,
