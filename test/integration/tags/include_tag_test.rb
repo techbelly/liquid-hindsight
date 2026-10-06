@@ -74,6 +74,15 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_include_tag_for_alias
+    assert_template_result(
+      "Product: Draft 151cm Product: Element 155cm ",
+      "{% include 'product_alias' for products as product %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: { "product_alias" => "Product: {{ product.title }} " },
+    )
+  end
+
   def test_include_tag_with_default_name
     assert_template_result(
       "Product: Draft 151cm ",
