@@ -9,4 +9,8 @@ class RegexpUnitTest < Minitest::Test
   def test_empty
     assert_equal([], ''.scan(QuotedFragment))
   end
+
+  def test_quote
+    assert_equal(['"arg 1"'], '"arg 1"'.scan(QuotedFragment))
+  end
 end # RegexpTest
