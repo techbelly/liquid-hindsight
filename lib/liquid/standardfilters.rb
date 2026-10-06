@@ -383,6 +383,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Filters an array to exclude items with a specific property value.
+    # @liquid_description
+    #   This requires you to provide both the property name and the associated value.
+    # @liquid_syntax array | reject: string, string
+    # @liquid_return [array[untyped]]
+    def reject(input, property, target_value = nil)
+      filter_array(input, property, target_value) { |ary, &block| ary.reject(&block) }
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Tests if any item in an array has a specific property value.
     # @liquid_description
     #   This requires you to provide both the property name and the associated value.
