@@ -199,6 +199,13 @@ class TemplateTest < Minitest::Test
     assert_equal('bob filtered', rendered_template)
   end
 
+  def test_global_filter_option_when_native_filters_exist
+    global_filter_proc = ->(output) { "#{output} filtered" }
+    rendered_template  = Template.parse("{{name | upcase}}").render({ "name" => "bob" }, global_filter: global_filter_proc)
+
+    assert_equal('BOB filtered', rendered_template)
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
