@@ -56,6 +56,10 @@ class FiltersTest < Minitest::Test
 
     assert_equal(' 1000$ CAD ', Template.parse("{{var | money}}").render(@context))
   end
+
+  def test_size
+    assert_template_result("4", "{{var | size}}", { "var" => 'abcd' })
+  end
 end
 
 class TestObject < Liquid::Drop
