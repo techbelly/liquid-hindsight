@@ -41,6 +41,16 @@ class LiquidTagTest < Minitest::Test
     assert_match_syntax_error("syntax error (line 3): Unknown tag 'error'", "{% liquid echo ''\n  \n error %}")
   end
 
+  def test_nested_liquid_tag
+    assert_template_result('good', <<~LIQUID)
+      {%- if true %}
+        {%- liquid
+          echo "good"
+        %}
+      {%- endif -%}
+    LIQUID
+  end
+
   def test_cannot_open_blocks_living_past_a_liquid_tag
     assert_match_syntax_error("syntax error (line 3): 'if' tag was never closed", <<~LIQUID)
       {%- liquid
