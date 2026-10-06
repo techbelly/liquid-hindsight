@@ -126,6 +126,21 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(doc_content, doc_tag.nodelist.first)
   end
 
+  def test_doc_tag_nodelist_with_empty_content
+    template_source = "{% doc %}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal([""], doc_tag.nodelist)
+    assert_equal(1, doc_tag.nodelist.length)
+  end
+
   private
 
   def traversal(template)
