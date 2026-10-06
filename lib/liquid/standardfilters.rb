@@ -294,6 +294,15 @@ module Liquid
 
       if ary.empty? # The next two cases assume a non-empty array.
         []
+      else
+        ary.uniq do |item|
+          item[property]
+        rescue TypeError
+          raise_property_error(property)
+        rescue NoMethodError
+          return nil unless item.respond_to?(:[])
+          raise
+        end
       end
     end
 
@@ -467,6 +476,13 @@ module Liquid
 
       def reverse
         reverse_each.to_a
+      end
+
+      def uniq(&block)
+        to_a.uniq do |item|
+          item = Utils.to_liquid_value(item)
+          block ? yield(item) : item
+        end
       end
 
       def empty?
