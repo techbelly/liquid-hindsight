@@ -37,6 +37,19 @@ class CycleTagTest < Minitest::Test
     assert_template_result("112233", template)
   end
 
+  def test_cycle_named_groups_vlookup
+    template = <<~LIQUID
+      {%- assign placeholder1 = 'placeholder1' -%}
+      {%- assign placeholder2 = 'placeholder2' -%}
+      {%- for i in (1..3) -%}
+        {%- cycle placeholder1: 1, 2, 3 -%}
+        {%- cycle placeholder2: 1, 2, 3 -%}
+      {%- endfor -%}
+    LIQUID
+
+    assert_template_result("112233", template)
+  end
+
   def test_unnamed_cycle_dependent_counter_when_used_with_literal_values
     template = <<~LIQUID
       {%- cycle "1", "2" -%}
