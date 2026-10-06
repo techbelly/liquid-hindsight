@@ -81,6 +81,11 @@ class StandardTagTest < Minitest::Test
     assert_template_result('array has 4 elements', "array has {{ array.size }} elements", assigns)
   end
 
+  def test_size_of_hash
+    assigns = { "hash" => { a: 1, b: 2, c: 3, d: 4 } }
+    assert_template_result('hash has 4 elements', "hash has {{ hash.size }} elements", assigns)
+  end
+
   def test_illegal_symbols
     assert_template_result('', '{% if true == empty %}?{% endif %}', {})
     assert_template_result('', '{% if true == null %}?{% endif %}', {})
