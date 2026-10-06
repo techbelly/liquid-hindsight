@@ -115,6 +115,13 @@ class ForTagTest < Minitest::Test
     assert_equal('2:9992:998', template.render!('numbers' => range))
   end
 
+  def test_range_scores_cannot_be_bypassed_by_repeated_renders
+    template = Template.parse('{% for i in (1..2) %}{% endfor %}')
+    template.resource_limits.cumulative_render_score_limit = 3
+    assert_equal('', template.render!)
+    assert_raises(Liquid::MemoryError) { template.render! }
+  end
+
   def test_endless_range_remains_unsupported_with_a_limit
     template = Template.parse('{% for i in numbers limit:2 %}{{ i }}{% endfor %}')
 
