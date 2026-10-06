@@ -109,6 +109,19 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_false(' 1 ', 'contains', 2)
   end
 
+  def test_or_condition
+    condition = Condition.new(1, '==', 2)
+    assert_equal(false, condition.evaluate(Context.new))
+
+    condition.or(Condition.new(2, '==', 1))
+
+    assert_equal(false, condition.evaluate(Context.new))
+
+    condition.or(Condition.new(1, '==', 1))
+
+    assert_equal(true, condition.evaluate(Context.new))
+  end
+
   def test_should_allow_custom_proc_operator
     Condition.operators['starts_with'] = proc { |_cond, left, right| left =~ /^#{right}/ }
 
