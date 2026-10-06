@@ -793,6 +793,12 @@ class StandardFiltersTest < Minitest::Test
     assert(t.foo > 0)
   end
 
+  def test_sum_with_property_calls_to_liquid_on_property_values
+    t = TestThing.new
+    Liquid::Template.parse('{{ foo | sum: "quantity" }}').render("foo" => [{ "quantity" => t }])
+    assert(t.foo > 0)
+  end
+
   def test_sum_with_non_string_property
     input = [{ true => 1 }, { 1.0 => 0.2, 1 => -0.3 }, { 1..5 => 0.4 }]
 
