@@ -27,6 +27,9 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        [@node.variable]
+      end
     end
   end
 end
