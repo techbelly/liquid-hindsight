@@ -24,6 +24,10 @@ module Liquid
       self.partial = false
     end
 
+    def [](option_key)
+      @options[option_key]
+    end
+
     def new_parser(input)
       @string_scanner.string = input
       Parser.new(@string_scanner, reject_bare_brackets: @error_mode == :strict2 || @error_mode == :rigid)

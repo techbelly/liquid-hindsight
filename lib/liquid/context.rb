@@ -79,6 +79,18 @@ module Liquid
       @scopes.shift
     end
 
+    # Look up variable, either resolve directly after considering the name. We can directly handle
+    # Strings, digits, floats and booleans (true,false).
+    # If no match is made we lookup the variable in the current scope and
+    # later move up to the parent blocks to see if we can resolve the variable somewhere up the tree.
+    # Some special keywords return symbols. Those symbols are to be called on the rhs object in expressions
+    #
+    # Example:
+    #   products == empty #=> products.empty?
+    def [](expression)
+      evaluate(Expression.parse(expression, @string_scanner))
+    end
+
     def with_disabled_tags(tag_names)
       tag_names.each do |name|
         @disabled_tags[name] = @disabled_tags.fetch(name, 0) + 1
