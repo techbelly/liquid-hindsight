@@ -468,6 +468,15 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ a: 1, b: 2 }], @filters.reverse(a: 1, b: 2))
   end
 
+  def test_map
+    assert_equal([1, 2, 3, 4], @filters.map([{ "a" => 1 }, { "a" => 2 }, { "a" => 3 }, { "a" => 4 }], 'a'))
+    assert_template_result(
+      'abc',
+      "{{ ary | map:'foo' | map:'bar' }}",
+      { 'ary' => [{ 'foo' => { 'bar' => 'a' } }, { 'foo' => { 'bar' => 'b' } }, { 'foo' => { 'bar' => 'c' } }] },
+    )
+  end
+
   def test_sort_calls_to_liquid
     t = TestThing.new
     Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
