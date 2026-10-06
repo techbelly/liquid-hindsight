@@ -14,6 +14,18 @@ class ConditionUnitTest < Minitest::Test
     assert_equal(true,  Condition.new(1, '==', 1).evaluate(Context.new))
   end
 
+  def test_default_operators_evalute_false
+    assert_evaluates_false(1, '==', 2)
+    assert_evaluates_false(1, '!=', 1)
+    assert_evaluates_false(1, '<>', 1)
+    assert_evaluates_false(1, '<', 0)
+    assert_evaluates_false(2, '>', 4)
+    assert_evaluates_false(1, '>=', 3)
+    assert_evaluates_false(2, '>=', 4)
+    assert_evaluates_false(1, '<=', 0)
+    assert_evaluates_false(1, '<=', 0)
+  end
+
   def test_contains_works_on_strings
     assert_evaluates_true('bob', 'contains', 'o')
     assert_evaluates_true('bob', 'contains', 'b')
