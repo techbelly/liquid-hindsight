@@ -125,6 +125,11 @@ class DropsTest < Minitest::Test
     assert_equal(' catchall_method: 8 ', output)
   end
 
+  def test_context_drop
+    output = Liquid::Template.parse(' {{ context.bar }} ').render!('context' => ContextDrop.new, 'bar' => "carrot")
+    assert_equal(' carrot ', output)
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
