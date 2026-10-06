@@ -26,6 +26,15 @@ class ParserUnitTest < Minitest::Test
     assert_equal('7', p.consume?(:number))
   end
 
+  def test_id?
+    p = new_parser("wat 6 Peter Hegemon")
+    assert_equal('wat', p.id?('wat'))
+    assert_equal(false, p.id?('endgame'))
+    assert_equal('6', p.consume(:number))
+    assert_equal('Peter', p.id?('Peter'))
+    assert_equal(false, p.id?('Achilles'))
+  end
+
   def test_look
     p = new_parser("wat 6 Peter Hegemon")
     assert_equal(true, p.look(:id))
