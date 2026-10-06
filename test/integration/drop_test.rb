@@ -139,6 +139,11 @@ class DropsTest < Minitest::Test
     assert_equal(' catchall_method: 8 ', output)
   end
 
+  def test_text_array_drop
+    output = Liquid::Template.parse('{% for text in product.texts.array %} {{text}} {% endfor %}').render!('product' => ProductDrop.new)
+    assert_equal(' text1  text2 ', output)
+  end
+
   def test_context_drop
     output = Liquid::Template.parse(' {{ context.bar }} ').render!('context' => ContextDrop.new, 'bar' => "carrot")
     assert_equal(' carrot ', output)
