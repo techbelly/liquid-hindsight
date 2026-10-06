@@ -43,4 +43,21 @@ class RegistersUnitTest < Minitest::Test
       static_register.static.delete(:c)
     end
   end
+
+  def test_initialization_reused_static_same_memory_object
+    static_register_1 = Registers.new(a: 1, b: 2)
+    static_register_1[:b] = 22
+    static_register_1[:c] = 33
+
+    static_register_2 = Registers.new(static_register_1)
+
+    assert_equal(1, static_register_2[:a])
+    assert_equal(2, static_register_2[:b])
+    assert_nil(static_register_2[:c])
+
+    static_register_1.static[:b] = 222
+    static_register_1.static[:c] = 333
+
+    assert_same(static_register_1.static, static_register_2.static)
+  end
 end
