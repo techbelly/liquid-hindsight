@@ -85,6 +85,11 @@ module Liquid
       end
     end
 
+    def children
+      children = @root_children
+      children
+    end
+
     def each(&block)
       children.each(&block)
     end
