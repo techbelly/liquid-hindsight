@@ -15,5 +15,9 @@ module Liquid
   #
   # This will parse the template with a LocalFileSystem implementation rooted at 'template_path'.
   class BlankFileSystem
+    # Called by Liquid to retrieve a template file
+    def read_template_file(_template_path)
+      raise FileSystemError, "This liquid context does not allow includes."
+    end
   end
 end
