@@ -53,6 +53,11 @@ class StatementsTest < Minitest::Test
     assert_template_result('  true  ', text)
   end
 
+  def test_strings_not_equal
+    text = " {% if 'test' != 'test' %} true {% else %} false {% endif %} "
+    assert_template_result('  false  ', text)
+  end
+
   def test_var_strings_equal
     text = ' {% if var == "hello there!" %} true {% else %} false {% endif %} '
     assert_template_result('  true  ', text, { 'var' => 'hello there!' })
