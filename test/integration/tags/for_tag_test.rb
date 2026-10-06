@@ -76,6 +76,39 @@ class ForTagTest < Minitest::Test
     assert_template_result("1-1,1-2,after", source)
   end
 
+  def test_for_tag_string
+    # ruby 1.8.7 "String".each => Enumerator with single "String" element.
+    # ruby 1.9.3 no longer supports .each on String though we mimic
+    # the functionality for backwards compatibility
+
+    assert_template_result(
+      'test string',
+      '{%for val in string%}{{val}}{%endfor%}',
+      { 'string' => "test string" },
+    )
+
+    assert_template_result(
+      'test string',
+      '{%for val in string limit:1%}{{val}}{%endfor%}',
+      { 'string' => "test string" },
+    )
+
+    assert_template_result(
+      'val-string-1-1-0-1-0-true-true-test string',
+      '{%for val in string%}' \
+      '{{forloop.name}}-' \
+      '{{forloop.index}}-' \
+      '{{forloop.length}}-' \
+      '{{forloop.index0}}-' \
+      '{{forloop.rindex}}-' \
+      '{{forloop.rindex0}}-' \
+      '{{forloop.first}}-' \
+      '{{forloop.last}}-' \
+      '{{val}}{%endfor%}',
+      { 'string' => "test string" },
+    )
+  end
+
   def test_inner_for_over_empty_input
     assert_template_result('oo', '{% for a in (1..2) %}o{% for b in empty %}{% endfor %}{% endfor %}')
   end
