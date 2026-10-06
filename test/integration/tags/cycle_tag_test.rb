@@ -13,6 +13,17 @@ class CycleTagTest < Minitest::Test
     assert_template_result("121", template)
   end
 
+  def test_optional_trailing_comma
+    template = <<~LIQUID
+      {%- cycle "1", "2", -%}
+      {%- cycle "1", "2", -%}
+      {%- cycle "1", "2", -%}
+      {%- cycle "1", -%}
+    LIQUID
+
+    assert_template_result("1211", template)
+  end
+
   def test_cycle_tag_without_arguments
     error = assert_raises(Liquid::SyntaxError) do
       Template.parse("{% cycle %}")
