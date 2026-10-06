@@ -543,6 +543,16 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_map_with_value_property
+    array = [
+      { "handle" => "alpha", "value" => "A" },
+      { "handle" => "beta", "value" => "B" },
+      { "handle" => "gamma", "value" => "C" }
+    ]
+
+    assert_template_result("A B C", "{{ array | map: 'value' | join: ' ' }}", { "array" => array })
+  end
+
   def test_map_returns_input_with_no_property
     foo = [
       [1],
