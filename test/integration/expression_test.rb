@@ -9,6 +9,14 @@ class ExpressionTest < Minitest::Test
     assert_expression_result(true, "true")
   end
 
+  def test_string
+    assert_template_result("single quoted", "{{'single quoted'}}")
+    assert_template_result("double quoted", '{{"double quoted"}}')
+    assert_template_result("spaced", "{{ 'spaced' }}")
+    assert_template_result("spaced2", "{{ 'spaced2' }}")
+    assert_template_result("emoji🔥", "{{ 'emoji🔥' }}")
+  end
+
   def test_quirky_negative_sign_expression_markup
     result = Expression.parse("-", nil)
     assert(result.is_a?(VariableLookup))
