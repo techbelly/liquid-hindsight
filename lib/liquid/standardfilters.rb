@@ -745,6 +745,17 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Subtracts a given number from another number.
+    # @liquid_syntax number | minus: number
+    # @liquid_return [number]
+    def minus(input, operand)
+      apply_operation(input, operand, :-)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category default
     # @liquid_summary
     #   Sets a default value for any variable whose value is one of the following:
