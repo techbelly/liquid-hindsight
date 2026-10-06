@@ -283,6 +283,17 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_renders_error_with_template_name_from_template_factory
+    assert_template_result(
+      'Liquid error (some/path/foo line 1): standard error',
+      "{% include 'foo' with errors %}",
+      { 'errors' => ErrorDrop.new },
+      partials: { 'foo' => '{{ foo.standard_error }}' },
+      template_factory: StubTemplateFactory.new,
+      render_errors: true,
+    )
+  end
+
   def test_include_template_with_invalid_expression
     template = "{% include foo=>bar %}"
 
