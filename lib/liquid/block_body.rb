@@ -104,6 +104,10 @@ module Liquid
       parse_context.trim_whitespace = (token[-3] == WhitespaceControl)
     end
 
+    def blank?
+      @blank
+    end
+
     private
 
     def create_variable(token, parse_context)

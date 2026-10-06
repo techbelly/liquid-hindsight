@@ -40,10 +40,6 @@ module Liquid
 
           return false if end_tag_name == block_delimiter
           raise_tag_never_closed(block_name) unless end_tag_name
-
-          # this tag is not registered with the system
-          # pass it to the current block for special handling or error reporting
-          unknown_tag(end_tag_name, end_tag_params, tokens)
         end
       ensure
         parse_context.depth -= 1
