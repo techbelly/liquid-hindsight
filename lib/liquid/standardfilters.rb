@@ -324,6 +324,24 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Concatenates (combines) two arrays.
+    # @liquid_description
+    #   > Note:
+    #   > The `concat` filter won't filter out duplicates. If you want to remove duplicates, then you need to use the
+    #   > [`uniq` filter](/docs/api/liquid/filters/uniq).
+    # @liquid_syntax array | concat: array
+    # @liquid_return [array[untyped]]
+    def concat(input, array)
+      unless array.respond_to?(:to_ary)
+        raise ArgumentError, "concat filter requires an array argument"
+      end
+      InputIterator.new(input, context).concat(array)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Returns the first item in an array.
     # @liquid_syntax array | first
     # @liquid_return [untyped]
@@ -392,6 +410,10 @@ module Liquid
         elsif input.is_a?(Hash)
           [input]
         end
+      end
+
+      def concat(args)
+        to_a.concat(args)
       end
 
       def reverse

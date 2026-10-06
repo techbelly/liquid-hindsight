@@ -356,6 +356,16 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('빈', @filters.last('고스트빈'))
   end
 
+  def test_concat
+    assert_equal([1, 2, 3, 4], @filters.concat([1, 2], [3, 4]))
+    assert_equal([1, 2, 'a'],  @filters.concat([1, 2], ['a']))
+    assert_equal([1, 2, 10],   @filters.concat([1, 2], [10]))
+
+    assert_raises(Liquid::ArgumentError, "concat filter requires an array argument") do
+      @filters.concat([1, 2], 10)
+    end
+  end
+
   private
 
   def with_timezone(tz)
