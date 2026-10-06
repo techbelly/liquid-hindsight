@@ -151,6 +151,15 @@ class DropsTest < Minitest::Test
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
 
+  def test_enumerable_drop_will_invoke_liquid_method_missing_for_clashing_method_names
+    ["select", "each", "map", "cycle"].each do |method|
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => EnumerableDrop.new))
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => EnumerableDrop.new))
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => RealEnumerableDrop.new))
+      assert_equal(method.to_s, Liquid::Template.parse("{{collection[\"#{method}\"]}}").render!('collection' => RealEnumerableDrop.new))
+    end
+  end
+
   def test_some_enumerable_methods_still_get_invoked
     [:count, :max].each do |method|
       assert_equal("3", Liquid::Template.parse("{{collection.#{method}}}").render!('collection' => RealEnumerableDrop.new))
