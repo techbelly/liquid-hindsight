@@ -17,4 +17,10 @@ class RegexpUnitTest < Minitest::Test
   def test_words
     assert_equal(['arg1', 'arg2'], 'arg1 arg2'.scan(QuotedFragment))
   end
+
+  def test_tags
+    assert_equal(['<tr>', '</tr>'], '<tr> </tr>'.scan(QuotedFragment))
+    assert_equal(['<tr></tr>'], '<tr></tr>'.scan(QuotedFragment))
+    assert_equal(['<style', 'class="hello">', '</style>'], %(<style class="hello">' </style>).scan(QuotedFragment))
+  end
 end # RegexpTest
