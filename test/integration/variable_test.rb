@@ -6,6 +6,11 @@ require 'timeout'
 class VariableTest < Minitest::Test
   include Liquid
 
+  def test_simple_variable
+    assert_template_result('worked', "{{test}}", { 'test' => 'worked' })
+    assert_template_result('worked wonderfully', "{{test}}", { 'test' => 'worked wonderfully' })
+  end
+
   def test_variable_render_calls_to_liquid
     assert_template_result('foobar', '{{ foo }}', { 'foo' => ThingWithToLiquid.new })
   end
