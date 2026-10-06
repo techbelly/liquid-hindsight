@@ -187,6 +187,17 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_preserve_tree_structure
+    assert_equal(
+      [[nil, [
+        [nil, [[nil, [["other", []]]]]],
+        ["test", []],
+        ["xs", []],
+      ]]],
+      traversal(%({% for x in xs offset: test %}{{ other }}{% endfor %})).visit,
+    )
+  end
+
   private
 
   def traversal(template)
