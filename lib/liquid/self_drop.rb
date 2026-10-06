@@ -16,6 +16,11 @@ module Liquid
   #   then the local value takes precedence over the `self` object.
   # @liquid_access global
   class SelfDrop < Drop
+    def initialize(self_context)
+      super()
+      @self_context = self_context
+    end
+
     def [](key)
       @self_context.find_variable(key)
     rescue UndefinedVariable
@@ -29,6 +34,12 @@ module Liquid
     def to_liquid
       self
     end
+
+    def ==(other)
+      other.is_a?(SelfDrop) && other.self_context.equal?(@self_context)
+    end
+
+    alias_method :eql?, :==
 
     protected
 
