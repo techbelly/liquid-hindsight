@@ -60,6 +60,7 @@ module Liquid
           end
         end
 
+        raise_tag_never_closed(block_name)
       ensure
         parse_context.depth -= 1
       end
