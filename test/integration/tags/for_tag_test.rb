@@ -143,6 +143,13 @@ class ForTagTest < Minitest::Test
     end
   end
 
+  def test_spacing_with_variable_naming_in_for_loop
+    expected = '12345'
+    template = '{% for       item   in   items %}{{item}}{% endfor %}'
+    assigns  = { 'items' => [1, 2, 3, 4, 5] }
+    assert_template_result(expected, template, assigns)
+  end
+
   class LoaderDrop < Liquid::Drop
     attr_accessor :each_called, :load_slice_called
 
