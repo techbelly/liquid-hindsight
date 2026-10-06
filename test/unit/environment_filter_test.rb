@@ -44,4 +44,10 @@ class EnvironmentFilterTest < Minitest::Test
     assert_equal(false, strainer.class.invokable?('__send__'))
     assert_equal(true, strainer.class.invokable?('size')) # from the standard lib
   end
+
+  def test_strainer_returns_nil_if_no_filter_method_found
+    strainer = @environment.create_strainer(@context)
+    assert_nil(strainer.invoke("private_filter"))
+    assert_nil(strainer.invoke("undef_the_filter"))
+  end
 end
