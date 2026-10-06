@@ -175,6 +175,17 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_renders_error_with_template_name_from_template_factory
+    assert_template_result(
+      'Liquid error (some/path/foo line 1): standard error',
+      "{% render 'foo' with errors %}",
+      { 'errors' => ErrorDrop.new },
+      partials: { 'foo' => '{{ foo.standard_error }}' },
+      template_factory: StubTemplateFactory.new,
+      render_errors: true,
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
