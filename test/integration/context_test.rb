@@ -282,6 +282,19 @@ class ContextTest < Minitest::Test
     assert_template_result("1", "{{ test.last }}", assigns)
   end
 
+  def test_access_hashes_with_hash_notation
+    assigns = { 'products' => { 'count' => 5, 'tags' => ['deepsnow', 'freestyle'] } }
+    assert_template_result("5", '{{ products["count"] }}', assigns)
+    assert_template_result("deepsnow", '{{ products["tags"][0] }}', assigns)
+    assert_template_result("deepsnow", '{{ products["tags"].first }}', assigns)
+
+    assigns = { 'product' => { 'variants' => [{ 'title' => 'draft151cm' }, { 'title' => 'element151cm' }] } }
+    assert_template_result("draft151cm", '{{ product["variants"][0]["title"] }}', assigns)
+    assert_template_result("element151cm", '{{ product["variants"][1]["title"] }}', assigns)
+    assert_template_result("draft151cm", '{{ product["variants"].first["title"] }}', assigns)
+    assert_template_result("element151cm", '{{ product["variants"].last["title"] }}', assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
