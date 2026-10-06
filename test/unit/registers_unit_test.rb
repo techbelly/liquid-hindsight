@@ -5,6 +5,16 @@ require 'test_helper'
 class RegistersUnitTest < Minitest::Test
   include Liquid
 
+  def test_set
+    static_register = Registers.new(a: 1, b: 2)
+    static_register[:b] = 22
+    static_register[:c] = 33
+
+    assert_equal(1, static_register[:a])
+    assert_equal(22, static_register[:b])
+    assert_equal(33, static_register[:c])
+  end
+
   def test_get_missing_key
     static_register = Registers.new
 
