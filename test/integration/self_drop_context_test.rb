@@ -14,4 +14,8 @@ class SelfDropContextTest < Minitest::Test
     assert_equal(drop.object_id, cached_drop.object_id)
     assert_equal(drop, cached_drop)
   end
+
+  def test_bare_self_compares_equal_to_bare_self
+    assert_template_result('T', '{% if self == self %}T{% else %}F{% endif %}')
+  end
 end
