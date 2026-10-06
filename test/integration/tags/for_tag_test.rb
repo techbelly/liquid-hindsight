@@ -63,6 +63,11 @@ class ForTagTest < Minitest::Test
     assert_equal("Liquid error: invalid integer", exception.message)
   end
 
+  def test_offset_only
+    assigns = { 'array' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] }
+    assert_template_result('890', '{%for i in array offset:7 %}{{ i }}{%endfor%}', assigns)
+  end
+
   def test_for_with_break
     assigns = { 'array' => { 'items' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] } }
 
