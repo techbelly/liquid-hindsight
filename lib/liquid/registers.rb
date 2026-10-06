@@ -13,6 +13,10 @@ module Liquid
       @changes[key] = value
     end
 
+    def [](key)
+      @static[key]
+    end
+
     UNDEFINED = Object.new
 
     def key?(key)
