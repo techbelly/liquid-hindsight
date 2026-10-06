@@ -313,6 +313,18 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Strips all whitespace from the left and right of a string.
+    # @liquid_syntax string | strip
+    # @liquid_return [string]
+    def strip(input)
+      input = Utils.to_s(input)
+      input.strip
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Strips all HTML tags from a string.
     # @liquid_syntax string | strip_html
     # @liquid_return [string]
