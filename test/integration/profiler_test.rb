@@ -43,6 +43,18 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_profiling_includes_line_numbers_of_included_partials
+    t = Template.parse("{% include 'a_template' %}", profile: true)
+    t.render!
+
+    included_children = t.profiler[0].children
+
+    # {% assign template_name = 'a_template' %}
+    assert_equal(1, included_children[0].line_number)
+    # {{ template_name }}
+    assert_equal(2, included_children[1].line_number)
+  end
+
   def test_profiling_render_tag
     t = Template.parse("{% render 'a_template' %}", profile: true)
     t.render!
