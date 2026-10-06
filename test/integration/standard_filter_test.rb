@@ -965,6 +965,24 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, template, { "array" => array })
   end
 
+  def test_find_index_with_value
+    products = [
+      { "title" => "Pro goggles",    "price" => 1299 },
+      { "title" => "Thermal gloves", "price" => 1499 },
+      { "title" => "Alpine jacket",  "price" => 3999 },
+      { "title" => "Mountain boots", "price" => 3899 },
+      { "title" => "Safety helmet",  "price" => 1999 }
+    ]
+
+    template = <<~LIQUID
+      {%- assign index = products | find_index: 'price', 3999 -%}
+      {{- index -}}
+    LIQUID
+    expected_output = "2"
+
+    assert_template_result(expected_output, template, { "products" => products })
+  end
+
   def test_where
     array = [
       { "handle" => "alpha", "ok" => true },
