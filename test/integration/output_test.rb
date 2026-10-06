@@ -67,4 +67,11 @@ class OutputTest < Minitest::Test
 
     assert_equal(expected, Template.parse(text).render!(@assigns, filters: [FunnyFilter]))
   end
+
+  def test_variable_piping_with_args
+    text     = %! {{ car.gm | add_smiley : ':-(' }} !
+    expected = %| bad :-( |
+
+    assert_equal(expected, Template.parse(text).render!(@assigns, filters: [FunnyFilter]))
+  end
 end # OutputTest
