@@ -142,21 +142,7 @@ module Liquid
     end
 
     def self.inspect(obj, seen = {})
-      case obj
-      when Hash
-        # If the custom hash implementation overrides `#inspect`, use their
-        # custom implementation. Otherwise we use Liquid's default
-        # implementation.
-        if obj.class.instance_method(:inspect) == HASH_INSPECT_METHOD
-          hash_inspect(obj, seen)
-        else
-          obj.inspect
-        end
-      when Array
-        array_inspect(obj, seen)
-      else
-        obj.inspect
-      end
+      obj.inspect
     end
 
     def self.hash_inspect(hash, seen = {})
@@ -169,8 +155,6 @@ module Liquid
       hash.each do |key, value|
         if first
           first = false
-        else
-          str << ", "
         end
 
         key_str = inspect(key, seen)
