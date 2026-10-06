@@ -44,6 +44,12 @@ class SelfDropContextTest < Minitest::Test
     assert_template_result('T', '{% if self == self %}T{% else %}F{% endif %}')
   end
 
+  def test_self_drop_with_strict_variables_does_not_raise_for_defined_var
+    t = Template.parse('{{ self.x }}')
+    result = t.render({ 'x' => 42 }, strict_variables: true)
+    assert_equal('42', result)
+  end
+
   def test_self_drop_can_be_passed_as_bare_drop_to_render
     t = Template.parse('{{ self.x }}')
     drop = SelfDrop.new(Context.new({ 'x' => 42 }))
