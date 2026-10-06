@@ -36,6 +36,22 @@ class EnvironmentFilterTest < Minitest::Test
     assert_equal("public", strainer.invoke("public_filter"))
   end
 
+  def test_strainer_argument_error_contains_backtrace
+    strainer = @environment.create_strainer(@context)
+
+    exception = assert_raises(Liquid::ArgumentError) do
+      strainer.invoke("public_filter", 1)
+    end
+
+    assert_match(
+      /\ALiquid error: wrong number of arguments \((1 for 0|given 1, expected 0)\)\z/,
+      exception.message,
+    )
+
+    source = AccessScopeFilters.instance_method(:public_filter).source_location
+    assert_equal(source[0..1].map(&:to_s), exception.backtrace[0].split(':')[0..1])
+  end
+
   def test_strainer_only_invokes_public_filter_methods
     strainer = @environment.create_strainer(@context)
     assert_equal(false, strainer.class.invokable?('__test__'))
