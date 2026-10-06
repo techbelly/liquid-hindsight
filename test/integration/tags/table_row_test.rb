@@ -216,4 +216,19 @@ class TableRowTest < Minitest::Test
       { 'numbers' => range },
     )
   end
+
+  def test_endless_range_subclass_uses_its_custom_each_without_a_limit
+    range = Class.new(Range) do
+      def each
+        yield 10
+        yield 20
+      end
+    end.new(1, nil)
+
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">10</td><td class=\"col2\">20</td></tr>\n",
+      '{% tablerow i in numbers %}{{ i }}{% endtablerow %}',
+      { 'numbers' => range },
+    )
+  end
 end
