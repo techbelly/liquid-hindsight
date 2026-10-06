@@ -511,6 +511,13 @@ class StandardFiltersTest < Minitest::Test
     assert(t.foo > 0)
   end
 
+  def test_map_over_proc
+    drop  = TestDrop.new(value: "testfoo")
+    p     = proc { drop }
+    output = Liquid::Template.parse('{{ procs | map: "value" }}').render!({ "procs" => [p] })
+    assert_equal("testfoo", output)
+  end
+
   def test_map_returns_empty_on_2d_input_array
     foo = [
       [1],
