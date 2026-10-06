@@ -169,6 +169,8 @@ module Liquid
           for_stack.pop
         end
       end
+
+      output
     end
 
     def set_attribute(key, expr, safe: false)

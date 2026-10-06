@@ -156,6 +156,31 @@ class TemplateTest < Minitest::Test
     assert_equal("すごい", t.render)
   end
 
+  def test_cumulative_render_score_limit_across_render_tags
+    file_system = StubFileSystem.new(
+      'loop' => '{% for a in (1..10) %} foo {% endfor %}',
+    )
+    environment = Liquid::Environment.build(file_system: file_system)
+
+    # Without cumulative limit, all 5 partials render successfully
+    t = Template.parse(
+      '{% render "loop" %}{% render "loop" %}{% render "loop" %}{% render "loop" %}{% render "loop" %}',
+      environment: environment,
+    )
+    unlimited_output = t.render!
+    total_cumulative = t.resource_limits.cumulative_render_score
+
+    # With cumulative limit set below the total, rendering stops early
+    t2 = Template.parse(
+      '{% render "loop" %}{% render "loop" %}{% render "loop" %}{% render "loop" %}{% render "loop" %}',
+      environment: environment,
+    )
+    t2.resource_limits.cumulative_render_score_limit = total_cumulative / 2
+    limited_output = t2.render
+    assert(t2.resource_limits.reached?)
+    assert_operator(limited_output.length, :<, unlimited_output.length)
+  end
+
   def test_cumulative_render_score_limit_raises_on_render_bang
     file_system = StubFileSystem.new(
       'loop' => '{% for a in (1..10) %} foo {% endfor %}',
