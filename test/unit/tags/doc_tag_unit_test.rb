@@ -112,6 +112,16 @@ class DocTagUnitTest < Minitest::Test
     assert_template_result('', template)
   end
 
+  def test_doc_tag_ignores_unclosed_assign
+    template = <<~LIQUID.chomp
+      {% doc %}
+        {% assign foo = "1"
+      {% enddoc %}
+    LIQUID
+
+    assert_template_result('', template)
+  end
+
   def test_doc_tag_captures_token_before_enddoc
     template_source = "{% doc %}{{ incomplete{% enddoc %}"
 
