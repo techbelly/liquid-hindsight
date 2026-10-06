@@ -107,6 +107,17 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Encodes a string to URL-safe [Base64 format](https://developer.mozilla.org/en-US/docs/Glossary/Base64).
+    # @liquid_syntax string | base64_url_safe_encode
+    # @liquid_return [string]
+    def base64_url_safe_encode(input)
+      Base64.urlsafe_encode64(Utils.to_s(input))
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.
