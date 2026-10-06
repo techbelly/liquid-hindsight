@@ -9,7 +9,15 @@ module Liquid
       @changes = {}
     end
 
+    def []=(key, value)
+      @changes[key] = value
+    end
+
     UNDEFINED = Object.new
+
+    def key?(key)
+      @changes.key?(key) || @static.key?(key)
+    end
   end
 
   # Alias for backwards compatibility
