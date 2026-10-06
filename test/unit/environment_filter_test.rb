@@ -36,6 +36,13 @@ class EnvironmentFilterTest < Minitest::Test
     assert_equal("public", strainer.invoke("public_filter"))
   end
 
+  def test_strainer_raises_argument_error
+    strainer = @environment.create_strainer(@context)
+    assert_raises(Liquid::ArgumentError) do
+      strainer.invoke("public_filter", 1)
+    end
+  end
+
   def test_strainer_argument_error_contains_backtrace
     strainer = @environment.create_strainer(@context)
 
