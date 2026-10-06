@@ -133,6 +133,14 @@ module Liquid
       strainer_template.new(context)
     end
 
+    # Returns the names of all the filter methods that are available to use in
+    # the strainer template.
+    #
+    # @return [Array<String>] The names of all the filter methods.
+    def filter_method_names
+      @strainer_template.filter_method_names
+    end
+
     # Returns the tag class for the given tag name.
     #
     # @param name [String] The name of the tag.

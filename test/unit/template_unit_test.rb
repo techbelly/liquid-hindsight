@@ -21,6 +21,7 @@ class TemplateUnitTest < Minitest::Test
   end
 
   class FakeTag; end
+
   def test_tags_can_be_looped_over
     with_custom_tag('fake', FakeTag) do
       result = Template.tags.map { |name, klass| [name, klass] }

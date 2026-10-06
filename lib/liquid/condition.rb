@@ -137,6 +137,8 @@ module Liquid
           liquid_blank?(value)
         when :empty?
           liquid_empty?(value)
+        else
+          false
         end
       end
     end
@@ -155,13 +157,21 @@ module Liquid
         value.empty? || value.match?(/\A\s*\z/)
       when Array, Hash
         value.empty?
+      else
+        # Fall back to empty? if available, otherwise false
+        value.respond_to?(:empty?) ? value.empty? : false
       end
     end
 
     # Implement empty? semantics
     # Note: nil is NOT empty. empty? checks if a collection has zero elements.
     def liquid_empty?(value)
-      value.respond_to?(:empty?) ? value.empty? : false
+      case value
+      when String, Array, Hash
+        value.empty?
+      else
+        value.respond_to?(:empty?) ? value.empty? : false
+      end
     end
 
     def interpret_condition(left, right, op, context)

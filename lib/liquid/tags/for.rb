@@ -82,6 +82,8 @@ module Liquid
         markup.scan(TagAttributes) do |key, value|
           set_attribute(key, value)
         end
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.for")
       end
     end
 
@@ -99,6 +101,7 @@ module Liquid
       while p.look(:comma) || p.look(:id)
         p.consume?(:comma)
         unless (attribute = p.id?('limit') || p.id?('offset'))
+          raise SyntaxError, options[:locale].t("errors.syntax.for_invalid_attribute")
         end
         p.consume(:colon)
         set_attribute(attribute, p.expression, safe: true)

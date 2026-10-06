@@ -11,6 +11,8 @@ module Liquid
     supports_64bit_indices = begin
       [][1 << 33, 1 << 33]
       true
+    rescue RangeError
+      false
     end
 
     INDEX_RANGE = if supports_64bit_indices
@@ -221,6 +223,9 @@ module Liquid
           Utils.to_s(input).slice(offset, length) || ''
         end
       rescue RangeError
+        if INDEX_RANGE.cover?(length) && INDEX_RANGE.cover?(offset)
+          raise # unexpected error
+        end
         offset = offset.clamp(INDEX_RANGE)
         length = length.clamp(INDEX_RANGE)
         retry
@@ -275,6 +280,7 @@ module Liquid
       rescue RangeError
         # integer too big for String#split, but we can semantically assume no truncation is needed
         return input if words + 1 > MAX_I32
+        raise # unexpected error
       end
       return input if wordlist.length <= words
 

@@ -545,6 +545,7 @@ class TableRowTest < Minitest::Test
   def test_range_subclass_custom_to_a_is_not_used
     range = Class.new(Range) do
       def to_a
+        [42]
       end
     end.new(1, 3)
 

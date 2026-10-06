@@ -106,6 +106,8 @@ module Liquid
     rescue ::ArgumentError => e
       if e.message == "invalid byte sequence in #{@ss.string.encoding}"
         raise SyntaxError, "Invalid byte sequence in #{@ss.string.encoding}"
+      else
+        raise
       end
     end
 
@@ -135,6 +137,8 @@ module Liquid
         elsif byte_a == OPEN_CURLEY && byte_b == PERCENTAGE
           return next_tag_token_with_start(start)
         end
+
+        byte_a = byte_b
       end
 
       "{{"

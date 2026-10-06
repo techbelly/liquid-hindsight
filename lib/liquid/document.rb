@@ -41,6 +41,10 @@ module Liquid
       @body.render_to_output_buffer(context, output)
     end
 
+    def render(context)
+      render_to_output_buffer(context, +'')
+    end
+
     private
 
     def new_body
@@ -51,6 +55,7 @@ module Liquid
       @body.parse(tokenizer, parse_context) do |unknown_tag_name, unknown_tag_markup|
         if unknown_tag_name
           unknown_tag(unknown_tag_name, unknown_tag_markup, tokenizer)
+          true
         else
           false
         end

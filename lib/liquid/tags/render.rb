@@ -38,6 +38,10 @@ module Liquid
       parse_with_selected_parser(markup)
     end
 
+    def for_loop?
+      @is_for_loop
+    end
+
     def render_to_output_buffer(context, output)
       render_tag(context, output)
     end
@@ -94,6 +98,10 @@ module Liquid
 
       @attributes = {}
       while p.look(:id)
+        key = p.consume
+        p.consume(:colon)
+        @attributes[key] = safe_parse_expression(p)
+        p.consume?(:comma)
       end
 
       p.consume(:end_of_string)

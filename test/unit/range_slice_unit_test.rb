@@ -27,6 +27,7 @@ class RangeSliceUnitTest < Minitest::Test
     limits = Liquid::ResourceLimits.new({})
     range = Class.new(Range) do
       def to_a
+        raise 'range was materialized'
       end
     end.new('a', 'c')
 

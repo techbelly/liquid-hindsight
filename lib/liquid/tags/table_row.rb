@@ -74,6 +74,8 @@ module Liquid
         markup.scan(TagAttributes) do |key, value|
           @attributes[key] = parse_expression(value)
         end
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.table_row")
       end
     end
 

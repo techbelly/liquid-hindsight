@@ -51,6 +51,13 @@ module Liquid
       @pattern = pattern
     end
 
+    def read_template_file(template_path)
+      full_path = full_path(template_path)
+      raise FileSystemError, "No such template '#{template_path}'" unless File.exist?(full_path)
+
+      File.read(full_path)
+    end
+
     def full_path(template_path)
       raise FileSystemError, "Illegal template name '#{template_path}'" unless %r{\A[^./][a-zA-Z0-9_/]+\z}.match?(template_path)
 

@@ -120,6 +120,9 @@ module Liquid
         if num_end_pos
           # number ends with a number "123.123"
           markup.byteslice(0, num_end_pos).to_f
+        else
+          # number ends with a dot "123."
+          markup.byteslice(0, first_dot_pos).to_f
         end
       end
     end

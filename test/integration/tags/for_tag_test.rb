@@ -537,6 +537,8 @@ HERE
   def test_endless_range_subclass_with_custom_each_remains_unsupported
     range = Class.new(Range) do
       def each
+        yield 10
+        yield 20
       end
     end.new(1, nil)
 

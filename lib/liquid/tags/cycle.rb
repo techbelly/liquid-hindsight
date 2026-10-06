@@ -26,6 +26,10 @@ module Liquid
       parse_with_selected_parser(markup)
     end
 
+    def named?
+      @is_named
+    end
+
     def render_to_output_buffer(context, output)
       context.registers[:cycle] ||= {}
 
@@ -34,7 +38,9 @@ module Liquid
 
       val = context.evaluate(@variables[iteration])
 
-      if !val.is_a?(String)
+      if val.is_a?(Array)
+        val = val.join
+      elsif !val.is_a?(String)
         val = val.to_s
       end
 
@@ -78,6 +84,11 @@ module Liquid
       end
 
       p.consume(:end_of_string)
+
+      unless @is_named
+        @name = @variables.to_s
+        @is_named = !@name.match?(UNNAMED_CYCLE_PATTERN)
+      end
     end
 
     def strict_parse(markup)

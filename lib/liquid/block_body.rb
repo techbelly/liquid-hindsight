@@ -261,5 +261,15 @@ module Liquid
 
       BlockBody.raise_missing_variable_terminator(token, parse_context)
     end
+
+    # @deprecated Use {.raise_missing_tag_terminator} instead
+    def raise_missing_tag_terminator(token, parse_context)
+      BlockBody.raise_missing_tag_terminator(token, parse_context)
+    end
+
+    # @deprecated Use {.raise_missing_variable_terminator} instead
+    def raise_missing_variable_terminator(token, parse_context)
+      BlockBody.raise_missing_variable_terminator(token, parse_context)
+    end
   end
 end

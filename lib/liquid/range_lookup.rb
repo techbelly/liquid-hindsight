@@ -16,6 +16,8 @@ module Liquid
           if invalid_expr
             raise Liquid::SyntaxError, "Invalid expression type '#{invalid_expr}' in range expression"
           end
+
+          raise
         end
       end
     end

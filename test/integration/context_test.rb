@@ -705,6 +705,9 @@ class ContextTest < Minitest::Test
   private
 
   def assert_no_object_allocations
+    unless RUBY_ENGINE == 'ruby'
+      skip("stackprof needed to count object allocations")
+    end
     require 'stackprof'
 
     profile = StackProf.run(mode: :object) do

@@ -162,6 +162,10 @@ module Liquid
       end
     end
 
+    def clear_instance_assigns
+      @scopes[0] = {}
+    end
+
     # Only allow String, Numeric, Hash, Array, Proc, Boolean or <tt>Liquid::Drop</tt>
     def []=(key, value)
       @scopes[0][key] = value

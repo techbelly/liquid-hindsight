@@ -164,6 +164,8 @@ module Liquid
 
     def self.to_s(obj, seen = {})
       case obj
+      when BigDecimal
+        obj.to_s("F")
       when Hash
         # If the custom hash implementation overrides `#to_s`, use their
         # custom implementation. Otherwise we use Liquid's default
@@ -188,6 +190,8 @@ module Liquid
         # implementation.
         if obj.class.instance_method(:inspect) == HASH_INSPECT_METHOD
           hash_inspect(obj, seen)
+        else
+          obj.inspect
         end
       when Array
         array_inspect(obj, seen)
@@ -198,6 +202,7 @@ module Liquid
 
     def self.array_inspect(arr, seen = {})
       if seen[arr.object_id]
+        return "[...]"
       end
 
       seen[arr.object_id] = true

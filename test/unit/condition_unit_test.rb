@@ -154,6 +154,7 @@ class ConditionUnitTest < Minitest::Test
 
   def test_default_context_is_deprecated
     if Gem::Version.new(Liquid::VERSION) >= Gem::Version.new('6.0.0')
+      flunk("Condition#evaluate without a context argument is to be removed")
     end
 
     _out, err = capture_io do

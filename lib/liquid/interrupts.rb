@@ -12,6 +12,7 @@ module Liquid
 
   # Interrupt that is thrown whenever a {% break %} is called.
   class BreakInterrupt < Interrupt; end
+
   # Interrupt that is thrown whenever a {% continue %} is called.
   class ContinueInterrupt < Interrupt; end
 end

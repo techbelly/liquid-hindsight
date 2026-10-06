@@ -99,6 +99,8 @@ module Liquid
     def lax_parse(markup)
       if markup =~ Syntax
         @left = parse_expression(Regexp.last_match(1))
+      else
+        raise SyntaxError, options[:locale].t("errors.syntax.case")
       end
     end
 
@@ -143,6 +145,7 @@ module Liquid
 
     def record_else_condition(markup)
       unless markup.strip.empty?
+        raise SyntaxError, options[:locale].t("errors.syntax.case_invalid_else")
       end
 
       block = ElseCondition.new

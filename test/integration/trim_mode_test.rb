@@ -29,7 +29,9 @@ class TrimModeTest < Minitest::Test
       <div>
         <p>
 
+
           {{- 'John' -}}
+
 
         </p>
       </div>
@@ -47,9 +49,11 @@ class TrimModeTest < Minitest::Test
       <div>
         <p>
 
+
           {%- if true -%}
           yes
           {%- endif -%}
+
 
         </p>
       </div>
