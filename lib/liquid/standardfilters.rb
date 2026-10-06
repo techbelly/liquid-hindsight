@@ -180,6 +180,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Sorts the items in an array in case-sensitive alphabetical, or numerical, order.
+    # @liquid_syntax array | sort
+    # @liquid_return [array[untyped]]
+    def sort(input, property = nil)
+      ary = InputIterator.new(input, context)
+
+      return [] if ary.empty?
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Returns the first item in an array.
     # @liquid_syntax array | first
     # @liquid_return [untyped]
@@ -205,5 +218,21 @@ module Liquid
     private
 
     attr_reader :context
+
+    class InputIterator
+      include Enumerable
+
+      def initialize(input, context)
+        @context = context
+        @input   = if input.is_a?(Array)
+          input.flatten
+        end
+      end
+
+      def empty?
+        @input.each { return false }
+        true
+      end
+    end
   end
 end
