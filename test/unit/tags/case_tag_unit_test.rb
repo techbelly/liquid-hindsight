@@ -31,6 +31,27 @@ class CaseTagUnitTest < Minitest::Test
     end
   end
 
+  def test_case_when_with_trailing_element
+    template = <<~LIQUID
+      {%- case 1 -%}
+        {%- when 1 bar -%}
+          one
+        {%- else -%}
+          two
+      {%- endcase -%}
+    LIQUID
+
+    with_error_modes(:lax, :strict) do
+      assert_template_result("one", template)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+
+      assert_match(/Expected end_of_string but found/, error.message)
+    end
+  end
+
   def test_case_when_with_comma
     template = <<~LIQUID
       {%- case 1 -%}
