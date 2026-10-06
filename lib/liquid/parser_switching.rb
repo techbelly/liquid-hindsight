@@ -19,6 +19,7 @@ module Liquid
       when :strict
         raise
       end
+      lax_parse(markup)
     end
 
     def strict2_mode?

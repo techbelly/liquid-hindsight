@@ -41,6 +41,24 @@ module Liquid
       "in \"{{#{markup}}}\""
     end
 
+    def lax_parse(markup)
+      @filters = []
+      return unless markup =~ MarkupWithQuotedFragment
+
+      name_markup   = Regexp.last_match(1)
+      filter_markup = Regexp.last_match(2)
+      @name         = parse_context.parse_expression(name_markup)
+      if filter_markup =~ FilterMarkupRegex
+        filters = Regexp.last_match(1).scan(FilterParser)
+        filters.each do |f|
+          next unless f =~ /\w+/
+          filtername = Regexp.last_match(0)
+          filterargs = f.scan(FilterArgsRegex).flatten
+          @filters << lax_parse_filter_expressions(filtername, filterargs)
+        end
+      end
+    end
+
     def strict_parse(markup)
       @filters = []
       p = @parse_context.new_parser(markup)
