@@ -27,6 +27,28 @@ module Liquid
     attr_accessor :default_resource_limits
 
     class << self
+      # Creates a new environment instance.
+      #
+      # @param tags [Hash] The tags that are available to use in
+      #  the template.
+      # @param file_system The default file system that is used
+      #  to load templates from.
+      # @param error_mode [Symbol] The default error mode for all templates
+      #  (either :strict2, :strict, :warn, or :lax).
+      # @param exception_renderer [Proc] The exception renderer that is used to
+      #   render exceptions.
+      # @yieldparam environment [Environment] The environment instance that is being built.
+      # @return [Environment] The new environment instance.
+      def build(tags: nil, file_system: nil, error_mode: nil, exception_renderer: nil)
+        ret = new
+        ret.tags = tags if tags
+        ret.file_system = file_system if file_system
+        ret.error_mode = error_mode if error_mode
+        ret.exception_renderer = exception_renderer if exception_renderer
+        yield ret if block_given?
+        ret.freeze
+      end
+
       # Returns the default environment instance.
       #
       # @return [Environment] The default environment instance.
@@ -90,6 +112,13 @@ module Liquid
       end
 
       strainer_template.new(context)
+    end
+
+    def freeze
+      @tags.freeze
+      # TODO: freeze the tags, currently this is not possible because of liquid-c
+      # @strainer_template.freeze
+      super
     end
   end
 end
