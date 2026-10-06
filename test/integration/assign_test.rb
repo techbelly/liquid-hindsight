@@ -91,6 +91,12 @@ class AssignTest < Minitest::Test
     assert_equal(6, assign_score_of([123, 'abcd']))
   end
 
+  def test_assign_score_of_hash
+    assert_equal(1, assign_score_of({}))
+    assert_equal(5, assign_score_of('int' => 123))
+    assert_equal(12, assign_score_of('int' => 123, 'str' => 'abcd'))
+  end
+
   def test_assign_with_valid_identifier_in_strict2
     assert_template_result("hello", "{% assign my_var = 'hello' %}{{ my_var }}", error_mode: :strict2)
   end

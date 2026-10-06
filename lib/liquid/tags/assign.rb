@@ -82,6 +82,13 @@ module Liquid
         # Uses #each to avoid extra allocations.
         val.each { |child| sum += assign_score_of(child) }
         sum
+      elsif val.instance_of?(Hash)
+        sum = 1
+        val.each do |key, entry_value|
+          sum += assign_score_of(key)
+          sum += assign_score_of(entry_value)
+        end
+        sum
       else
         1
       end
