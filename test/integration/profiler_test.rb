@@ -188,6 +188,14 @@ class ProfilerTest < Minitest::Test
     end
   end
 
+  def test_profiling_marks_children_of_if_blocks
+    t = Template.parse("{% if true %} {% increment test %} {{ test }} {% endif %}", profile: true)
+    t.render!
+
+    assert_equal(1, t.profiler.length)
+    assert_equal(2, t.profiler[0].children.length)
+  end
+
   def test_profiling_supports_total_time
     t = Template.parse("{% if true %} {{ test }} {% endif %}", profile: true)
     output = t.render!("test" => TestDrop.new("one"))
