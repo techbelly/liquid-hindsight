@@ -13,4 +13,14 @@ class LiquidTagTest < Minitest::Test
       {%- endif -%}
     LIQUID
   end
+
+  def test_next_liquid_with_unclosed_if_tag
+    assert_match_syntax_error("Liquid syntax error (line 2): 'if' tag was never closed", <<~LIQUID)
+      {%- liquid
+        liquid if true
+          echo "good"
+        endif
+      -%}
+    LIQUID
+  end
 end
