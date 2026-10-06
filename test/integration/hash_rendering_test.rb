@@ -7,6 +7,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_hash_with_replace___key____replaced_key__filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | replace: 'key', 'replaced_key' }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
   def test_hash_with_append____appended_text__filter
     assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"} appended text", "{{ my_hash | append: ' appended text' }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
