@@ -186,6 +186,11 @@ class ContextTest < Minitest::Test
     assert(@context['cents.non_zero?'])
   end
 
+  def test_context_from_within_drop
+    @context.merge("test" => '123', "vars" => ContextSensitiveDrop.new)
+    assert_equal('123', @context['vars.test'])
+  end
+
   def test_proc_as_variable
     @context['dynamic'] = proc { 'Hello' }
 
