@@ -591,6 +591,19 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Adds a given string to the end of a string.
+    # @liquid_syntax string | append: string
+    # @liquid_return [string]
+    def append(input, string)
+      input = Utils.to_s(input)
+      string = Utils.to_s(string)
+      input + string
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Concatenates (combines) two arrays.
