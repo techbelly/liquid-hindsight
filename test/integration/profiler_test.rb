@@ -80,4 +80,12 @@ class ProfilerTest < Minitest::Test
       assert_equal(profiler.total_time, children.map(&:total_time).reduce(&:+))
     end
   end
+
+  def test_profiling_uses_include_to_mark_children
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}", profile: true)
+    t.render!
+
+    include_node = t.profiler[1]
+    assert_equal(2, include_node.children.length)
+  end
 end

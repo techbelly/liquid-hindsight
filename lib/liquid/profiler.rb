@@ -87,7 +87,11 @@ module Liquid
 
     def children
       children = @root_children
-      children
+      if children.length == 1
+        children.first.children
+      else
+        children
+      end
     end
 
     def each(&block)
