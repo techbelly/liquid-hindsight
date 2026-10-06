@@ -72,11 +72,23 @@ module Liquid
       @reversed = p.id?('reversed')
 
       while p.look(:comma) || p.look(:id)
+        p.consume?(:comma)
+        unless (attribute = p.id?('limit') || p.id?('offset'))
+        end
+        p.consume(:colon)
+        set_attribute(attribute, p.expression, safe: true)
       end
       p.consume(:end_of_string)
     end
 
     private
+
+    def set_attribute(key, expr, safe: false)
+      case key
+      when 'limit'
+        @limit = parse_expression(expr, safe: safe)
+      end
+    end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
       def children
