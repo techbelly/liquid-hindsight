@@ -20,5 +20,10 @@ module Liquid
   # @liquid_syntax_keyword expression The expression to be output.
   class Echo < Tag
     attr_reader :variable
+
+    def initialize(tag_name, markup, parse_context)
+      super
+      @variable = Variable.new(markup, parse_context)
+    end
   end
 end
