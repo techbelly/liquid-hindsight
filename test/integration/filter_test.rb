@@ -92,6 +92,10 @@ class FiltersTest < Minitest::Test
       { "var" => "<!-- split and some <ul> tag --><b>bla blub</a>" },
     )
   end
+
+  def test_nonexistent_filter_is_ignored
+    assert_template_result("1000", "{{ var | xyzzy }}", { "var" => 1000 })
+  end
 end
 
 class TestObject < Liquid::Drop
