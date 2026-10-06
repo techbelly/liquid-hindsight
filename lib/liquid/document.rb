@@ -23,7 +23,12 @@ module Liquid
     end
 
     def unknown_tag(tag, _markup, _tokenizer)
-      raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
+      case tag
+      when 'else', 'end'
+        raise SyntaxError, parse_context.locale.t("errors.syntax.unexpected_outer_tag", tag: tag)
+      else
+        raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
+      end
     end
 
     private
