@@ -77,6 +77,11 @@ module Liquid
     def assign_score_of(val)
       if val.instance_of?(String)
         val.bytesize
+      elsif val.instance_of?(Array)
+        sum = 1
+        # Uses #each to avoid extra allocations.
+        val.each { |child| sum += assign_score_of(child) }
+        sum
       else
         1
       end
