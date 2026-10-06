@@ -105,6 +105,16 @@ class ForTagTest < Minitest::Test
     assert_equal(4, template.resource_limits.render_score)
   end
 
+  def test_integer_range_uses_arithmetic_offsets_reversal_and_metadata
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse(
+      '{% for i in numbers reversed offset:997 limit:2 %}{{ forloop.length }}:{{ i }}{% endfor %}',
+    )
+    template.resource_limits.render_score_limit = 10
+
+    assert_equal('2:9992:998', template.render!('numbers' => range))
+  end
+
   def test_endless_range_remains_unsupported_with_a_limit
     template = Template.parse('{% for i in numbers limit:2 %}{{ i }}{% endfor %}')
 
