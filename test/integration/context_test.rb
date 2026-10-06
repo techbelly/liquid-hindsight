@@ -346,6 +346,13 @@ class ContextTest < Minitest::Test
     assert_nil(subcontext['my_variable'])
   end
 
+  def test_new_isolated_subcontext_inherits_static_environment
+    super_context = Context.build(static_environments: { 'my_environment_value' => 'my value' })
+    subcontext    = super_context.new_isolated_subcontext
+
+    assert_equal('my value', subcontext['my_environment_value'])
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do
