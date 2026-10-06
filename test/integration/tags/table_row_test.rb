@@ -178,4 +178,20 @@ class TableRowTest < Minitest::Test
     assert(template.resource_limits.reached?)
     assert_equal(4, template.resource_limits.render_score)
   end
+
+  def test_tablerow_checks_generated_output_during_empty_body_iteration
+    template = Template.parse('{% tablerow i in (1..100) %}{% endtablerow %}')
+    template.resource_limits.render_length_limit = 40
+    checked_lengths = []
+    limits = template.resource_limits
+    original_increment_write_score = limits.method(:increment_write_score)
+    limits.define_singleton_method(:increment_write_score) do |output|
+      checked_lengths << output.bytesize
+      original_increment_write_score.call(output)
+    end
+
+    assert_equal('Liquid error: Memory limits exceeded', template.render)
+    assert(template.resource_limits.reached?)
+    assert_operator(checked_lengths.last, :<, 1000)
+  end
 end
