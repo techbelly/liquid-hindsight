@@ -66,6 +66,17 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('', '{% if true and false %} YES {% endif %}')
   end
 
+  def test_nested_if
+    assert_template_result('', '{% if false %}{% if false %} NO {% endif %}{% endif %}')
+    assert_template_result('', '{% if false %}{% if true %} NO {% endif %}{% endif %}')
+    assert_template_result('', '{% if true %}{% if false %} NO {% endif %}{% endif %}')
+    assert_template_result(' YES ', '{% if true %}{% if true %} YES {% endif %}{% endif %}')
+
+    assert_template_result(' YES ', '{% if true %}{% if true %} YES {% else %} NO {% endif %}{% else %} NO {% endif %}')
+    assert_template_result(' YES ', '{% if true %}{% if false %} NO {% else %} YES {% endif %}{% else %} NO {% endif %}')
+    assert_template_result(' YES ', '{% if false %}{% if true %} NO {% else %} NONO {% endif %}{% else %} YES {% endif %}')
+  end
+
   def test_comparisons_on_null
     assert_template_result('', '{% if null < 10 %} NO {% endif %}')
     assert_template_result('', '{% if null <= 10 %} NO {% endif %}')
