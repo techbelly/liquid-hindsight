@@ -39,6 +39,11 @@ module Liquid
 
         markup = markup.strip # markup can be a frozen string
 
+        if (markup.start_with?('"') && markup.end_with?('"')) ||
+          (markup.start_with?("'") && markup.end_with?("'"))
+          return markup[1..-2]
+        end
+
         inner_parse(markup, ss, nil).freeze
       end
 
