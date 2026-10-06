@@ -105,6 +105,13 @@ class RenderTagTest < Minitest::Test
     assert_syntax_error("{% assign name = 'snippet' %}{% render name %}")
   end
 
+  def test_optional_commas
+    partials = { 'snippet' => 'hello {{ arg1 }} {{ arg2 }}' }
+    assert_template_result('hello value1 value2', '{% render "snippet", arg1: "value1", arg2: "value2" %}', partials: partials)
+    assert_template_result('hello value1 value2', '{% render "snippet"  arg1: "value1", arg2: "value2" %}', partials: partials)
+    assert_template_result('hello value1 value2', '{% render "snippet"  arg1: "value1"  arg2: "value2" %}', partials: partials)
+  end
+
   def test_render_tag_within_if_statement
     assert_template_result(
       'my message',
