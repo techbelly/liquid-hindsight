@@ -64,6 +64,22 @@ class FiltersTest < Minitest::Test
   def test_join
     assert_template_result("1 2 3 4", "{{var | join}}", { "var" => [1, 2, 3, 4] })
   end
+
+  def test_sort
+    assert_template_result("1 2 3 4", "{{numbers | sort | join}}", { "numbers" => [2, 1, 4, 3] })
+    assert_template_result(
+      "alphabetic as expected",
+      "{{words | sort | join}}",
+      { "words" => ['expected', 'as', 'alphabetic'] },
+    )
+    assert_template_result("3", "{{value | sort}}", { "value" => 3 })
+    assert_template_result('are flower', "{{arrays | sort | join}}", { 'arrays' => ['flower', 'are'] })
+    assert_template_result(
+      "Expected case sensitive",
+      "{{case_sensitive | sort | join}}",
+      { "case_sensitive" => ["sensitive", "Expected", "case"] },
+    )
+  end
 end
 
 class TestObject < Liquid::Drop
