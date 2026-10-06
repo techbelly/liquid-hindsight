@@ -194,4 +194,11 @@ class TableRowTest < Minitest::Test
     assert(template.resource_limits.reached?)
     assert_operator(checked_lengths.last, :<, 1000)
   end
+
+  def test_tablerow_range_scores_persist_across_renders
+    template = Template.parse('{% tablerow i in (1..2) %}{% endtablerow %}')
+    template.resource_limits.cumulative_render_score_limit = 3
+    template.render!
+    assert_raises(Liquid::MemoryError) { template.render! }
+  end
 end
