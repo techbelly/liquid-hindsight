@@ -756,6 +756,19 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Returns the remainder of dividing a number by a given number.
+    # @liquid_syntax number | modulo: number
+    # @liquid_return [number]
+    def modulo(input, operand)
+      apply_operation(input, operand, :%)
+    rescue ::ZeroDivisionError => e
+      raise Liquid::ZeroDivisionError, e.message
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category default
     # @liquid_summary
     #   Sets a default value for any variable whose value is one of the following:
