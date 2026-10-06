@@ -48,6 +48,10 @@ module Liquid
       @@operators
     end
 
+    def self.parse_expression(parse_context, markup, safe: false)
+      @@method_literals[markup] || parse_context.parse_expression(markup, safe: safe)
+    end
+
     attr_reader :attachment, :child_condition
     attr_accessor :left, :operator, :right
 

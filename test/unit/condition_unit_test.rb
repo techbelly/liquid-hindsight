@@ -165,6 +165,16 @@ class ConditionUnitTest < Minitest::Test
     assert_includes(err.lines.map(&:strip), expected)
   end
 
+  def test_parse_expression_in_strict_mode
+    environment = Environment.build(error_mode: :strict)
+    parse_context = ParseContext.new(environment: environment)
+    result = Condition.parse_expression(parse_context, 'product.title')
+
+    assert_instance_of(VariableLookup, result)
+    assert_equal('product', result.name)
+    assert_equal(['title'], result.lookups)
+  end
+
   # Tests for blank? comparison without ActiveSupport
   #
   # Ruby's standard library does not include blank? on String, Array, Hash, etc.
