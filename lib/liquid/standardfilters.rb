@@ -88,6 +88,17 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Capitalizes the first word in a string and downcases the remaining characters.
+    # @liquid_syntax string | capitalize
+    # @liquid_return [string]
+    def capitalize(input)
+      Utils.to_s(input).capitalize
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Escapes special characters in HTML, such as `<>`, `'`, and `&`, and converts characters into escape sequences. The filter doesn't effect characters within the string that don’t have a corresponding escape sequence.".
     # @liquid_syntax string | escape
     # @liquid_return [string]

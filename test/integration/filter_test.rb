@@ -113,6 +113,10 @@ class FiltersTest < Minitest::Test
     )
   end
 
+  def test_capitalize
+    assert_template_result("Blub", "{{ var | capitalize }}", { "var" => "blub" })
+  end
+
   def test_nonexistent_filter_is_ignored
     assert_template_result("1000", "{{ var | xyzzy }}", { "var" => 1000 })
   end
