@@ -5,6 +5,14 @@ require 'test_helper'
 class RenderTagTest < Minitest::Test
   include Liquid
 
+  def test_render_tag_looks_for_file_system_in_registers_first
+    assert_template_result(
+      'from register file system',
+      '{% render "pick_a_source" %}',
+      partials: { 'pick_a_source' => 'from register file system' },
+    )
+  end
+
   def test_render_does_not_inherit_parent_scope_variables
     assert_template_result(
       '',
