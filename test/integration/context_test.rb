@@ -196,6 +196,14 @@ class ContextTest < Minitest::Test
     assert_equal('123', @context['vars.local.test'])
   end
 
+  def test_cents_through_drop_nestedly
+    @context.merge("cents" => { "cents" => CentsDrop.new })
+    assert_equal(100, @context['cents.cents.amount'])
+
+    @context.merge("cents" => { "cents" => { "cents" => CentsDrop.new } })
+    assert_equal(100, @context['cents.cents.cents.amount'])
+  end
+
   def test_proc_as_variable
     @context['dynamic'] = proc { 'Hello' }
 
