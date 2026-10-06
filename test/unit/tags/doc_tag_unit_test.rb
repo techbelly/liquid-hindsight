@@ -57,6 +57,23 @@ class DocTagUnitTest < Minitest::Test
     assert_match_syntax_error("Liquid syntax error (line 1): Syntax Error in 'doc' - Valid syntax: {% doc %}{% enddoc %}", '{% doc } foo %}{% enddoc %}')
   end
 
+  def test_doc_tag_ignores_liquid_nodes
+    template = <<~LIQUID.chomp
+      {% doc %}
+        {% if true %}
+        {% if ... %}
+        {%- for ? -%}
+        {% while true %}
+        {%
+          unless if
+        %}
+        {% endcase %}
+      {% enddoc %}
+    LIQUID
+
+    assert_template_result('', template)
+  end
+
   def test_doc_tag_does_not_allow_nested_docs
     error = assert_raises(Liquid::SyntaxError) do
       template = <<~LIQUID.chomp
