@@ -42,4 +42,8 @@ class BlankTest < Minitest::Test
   def test_unless_is_blank
     assert_template_result("", wrap("{% unless true %} {% endunless %}"))
   end
+
+  def test_mark_as_blank_only_during_parsing
+    assert_template_result(" " * (N + 1), wrap(" {% if false %} this never happens, but still, this block is not blank {% endif %}"))
+  end
 end
