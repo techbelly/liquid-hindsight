@@ -15,6 +15,20 @@ class IfElseTagTest < Minitest::Test
     assert_template_result(' YES ', "{% if #{awful_markup} %} YES {% endif %}", assigns)
   end
 
+  def test_comparison_of_expressions_starting_with_and_or_or
+    assigns = { 'order' => { 'items_count' => 0 }, 'android' => { 'name' => 'Roy' } }
+    assert_template_result(
+      "YES",
+      "{% if android.name == 'Roy' %}YES{% endif %}",
+      assigns,
+    )
+    assert_template_result(
+      "YES",
+      "{% if order.items_count == 0 %}YES{% endif %}",
+      assigns,
+    )
+  end
+
   def test_syntax_error_no_variable
     assert_raises(SyntaxError) { assert_template_result('', '{% if jerry == 1 %}') }
   end
