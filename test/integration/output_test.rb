@@ -95,4 +95,11 @@ class OutputTest < Minitest::Test
 
     assert_equal(expected, Template.parse(text).render!(@assigns, filters: [FunnyFilter]))
   end
+
+  def test_variable_piping_with_variable_args
+    text     = %( {{ car.gm | add_tag : 'span', car.bmw}} )
+    expected = %( <span id="good">bad</span> )
+
+    assert_equal(expected, Template.parse(text).render!(@assigns, filters: [FunnyFilter]))
+  end
 end # OutputTest
