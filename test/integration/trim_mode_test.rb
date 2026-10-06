@@ -66,4 +66,15 @@ class TrimModeTest < Minitest::Test
     END_EXPECTED
     assert_template_result(expected, text)
   end
+
+  # Make sure the trim isn't too agressive
+  def test_no_trim_tags
+    text     = '<p>{%- if true -%}yes{%- endif -%}</p>'
+    expected = '<p>yes</p>'
+    assert_template_result(expected, text)
+
+    text     = '<p>{%- if false -%}no{%- endif -%}</p>'
+    expected = '<p></p>'
+    assert_template_result(expected, text)
+  end
 end # TrimModeTest
