@@ -133,6 +133,19 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Splits a string into an array of substrings based on a given separator.
+    # @liquid_syntax string | split: string
+    # @liquid_return [array[string]]
+    def split(input, pattern)
+      pattern = Utils.to_s(pattern)
+      input = Utils.to_s(input)
+      input.split(pattern)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.
