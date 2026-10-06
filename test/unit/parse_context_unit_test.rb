@@ -37,6 +37,20 @@ class ParseContextUnitTest < Minitest::Test
     assert_match(/is not a valid expression/, error_strict2.message)
   end
 
+  def test_parse_expression_with_variable_lookup
+    result_strict = strict_parse_context.parse_expression('product.title')
+
+    assert_instance_of(VariableLookup, result_strict)
+    assert_equal('product', result_strict.name)
+    assert_equal(['title'], result_strict.lookups)
+
+    error = assert_raises(Liquid::InternalError) do
+      strict2_parse_context.parse_expression('product.title')
+    end
+
+    assert_match(/unsafe parse_expression cannot be used in strict2 mode/, error.message)
+  end
+
   def test_parse_expression_with_safe_true
     result_strict = strict_parse_context.parse_expression('product.title', safe: true)
 
