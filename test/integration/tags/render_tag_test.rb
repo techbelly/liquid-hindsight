@@ -15,6 +15,16 @@ class RenderTagTest < Minitest::Test
     end
   end
 
+  def test_sub_contexts_count_towards_the_same_recursion_limit
+    env = Liquid::Environment.build(
+      file_system: StubFileSystem.new('loop_render' => '{% render "loop_render" %}'),
+    )
+
+    assert_raises(Liquid::StackLevelError) do
+      Template.parse('{% render "loop_render" %}', environment: env).render!
+    end
+  end
+
   def test_dynamically_choosen_templates_are_not_allowed
     assert_syntax_error("{% assign name = 'snippet' %}{% render name %}")
   end
