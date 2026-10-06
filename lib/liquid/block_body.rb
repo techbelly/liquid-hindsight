@@ -97,6 +97,11 @@ module Liquid
         raise
       else
         error_message = context.handle_error(exc, line_number)
+        error_mode = context.registers.static[:template_error_mode]
+        suppress_error_text = blank_tag && error_mode != :strict2 && error_mode != :rigid
+        unless suppress_error_text # blank-tag suppression is kept for backwards compatibility outside strict2
+          output << error_message
+        end
       end
     end
 

@@ -5,6 +5,39 @@ require 'test_helper'
 class ErrorHandlingTest < Minitest::Test
   include Liquid
 
+  def test_templates_parsed_with_line_numbers_renders_them_in_errors
+    template = <<-LIQUID
+      Hello,
+
+      {{ errors.standard_error }} will raise a standard error.
+
+      Bla bla test.
+
+      {{ errors.syntax_error }} will raise a syntax error.
+
+      This is an argument error: {{ errors.argument_error }}
+
+      Bla.
+    LIQUID
+
+    expected = <<-TEXT
+      Hello,
+
+      Liquid error (line 3): standard error will raise a standard error.
+
+      Bla bla test.
+
+      Liquid syntax error (line 7): syntax error will raise a syntax error.
+
+      This is an argument error: Liquid error (line 9): argument error
+
+      Bla.
+    TEXT
+
+    output = Liquid::Template.parse(template, line_numbers: true).render('errors' => ErrorDrop.new)
+    assert_equal(expected, output)
+  end
+
   def test_missing_endtag_parse_time_error
     assert_match_syntax_error(/: 'for' tag was never closed\z/, ' {% for a in b %} ... ')
   end
