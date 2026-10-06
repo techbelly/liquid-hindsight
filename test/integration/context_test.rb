@@ -246,6 +246,14 @@ class ContextTest < Minitest::Test
     assert_template_result("pass", "{% if test[2] == nil %}pass{% endif %}", assigns)
   end
 
+  def test_recoursive_array_notation
+    assigns = { "test" => { 'test' => [1, 2, 3, 4, 5] } }
+    assert_template_result("1", "{{ test.test[0] }}", assigns)
+
+    assigns = { "test" => [{ 'test' => 'worked' }] }
+    assert_template_result("worked", "{{ test[0].test }}", assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
