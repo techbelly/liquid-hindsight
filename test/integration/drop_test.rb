@@ -177,6 +177,12 @@ class DropsTest < Minitest::Test
     assert_equal('3', Liquid::Template.parse('{%for i in dummy%}{%for i in dummy%}{{ context.scopes }}{%endfor%}{%endfor%}').render!('context' => ContextDrop.new, 'dummy' => [1]))
   end
 
+  def test_scope_though_proc
+    assert_equal('1', Liquid::Template.parse('{{ s }}').render!('context' => ContextDrop.new, 's' => proc { |c| c['context.scopes'] }))
+    assert_equal('2', Liquid::Template.parse('{%for i in dummy%}{{ s }}{%endfor%}').render!('context' => ContextDrop.new, 's' => proc { |c| c['context.scopes'] }, 'dummy' => [1]))
+    assert_equal('3', Liquid::Template.parse('{%for i in dummy%}{%for i in dummy%}{{ s }}{%endfor%}{%endfor%}').render!('context' => ContextDrop.new, 's' => proc { |c| c['context.scopes'] }, 'dummy' => [1]))
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
