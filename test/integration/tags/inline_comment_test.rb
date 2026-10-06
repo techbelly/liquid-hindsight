@@ -16,6 +16,18 @@ class InlineCommentTest < Minitest::Test
     assert_template_result('', '{%#this is an inline comment%}')
   end
 
+  def test_inline_comment_can_be_written_on_multiple_lines
+    assert_template_result('', <<~LIQUID)
+      {%-
+        # That kind of block comment is also allowed.
+        # It would only be a stylistic difference.
+
+        # Much like JavaScript's /* */ comments and their
+        # leading * on new lines.
+      -%}
+    LIQUID
+  end
+
   def test_inline_comments_require_the_pound_sign_on_every_new_line
     assert_match_syntax_error("Each line of comments must be prefixed by the '#' character", <<~LIQUID)
       {%-
