@@ -54,4 +54,13 @@ class BlankTest < Minitest::Test
   def test_captures_are_blank
     assert_template_result("", wrap(" {% capture foo %} whatever {% endcapture %} "))
   end
+
+  def test_nested_blocks_are_blank_but_only_if_all_children_are
+    assert_template_result("", wrap(wrap(" ")))
+    assert_template_result(
+      "\n       but this is not " * (N + 1),
+      wrap('{% if true %} {% comment %} this is blank {% endcomment %} {% endif %}
+      {% if true %} but this is not {% endif %}'),
+    )
+  end
 end
