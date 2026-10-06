@@ -62,4 +62,16 @@ class EnvironmentFilterTest < Minitest::Test
     assert_equal("puts",  strainer.invoke("__send__", "puts", "Hi Mom"))
     assert_equal("has_method?", strainer.invoke("invoke", "has_method?", "invoke"))
   end
+
+  def test_strainer_uses_a_class_cache_to_avoid_method_cache_invalidation
+    a = Module.new
+    b = Module.new
+
+    strainer = @environment.create_strainer(@context, [a, b])
+
+    assert_kind_of(StrainerTemplate, strainer)
+    assert_kind_of(a, strainer)
+    assert_kind_of(b, strainer)
+    assert_kind_of(Liquid::StandardFilters, strainer)
+  end
 end
