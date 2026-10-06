@@ -10,4 +10,10 @@ class IncrementTagTest < Minitest::Test
       Template.parse('{% increment 11aa %}', error_mode: :strict2)
     end
   end
+
+  def test_increment_strict2_rejects_empty_variable_name
+    assert_raises(Liquid::SyntaxError) do
+      Template.parse('{% increment %}', error_mode: :strict2)
+    end
+  end
 end
