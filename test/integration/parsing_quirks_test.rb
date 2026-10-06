@@ -36,6 +36,12 @@ class ParsingQuirksTest < Minitest::Test
     end
   end
 
+  def test_no_error_on_lax_empty_filter
+    assert(Template.parse("{{test |a|b|}}", error_mode: :lax))
+    assert(Template.parse("{{test}}", error_mode: :lax))
+    assert(Template.parse("{{|test|}}", error_mode: :lax))
+  end
+
   def test_raise_on_invalid_tag_delimiter
     assert_raises(Liquid::SyntaxError) do
       Template.new.parse('{% end %}')
