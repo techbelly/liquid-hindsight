@@ -5,6 +5,11 @@ require 'test_helper'
 class VariableUnitTest < Minitest::Test
   include Liquid
 
+  def test_variable
+    var = create_variable('hello')
+    assert_equal(VariableLookup.new('hello'), var.name)
+  end
+
   def test_string_single_quoted
     var = create_variable(%( "hello" ))
     assert_equal('hello', var.name)
