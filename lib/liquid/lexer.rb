@@ -114,6 +114,17 @@ module Liquid
           if (special = SPECIAL_TABLE[peeked])
             ss.scan_byte
             output << special
+          else
+            type, pattern = NEXT_MATCHER_JUMP_TABLE[peeked]
+
+            if type && (t = ss.scan(pattern))
+              # Special case for "contains"
+              output << if type == :id && t == "contains" && output.last&.first != :dot
+                COMPARISON_CONTAINS
+              else
+                [type, t]
+              end
+            end
           end
         end
         # rubocop:enable Metrics/BlockNesting

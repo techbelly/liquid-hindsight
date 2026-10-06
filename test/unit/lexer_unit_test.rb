@@ -17,6 +17,12 @@ class LexerUnitTest < Minitest::Test
     )
   end
 
+  def test_fancy_identifiers
+    assert_equal([[:id, 'hi'], [:id, 'five?'], [:end_of_string]], tokenize('hi five?'))
+
+    assert_equal([[:number, '2'], [:id, 'foo'], [:end_of_string]], tokenize('2foo'))
+  end
+
   private
 
   def tokenize(input)
