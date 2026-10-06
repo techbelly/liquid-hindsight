@@ -144,4 +144,17 @@ class VariableTest < Minitest::Test
       },
     )
   end
+
+  def test_filter_with_colon_but_no_arguments
+    template = '{{ "test" | upcase: }}'
+
+    with_error_modes(:strict) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/is not a valid expression/, error.message)
+    end
+
+    with_error_modes(:strict2) do
+      assert_template_result('TEST', template)
+    end
+  end
 end
