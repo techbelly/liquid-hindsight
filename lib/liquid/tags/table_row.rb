@@ -107,6 +107,11 @@ module Liquid
             interrupt = context.pop_interrupt
             break if interrupt.is_a?(BreakInterrupt)
           end
+
+          if tablerowloop.col_last && !tablerowloop.last
+          end
+
+          tablerowloop.send(:increment!)
         end
       end
 

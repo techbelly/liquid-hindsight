@@ -49,17 +49,20 @@ module Liquid
       @index == @length - 1
     end
 
+    # @liquid_public_docs
+    # @liquid_summary
+    #   Returns `true` if the current column is the last in the row. Returns `false` if not.
+    # @liquid_return [boolean]
+    def col_last
+      @col == @cols
+    end
+
     protected
 
     def increment!
       @index += 1
 
-      if @col == @cols
-        @col = 1
-        @row += 1
-      else
-        @col += 1
-      end
+      @col += 1
     end
   end
 end

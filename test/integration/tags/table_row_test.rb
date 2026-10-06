@@ -25,6 +25,24 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_cols_nil_constant_same_as_evaluated_nil_expression
+    expect = "<tr class=\"row1\">\n" \
+      "<td class=\"col1\">false</td>" \
+      "<td class=\"col2\">false</td>" \
+      "</tr>\n"
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) cols:nil %}{{ tablerowloop.col_last }}{% endtablerow %}",
+    )
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) cols:var %}{{ tablerowloop.col_last }}{% endtablerow %}",
+      { "var" => nil },
+    )
+  end
+
   def test_nil_limit_is_treated_as_zero
     expect = "<tr class=\"row1\">\n" \
       "</tr>\n"
