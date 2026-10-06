@@ -47,6 +47,8 @@ module Liquid
         end
         @body << token unless token.empty?
       end
+
+      raise_tag_never_closed(block_name)
     end
 
     private
