@@ -60,6 +60,10 @@ class FiltersTest < Minitest::Test
   def test_size
     assert_template_result("4", "{{var | size}}", { "var" => 'abcd' })
   end
+
+  def test_join
+    assert_template_result("1 2 3 4", "{{var | join}}", { "var" => [1, 2, 3, 4] })
+  end
 end
 
 class TestObject < Liquid::Drop
