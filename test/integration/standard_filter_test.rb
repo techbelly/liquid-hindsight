@@ -190,6 +190,10 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([], @filters.compact([], "a"))
   end
 
+  def test_reverse
+    assert_equal([4, 3, 2, 1], @filters.reverse([1, 2, 3, 4]))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))

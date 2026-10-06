@@ -264,6 +264,18 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Reverses the order of the items in an array.
+    # @liquid_syntax array | reverse
+    # @liquid_return [array[untyped]]
+    def reverse(input)
+      ary = InputIterator.new(input, context)
+      ary.reverse
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Removes any `nil` items from an array.
     # @liquid_syntax array | compact
     # @liquid_return [array[untyped]]
@@ -321,9 +333,21 @@ module Liquid
         end
       end
 
+      def reverse
+        reverse_each.to_a
+      end
+
       def empty?
         @input.each { return false }
         true
+      end
+
+      def each
+        @input.each do |e|
+          e = e.respond_to?(:to_liquid) ? e.to_liquid : e
+          e.context = @context if e.respond_to?(:context=)
+          yield(e)
+        end
       end
     end
   end
