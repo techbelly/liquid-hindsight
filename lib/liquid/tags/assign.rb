@@ -42,6 +42,17 @@ module Liquid
       lax_parse(markup)
     end
 
+    def strict2_parse(markup)
+      unless markup =~ Syntax
+      end
+
+      lhs = Regexp.last_match(1).strip
+      rhs = Regexp.last_match(2)
+
+      p = @parse_context.new_parser(lhs)
+      @to = p.consume(:id)
+    end
+
     private
   end
 end
