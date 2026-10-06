@@ -43,6 +43,13 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_render_ignores_raw_strings_when_profiling
+    t = Template.parse("This is raw string\nstuff\nNewline", profile: true)
+    t.render!
+
+    assert_equal(0, t.profiler.length)
+  end
+
   def test_profiling_includes_line_numbers_of_liquid_nodes
     t = Template.parse("{{ 'a string' | upcase }}\n{% increment test %}", profile: true)
     t.render!
