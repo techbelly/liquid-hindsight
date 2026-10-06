@@ -96,6 +96,15 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.last(''))
   end
 
+  def test_first_last_on_unicode_strings
+    # Unicode strings should return the first/last grapheme cluster (character),
+    # not the first/last byte. Ruby's String#[] handles this correctly with index 0/-1.
+    # This ensures international text works properly:
+    #   {{ korean_name | first }} => "고" (not a partial byte sequence)
+    assert_equal('고', @filters.first('고스트빈'))
+    assert_equal('빈', @filters.last('고스트빈'))
+  end
+
   private
 
   def with_timezone(tz)
