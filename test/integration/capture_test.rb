@@ -41,6 +41,10 @@ class CaptureTest < Minitest::Test
     assert_equal(9, t.resource_limits.assign_score)
   end
 
+  def test_capture_with_valid_identifier_in_strict2
+    assert_template_result("hello", "{% capture my_var %}hello{% endcapture %}{{ my_var }}", error_mode: :strict2)
+  end
+
   def test_capture_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% capture (x[y %}hello{% endcapture %}", error_mode: :strict2)
