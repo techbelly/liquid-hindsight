@@ -5,6 +5,14 @@ require 'test_helper'
 class SelfDropContextTest < Minitest::Test
   include Liquid
 
+  def test_self_drop_context_setter_is_undefined
+    context = Context.new
+    drop = SelfDrop.new(context)
+    refute(drop.respond_to?(:context=))
+
+    assert_template_result('42', '{{ self.x }}', { 'x' => 42 })
+  end
+
   def test_self_drop_repeated_lookups_compare_equal_for_same_context
     context = Context.new
     drop = context.find_variable("self")
