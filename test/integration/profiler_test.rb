@@ -88,4 +88,14 @@ class ProfilerTest < Minitest::Test
     include_node = t.profiler[1]
     assert_equal(2, include_node.children.length)
   end
+
+  def test_profiling_marks_children_with_the_name_of_included_partial
+    t = Template.parse("{{ 'a string' | upcase }}\n{% include 'a_template' %}", profile: true)
+    t.render!
+
+    include_node = t.profiler[1]
+    include_node.children.each do |child|
+      assert_equal("a_template", child.partial)
+    end
+  end
 end
