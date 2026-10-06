@@ -136,6 +136,22 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_tablerow_with_cols_attribute_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow i in (1..6) cols: 3 %}{{ i }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td><td class="col3">3</td></tr>
+      <tr class="row2"><td class="col1">4</td><td class="col2">5</td><td class="col3">6</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template)
+    end
+  end
+
   def test_tablerow_with_limit_attribute_in_strict2_mode
     template = <<~LIQUID.chomp
       {% tablerow i in (1..10) limit: 3 %}{{ i }}{% endtablerow %}
