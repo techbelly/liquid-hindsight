@@ -641,6 +641,15 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_sum_with_numeric_strings
+    input = [1, 2, "3", "4"]
+
+    assert_equal(10, @filters.sum(input))
+    assert_raises(Liquid::ArgumentError, "cannot select the property 'quantity'") do
+      @filters.sum(input, "quantity")
+    end
+  end
+
   def test_sum_with_nested_arrays
     input = [1, [2, [3, 4]]]
 

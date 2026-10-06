@@ -83,6 +83,8 @@ module Liquid
       case obj
       when Numeric
         obj
+      when String
+        DECIMAL_REGEX.match?(obj.strip) ? BigDecimal(obj) : obj.to_i
       end
     end
 
