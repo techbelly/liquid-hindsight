@@ -18,6 +18,9 @@ module Liquid
 
       begin
         partial = template.parse(source, parse_context)
+      rescue Liquid::Error => e
+        e.template_name = template&.name || template_name
+        raise e
       end
 
       partial.name ||= template_name

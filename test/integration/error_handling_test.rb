@@ -249,6 +249,22 @@ class ErrorHandlingTest < Minitest::Test
     end
   end
 
+  def test_error_is_raised_during_parse_with_template_name
+    depth = Liquid::Block::MAX_DEPTH + 1
+    code = "{% if true %}" * depth + "rendered" + "{% endif %}" * depth
+
+    template = Template.parse("{% render 'snippet' %}", line_numbers: true)
+
+    context = Liquid::Context.build(
+      registers: {
+        file_system: StubFileSystem.new("snippet" => code),
+        template_factory: StubTemplateFactory.new,
+      },
+    )
+
+    assert_equal("Liquid error (some/path/snippet line 1): Nesting too deep", template.render(context))
+  end
+
   def test_internal_error_is_raised_with_template_name
     template = Template.new
     template.parse(
