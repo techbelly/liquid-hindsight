@@ -29,6 +29,15 @@ module Liquid
       Parser.new(@string_scanner, reject_bare_brackets: @error_mode == :strict2 || @error_mode == :rigid)
     end
 
+    def new_tokenizer(source, start_line_number: nil, for_liquid_tag: false)
+      Tokenizer.new(
+        source: source,
+        string_scanner: @string_scanner,
+        line_number: start_line_number,
+        for_liquid_tag: for_liquid_tag,
+      )
+    end
+
     def partial=(value)
       @partial = value
       @options = value ? partial_options : @template_options
