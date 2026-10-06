@@ -168,6 +168,19 @@ class TemplateTest < Minitest::Test
     assert_equal('ruby error in drop', e.message)
   end
 
+  def test_exception_renderer_that_returns_string
+    exception = nil
+    handler   = ->(e) {
+      exception = e
+      '<!-- error -->'
+    }
+
+    output = Template.parse("{{ 1 | divided_by: 0 }}").render({}, exception_renderer: handler)
+
+    assert(exception.is_a?(Liquid::ZeroDivisionError))
+    assert_equal('<!-- error -->', output)
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
