@@ -28,14 +28,29 @@ module Liquid
     end
 
     # @api private
+    def self.raise_missing_tag_terminator(token, parse_context)
+      raise SyntaxError, parse_context.locale.t("errors.syntax.tag_termination", token: token, tag_end: TagEnd.inspect)
+    end
+
+    # @api private
     def self.raise_missing_variable_terminator(token, parse_context)
       raise SyntaxError, parse_context.locale.t("errors.syntax.variable_termination", token: token, tag_end: VariableEnd.inspect)
+    end
+
+    private def handle_invalid_tag_token(token, parse_context)
+      BlockBody.raise_missing_tag_terminator(token, parse_context)
     end
 
     private def parse_for_document(tokenizer, parse_context, &block)
       while (token = tokenizer.shift)
         next if token.empty?
         case
+        when token.start_with?(TAGSTART)
+          whitespace_handler(token, parse_context)
+          unless token =~ FullToken
+            return handle_invalid_tag_token(token, parse_context, &block)
+          end
+
         when token.start_with?(VARSTART)
           whitespace_handler(token, parse_context)
           @nodelist << create_variable(token, parse_context)
