@@ -72,6 +72,13 @@ class LexerUnitTest < Minitest::Test
     assert_equal([[:number, '2'], [:id, 'foo'], [:end_of_string]], tokenize('2foo'))
   end
 
+  def test_whitespace
+    assert_equal(
+      [[:id, 'five'], [:pipe, '|'], [:comparison, '=='], [:end_of_string]],
+      tokenize("five|\n\t =="),
+    )
+  end
+
   def test_unexpected_character
     assert_raises(SyntaxError) do
       tokenize("%")

@@ -126,7 +126,12 @@ module Liquid
             end
           elsif (sub_table = TWO_CHARS_COMPARISON_JUMP_TABLE[peeked])
             ss.scan_byte
-            raise_syntax_error(start_pos, ss)
+            if (peeked_byte = ss.peek_byte) && (found = sub_table[peeked_byte])
+              output << found
+              ss.scan_byte
+            else
+              raise_syntax_error(start_pos, ss)
+            end
           elsif (sub_table = COMPARISON_JUMP_TABLE[peeked])
             ss.scan_byte
             output << SINGLE_COMPARISON_TOKENS[peeked]
