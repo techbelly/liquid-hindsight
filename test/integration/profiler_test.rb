@@ -128,4 +128,12 @@ class ProfilerTest < Minitest::Test
       assert_equal("a_template", child.partial)
     end
   end
+
+  def test_profiling_supports_total_time
+    t = Template.parse("{% if true %} {{ test }} {% endif %}", profile: true)
+    output = t.render!("test" => TestDrop.new("one"))
+    assert_equal(" one ", output)
+
+    assert_operator(t.profiler[0].total_time, :>, 0.0)
+  end
 end
