@@ -734,6 +734,24 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category default
+    # @liquid_summary
+    #   Sets a default value for any variable whose value is one of the following:
+    #
+    #   - [`empty`](/docs/api/liquid/basics#empty)
+    #   - [`false`](/docs/api/liquid/basics#truthy-and-falsy)
+    #   - [`nil`](/docs/api/liquid/basics#nil)
+    # @liquid_syntax variable | default: variable
+    # @liquid_return [untyped]
+    # @liquid_optional_param allow_false: [boolean] Whether to use false values instead of the default.
+    def default(input, default_value = '', options = {})
+      options = {} unless options.is_a?(Hash)
+      false_check = options['allow_false'] ? input.nil? : !Liquid::Utils.to_liquid_value(input)
+      false_check || (input.respond_to?(:empty?) && input.empty?) ? default_value : input
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the sum of all elements in an array.
