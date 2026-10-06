@@ -59,6 +59,24 @@ class ParseContextUnitTest < Minitest::Test
     assert_nil(result_strict2)
   end
 
+  def test_safe_parse_expression_advances_parser_pointer
+    parser = strict2_parse_context.new_parser('foo, bar')
+
+    # safe_parse_expression consumes "foo"
+    first_result = strict2_parse_context.safe_parse_expression(parser)
+    assert_instance_of(VariableLookup, first_result)
+    assert_equal('foo', first_result.name)
+
+    parser.consume(:comma)
+
+    # safe_parse_expression consumes "bar"
+    second_result = strict2_parse_context.safe_parse_expression(parser)
+    assert_instance_of(VariableLookup, second_result)
+    assert_equal('bar', second_result.name)
+
+    parser.consume(:end_of_string)
+  end
+
   private
 
   def strict_parse_context
