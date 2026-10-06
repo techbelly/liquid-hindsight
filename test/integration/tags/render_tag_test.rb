@@ -88,6 +88,14 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_increment_is_isolated_between_renders
+    assert_template_result(
+      '010',
+      '{% increment port %}{% increment port %}{% render "incr" %}',
+      partials: { 'incr' => '{% increment port %}' },
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
