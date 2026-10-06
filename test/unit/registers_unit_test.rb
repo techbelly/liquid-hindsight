@@ -44,6 +44,26 @@ class RegistersUnitTest < Minitest::Test
     end
   end
 
+  def test_multiple_instances_are_unique
+    static_register_1 = Registers.new(a: 1, b: 2)
+    static_register_1[:b] = 22
+    static_register_1[:c] = 33
+
+    static_register_2 = Registers.new(a: 10, b: 20)
+    static_register_2[:b] = 220
+    static_register_2[:c] = 330
+
+    assert_equal({ a: 1, b: 2 }, static_register_1.static)
+    assert_equal(1, static_register_1[:a])
+    assert_equal(22, static_register_1[:b])
+    assert_equal(33, static_register_1[:c])
+
+    assert_equal({ a: 10, b: 20 }, static_register_2.static)
+    assert_equal(10, static_register_2[:a])
+    assert_equal(220, static_register_2[:b])
+    assert_equal(330, static_register_2[:c])
+  end
+
   def test_initialization_reused_static_same_memory_object
     static_register_1 = Registers.new(a: 1, b: 2)
     static_register_1[:b] = 22

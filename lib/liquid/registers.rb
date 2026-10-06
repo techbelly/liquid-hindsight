@@ -14,7 +14,11 @@ module Liquid
     end
 
     def [](key)
-      @static[key]
+      if @changes.key?(key)
+        @changes[key]
+      else
+        @static[key]
+      end
     end
 
     UNDEFINED = Object.new
