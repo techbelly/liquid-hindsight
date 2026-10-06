@@ -734,6 +734,17 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Adds two numbers.
+    # @liquid_syntax number | plus: number
+    # @liquid_return [number]
+    def plus(input, operand)
+      apply_operation(input, operand, :+)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category default
     # @liquid_summary
     #   Sets a default value for any variable whose value is one of the following:
@@ -803,6 +814,11 @@ module Liquid
 
     def raise_property_error(property)
       raise Liquid::ArgumentError, "cannot select the property '#{Utils.to_s(property)}'"
+    end
+
+    def apply_operation(input, operand, operation)
+      result = Utils.to_number(input).send(operation, Utils.to_number(operand))
+      result.is_a?(BigDecimal) ? result.to_f : result
     end
 
     def nil_safe_compare(a, b)
