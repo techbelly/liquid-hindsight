@@ -184,6 +184,29 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "a" => "a" }, { "a" => "B" }, { "a" => "c" }, { "a" => "D" }], @filters.sort_natural([{ "a" => "D" }, { "a" => "c" }, { "a" => "a" }, { "a" => "B" }], "a"))
   end
 
+  def test_sort_natural_case_check
+    input = [
+      { "key" => "X" },
+      { "key" => "Y" },
+      { "key" => "Z" },
+      { "fake" => "t" },
+      { "key" => "a" },
+      { "key" => "b" },
+      { "key" => "c" },
+    ]
+    expectation = [
+      { "key" => "a" },
+      { "key" => "b" },
+      { "key" => "c" },
+      { "key" => "X" },
+      { "key" => "Y" },
+      { "key" => "Z" },
+      { "fake" => "t" },
+    ]
+    assert_equal(expectation, @filters.sort_natural(input, "key"))
+    assert_equal(["a", "b", "c", "X", "Y", "Z"], @filters.sort_natural(["X", "Y", "Z", "a", "b", "c"]))
+  end
+
   def test_sort_empty_array
     assert_equal([], @filters.sort([], "a"))
   end
