@@ -67,6 +67,10 @@ module Liquid
       @instance_assigns ||= {}
     end
 
+    def errors
+      @errors ||= []
+    end
+
     # Render takes a hash with local variables.
     #
     # if you use the same filters over and over again consider registering them globally
