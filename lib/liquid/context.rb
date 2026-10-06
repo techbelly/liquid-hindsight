@@ -74,6 +74,14 @@ module Liquid
       !@interrupts.empty?
     end
 
+    def handle_error(e, line_number = nil)
+      e = internal_error unless e.is_a?(Liquid::Error)
+      e.template_name ||= template_name
+      e.line_number   ||= line_number
+      errors.push(e)
+      exception_renderer.call(e).to_s
+    end
+
     # Push new local scope on the stack. use <tt>Context#stack</tt> instead
     def push(new_scope = {})
       @scopes.unshift(new_scope)
