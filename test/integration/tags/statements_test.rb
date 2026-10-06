@@ -61,4 +61,9 @@ class StatementsTest < Minitest::Test
   #  expected = %|  true  |
   #  assert_equal expected, @template.parse(text)
   # end
+
+  def test_is_collection_empty
+    text = ' {% if array == empty %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text, { 'array' => [] })
+  end
 end # StatementsTest
