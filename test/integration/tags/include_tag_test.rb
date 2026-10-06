@@ -96,4 +96,13 @@ class IncludeTagTest < Minitest::Test
       assert(include_node.for_loop?, "Expected for_loop? to be true for 'for' keyword")
     end
   end
+
+  def test_include_for_loop_false_with_with_keyword
+    with_error_modes(:lax, :strict, :strict2) do
+      template = Template.parse("{% include 'product' with product %}")
+      include_node = template.root.nodelist.first
+
+      refute(include_node.for_loop?, "Expected for_loop? to be false for 'with' keyword")
+    end
+  end
 end # IncludeTagTest
