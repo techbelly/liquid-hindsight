@@ -469,6 +469,14 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "foo" => true }, { "foo" => "for sure" }], @filters.where(input, "foo"))
   end
 
+  def test_uniq_with_to_liquid_value
+    input = [StringDrop.new("foo"), StringDrop.new("bar"), "foo"]
+    expected = [StringDrop.new("foo"), StringDrop.new("bar")]
+    result = @filters.uniq(input)
+
+    assert_equal(expected, result)
+  end
+
   private
 
   def with_timezone(tz)

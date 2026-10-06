@@ -292,7 +292,9 @@ module Liquid
     def uniq(input, property = nil)
       ary = InputIterator.new(input, context)
 
-      if ary.empty? # The next two cases assume a non-empty array.
+      if property.nil?
+        ary.uniq
+      elsif ary.empty? # The next two cases assume a non-empty array.
         []
       else
         ary.uniq do |item|
