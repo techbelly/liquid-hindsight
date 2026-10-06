@@ -5,6 +5,14 @@ require 'test_helper'
 class RenderTagTest < Minitest::Test
   include Liquid
 
+  def test_render_with_no_arguments
+    assert_template_result(
+      'rendered content',
+      '{% render "source" %}',
+      partials: { 'source' => 'rendered content' },
+    )
+  end
+
   def test_render_tag_looks_for_file_system_in_registers_first
     assert_template_result(
       'from register file system',
