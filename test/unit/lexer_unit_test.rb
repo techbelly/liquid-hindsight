@@ -26,6 +26,13 @@ class LexerUnitTest < Minitest::Test
     )
   end
 
+  def test_comparison
+    assert_equal(
+      [[:comparison, '=='], [:comparison, '<>'], [:comparison, 'contains'], [:end_of_string]],
+      tokenize('== <> contains '),
+    )
+  end
+
   def test_comparison_without_whitespace
     assert_equal(
       [[:number, '1'], [:comparison, '>'], [:number, '0'], [:end_of_string]],
