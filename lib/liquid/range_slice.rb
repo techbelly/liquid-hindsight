@@ -18,6 +18,10 @@ module Liquid
       @resource_limits = resource_limits
     end
 
+    def empty?
+      @length.zero?
+    end
+
     def each
       return enum_for(:each) unless block_given?
 
@@ -25,6 +29,7 @@ module Liquid
       @length.times do
         @resource_limits.increment_render_score(1)
         yield value
+        value += @direction
       end
     end
   end

@@ -58,4 +58,16 @@ class RangeSliceUnitTest < Minitest::Test
     end
     assert_equal(3, limits.render_score)
   end
+
+  def test_preserves_slice_bounds_for_negative_offsets_and_limits
+    limits = Liquid::ResourceLimits.new({})
+
+    assert_equal([1, 2], Liquid::RangeSlice.new(1..5, -2, 2, limits).each.to_a)
+    empty = Liquid::RangeSlice.new(1..5, 2, 1, limits)
+    assert(empty.empty?)
+    assert_equal([], empty.each.to_a)
+    assert_equal(2, limits.render_score) # the empty window performs no work
+    assert(Liquid::RangeSlice.new(5..1, 0, nil, limits).empty?)
+    assert_equal([1, 2, 3, 4], Liquid::RangeSlice.new(1...5, 0, nil, limits).each.to_a)
+  end
 end
