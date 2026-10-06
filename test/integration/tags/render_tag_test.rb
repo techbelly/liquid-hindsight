@@ -5,6 +5,17 @@ require 'test_helper'
 class RenderTagTest < Minitest::Test
   include Liquid
 
+  def test_nested_render_tag
+    assert_template_result(
+      'one two',
+      "{% render 'one' %}",
+      partials: {
+        'one' => "one {% render 'two' %}",
+        'two' => 'two',
+      },
+    )
+  end
+
   def test_recursively_rendered_template_does_not_produce_endless_loop
     env = Liquid::Environment.build(
       file_system: StubFileSystem.new('loop' => '{% render "loop" %}'),
