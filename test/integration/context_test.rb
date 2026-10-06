@@ -119,6 +119,10 @@ class ContextTest < Minitest::Test
     assert_nil(@context['nil'])
   end
 
+  def test_variables_not_existing
+    assert_template_result("true", "{% if does_not_exist == nil %}true{% endif %}")
+  end
+
   def test_scoping
     @context.push
     @context.pop
