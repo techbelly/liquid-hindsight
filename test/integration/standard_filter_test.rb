@@ -187,6 +187,26 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.base64_encode(nil))
   end
 
+  def test_base64_decode
+    decoded = @filters.base64_decode('b25lIHR3byB0aHJlZQ==')
+    assert_equal('one two three', decoded)
+    assert_equal(Encoding::UTF_8, decoded.encoding)
+
+    decoded = @filters.base64_decode('4pyF')
+    assert_equal('✅', decoded)
+    assert_equal(Encoding::UTF_8, decoded.encoding)
+
+    decoded = @filters.base64_decode("/w==")
+    assert_equal(Encoding::ASCII_8BIT, decoded.encoding)
+    assert_equal((+"\xFF").force_encoding(Encoding::ASCII_8BIT), decoded)
+
+    exception = assert_raises(Liquid::ArgumentError) do
+      @filters.base64_decode("invalidbase64")
+    end
+
+    assert_equal('Liquid error: invalid base64 provided to base64_decode', exception.message)
+  end
+
   def test_base64_url_safe_encode
     assert_equal(
       'YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXogQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVogMTIzNDU2Nzg5MCAhQCMkJV4mKigpLT1fKy8_Ljo7W117fVx8',
