@@ -38,6 +38,22 @@ module Liquid
       parse_with_selected_parser(markup)
     end
 
+    def render_to_output_buffer(context, output)
+      render_tag(context, output)
+    end
+
+    def render_tag(context, output)
+      # The expression should be a String literal, which parses to a String object
+      template_name = @template_name_expr
+      raise ::ArgumentError unless template_name.is_a?(String)
+
+      partial = PartialCache.load(
+        template_name,
+        context: context,
+        parse_context: parse_context,
+      )
+    end
+
     # render (string) (with|for expression)? (as id)? (key: value)*
     def strict2_parse(markup)
       p = @parse_context.new_parser(markup)
