@@ -74,6 +74,16 @@ class DocTagUnitTest < Minitest::Test
     assert_template_result('', template)
   end
 
+  def test_doc_tag_ignores_unclosed_liquid_tags
+    template = <<~LIQUID.chomp
+      {% doc %}
+        {% if true %}
+      {% enddoc %}
+    LIQUID
+
+    assert_template_result('', template)
+  end
+
   def test_doc_tag_does_not_allow_nested_docs
     error = assert_raises(Liquid::SyntaxError) do
       template = <<~LIQUID.chomp
