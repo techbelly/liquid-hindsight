@@ -5,6 +5,10 @@ require 'test_helper'
 class ErrorHandlingTest < Minitest::Test
   include Liquid
 
+  def test_missing_endtag_parse_time_error
+    assert_match_syntax_error(/: 'for' tag was never closed\z/, ' {% for a in b %} ... ')
+  end
+
   def test_unrecognized_operator
     with_error_modes(:strict) do
       assert_raises(SyntaxError) do

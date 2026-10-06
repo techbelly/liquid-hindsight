@@ -33,12 +33,31 @@ module Liquid
       super
       @from = @limit = nil
       parse_with_selected_parser(markup)
+      @for_block = new_body
+      @else_block = nil
+    end
+
+    def parse(tokens)
+      if parse_body(@for_block, tokens)
+      end
     end
 
     protected
 
     def strict_parse(markup)
       p = @parse_context.new_parser(markup)
+      @variable_name = p.consume(:id)
+      raise SyntaxError, options[:locale].t("errors.syntax.for_invalid_in") unless p.id?('in')
+
+      collection_name  = p.expression
+      @collection_name = parse_expression(collection_name, safe: true)
+
+      @name     = "#{@variable_name}-#{collection_name}"
+      @reversed = p.id?('reversed')
+
+      while p.look(:comma) || p.look(:id)
+      end
+      p.consume(:end_of_string)
     end
 
     private
