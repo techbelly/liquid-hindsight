@@ -24,4 +24,46 @@ class TrimModeTest < Minitest::Test
     END_EXPECTED
     assert_template_result(expected, text)
   end
+
+  # Make sure the trim isn't applied to standard tags
+  def test_standard_tags
+    whitespace = '          '
+    text       = <<-END_TEMPLATE
+      <div>
+        <p>
+          {% if true %}
+          yes
+          {% endif %}
+        </p>
+      </div>
+    END_TEMPLATE
+    expected = <<~END_EXPECTED
+            <div>
+              <p>
+      #{whitespace}
+                yes
+      #{whitespace}
+              </p>
+            </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+
+    text = <<-END_TEMPLATE
+      <div>
+        <p>
+          {% if false %}
+          no
+          {% endif %}
+        </p>
+      </div>
+    END_TEMPLATE
+    expected = <<~END_EXPECTED
+            <div>
+              <p>
+      #{whitespace}
+              </p>
+            </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+  end
 end # TrimModeTest
