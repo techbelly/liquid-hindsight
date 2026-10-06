@@ -41,6 +41,17 @@ module Liquid
       if collection.is_a?(String)
         return collection.empty? ? [] : [collection]
       end
+      return [] unless collection.respond_to?(:each)
+
+      collection.each do |item|
+        if from <= index
+          segments << item
+        end
+
+        index += 1
+      end
+
+      segments
     end
 
     # Arithmetic slicing must not bypass a Range subclass's custom #each.
