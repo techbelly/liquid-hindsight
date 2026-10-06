@@ -127,6 +127,15 @@ class ContextTest < Minitest::Test
     assert_equal('hi', context.apply_global_filter('hi'))
   end
 
+  def test_disables_tag_specified
+    context = Context.new
+    context.with_disabled_tags(%w(foo bar)) do
+      assert_equal(true, context.tag_disabled?("foo"))
+      assert_equal(true, context.tag_disabled?("bar"))
+      assert_equal(false, context.tag_disabled?("unknown"))
+    end
+  end
+
   def test_context_always_uses_static_registers
     registers = {
       my_register: :my_value,
