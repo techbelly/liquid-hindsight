@@ -56,5 +56,28 @@ module Liquid
       @source = nil
       @ss = nil
     end
+
+    def shift_normal
+      token = next_token
+    end
+
+    def next_token
+      # possible states: :text, :tag, :variable
+      byte_a = @ss.peek_byte
+
+      next_text_token
+    end
+
+    def next_text_token
+      start = @ss.pos
+
+      unless @ss.skip_until(TAG_OR_VARIABLE_START)
+      end
+
+    rescue ::ArgumentError => e
+      if e.message == "invalid byte sequence in #{@ss.string.encoding}"
+        raise SyntaxError, "Invalid byte sequence in #{@ss.string.encoding}"
+      end
+    end
   end
 end
