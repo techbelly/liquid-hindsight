@@ -7,6 +7,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_hash_with_strip_html_filter
+    assert_template_result("{\"Key\"=>\"Value\", \"AnotherKey\"=>\"AnotherValue\"}", "{{ my_hash | strip_html }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
   def test_hash_with_truncate__20_filter
     assert_template_result("{\"Key\"=>\"Value\", ...", "{{ my_hash | truncate: 20 }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
