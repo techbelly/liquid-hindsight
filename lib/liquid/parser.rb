@@ -15,6 +15,9 @@ module Liquid
 
     def consume(type = nil)
       token = @tokens[@p]
+      if type && token[0] != type
+        raise SyntaxError, "Expected #{type} but found #{@tokens[@p].first}"
+      end
       @p += 1
       token[1]
     end

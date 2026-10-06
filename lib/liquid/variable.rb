@@ -33,6 +33,10 @@ module Liquid
       strict_parse_with_error_mode_fallback(markup)
     end
 
+    def markup_context(markup)
+      "in \"{{#{markup}}}\""
+    end
+
     def strict_parse(markup)
       @filters = []
       p = @parse_context.new_parser(markup)

@@ -30,6 +30,17 @@ class VariableUnitTest < Minitest::Test
     assert_equal(1000.01, var.name)
   end
 
+  def test_dashes
+    assert_equal(VariableLookup.new('foo-bar'), create_variable('foo-bar').name)
+    assert_equal(VariableLookup.new('foo-bar-2'), create_variable('foo-bar-2').name)
+
+    with_error_modes(:strict) do
+      assert_raises(Liquid::SyntaxError) { create_variable('foo - bar') }
+      assert_raises(Liquid::SyntaxError) { create_variable('-foo') }
+      assert_raises(Liquid::SyntaxError) { create_variable('2foo') }
+    end
+  end
+
   def test_string_with_special_chars
     var = create_variable(%( 'hello! $!@.;"ddasd" ' ))
     assert_equal('hello! $!@.;"ddasd" ', var.name)

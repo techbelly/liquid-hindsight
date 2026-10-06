@@ -83,6 +83,8 @@ module Minitest
     def with_error_modes(*modes)
       old_mode = Liquid::Environment.default.error_mode
       modes.each do |mode|
+        Liquid::Environment.default.error_mode = mode
+        yield
       end
     ensure
       Liquid::Environment.default.error_mode = old_mode
