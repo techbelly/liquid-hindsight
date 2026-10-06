@@ -118,6 +118,21 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_tablerow_with_bracketed_access_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow n in obj["numbers"] cols: 2 %}{{ n }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">10</td><td class="col2">20</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template, { 'obj' => { 'numbers' => [10, 20] } })
+    end
+  end
+
   def test_tablerow_without_attributes_in_strict2_mode
     template = <<~LIQUID.chomp
       {% tablerow i in (1..3) %}{{ i }}{% endtablerow %}
