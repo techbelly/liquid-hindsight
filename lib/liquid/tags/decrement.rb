@@ -37,5 +37,14 @@ module Liquid
       @variable_name = p.consume(:id)
       p.consume(:end_of_string)
     end
+
+    def render_to_output_buffer(context, output)
+      counter_environment = context.environments.first
+      value = counter_environment[@variable_name] || 0
+      value -= 1
+      counter_environment[@variable_name] = value
+      output << value.to_s
+      output
+    end
   end
 end
