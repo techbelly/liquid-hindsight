@@ -53,7 +53,13 @@ module Liquid
         unless ALLOWED_ATTRIBUTES.include?(key)
           raise SyntaxError, options[:locale].t("errors.syntax.table_row_invalid_attribute", attribute: key)
         end
+
+        p.consume(:colon)
+        @attributes[key] = safe_parse_expression(p)
+        p.consume?(:comma)
       end
+
+      p.consume(:end_of_string)
     end
 
     def strict_parse(markup)

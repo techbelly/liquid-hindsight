@@ -82,6 +82,21 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_tablerow_with_empty_collection_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow i in empty_array cols: 2 %}{{ i }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      </tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template, { 'empty_array' => [] })
+    end
+  end
+
   def test_tablerow_with_invalid_expression_strict_vs_strict2
     template = '{% tablerow i in (1..5) limit: foo=>bar %}{{ i }}{% endtablerow %}'
 
