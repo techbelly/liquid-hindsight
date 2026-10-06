@@ -164,6 +164,26 @@ module Liquid
       @blank
     end
 
+    # Remove blank strings in the block body for a control flow tag (e.g. `if`, `for`, `case`, `unless`)
+    # with a blank body.
+    #
+    # For example, in a conditional assignment like the following
+    #
+    # ```
+    # {% if size > max_size %}
+    #   {% assign size = max_size %}
+    # {% endif %}
+    # ```
+    #
+    # we assume the intention wasn't to output the blank spaces in the `if` tag's block body, so this method
+    # will remove them to reduce the render output size.
+    #
+    # Note that it is now preferred to use the `liquid` tag for this use case.
+    def remove_blank_strings
+      raise "remove_blank_strings only support being called on a blank block body" unless @blank
+      @nodelist.reject! { |node| node.instance_of?(String) }
+    end
+
     private
 
     def create_variable(token, parse_context)

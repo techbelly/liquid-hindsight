@@ -33,6 +33,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_complex_if_condition
+    assert_equal(
+      ["test"],
+      visit(%({% if 1 == 1 and 2 == test %}{% endif %})),
+    )
+  end
+
   def test_if_body
     assert_equal(
       ["test"],
