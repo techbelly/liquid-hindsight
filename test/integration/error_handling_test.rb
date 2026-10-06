@@ -99,6 +99,15 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal('Liquid syntax error: Unexpected character % in "{{%%%}}"', err.message)
   end
 
+  def test_warning_line_numbers
+    template = Liquid::Template.parse("{% if ~~~ %}\n{{%%%}}{% else %}\n{{ hello. }}{% endif %}", error_mode: :warn, line_numbers: true)
+    assert_equal('Liquid syntax error (line 1): Unexpected character ~ in "~~~"', template.warnings[0].message)
+    assert_equal('Liquid syntax error (line 2): Unexpected character % in "{{%%%}}"', template.warnings[1].message)
+    assert_equal('Liquid syntax error (line 3): Expected id but found end_of_string in "{{ hello. }}"', template.warnings[2].message)
+    assert_equal(3, template.warnings.size)
+    assert_equal([1, 2, 3], template.warnings.map(&:line_number))
+  end
+
   class TestFileSystem
     def read_template_file(_template_path)
       "{{ errors.argument_error }}"
