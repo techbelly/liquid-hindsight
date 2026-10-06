@@ -167,4 +167,15 @@ class TableRowTest < Minitest::Test
       assert_match(/Unexpected character =/, error.message)
     end
   end
+
+  def test_integer_range_is_not_materialized_and_charges_empty_iterations
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse('{% tablerow i in numbers %}{% endtablerow %}')
+    template.resource_limits.render_score_limit = 3
+
+    assert_raises(Liquid::MemoryError) { template.render!('numbers' => range) }
+
+    assert(template.resource_limits.reached?)
+    assert_equal(4, template.resource_limits.render_score)
+  end
 end
