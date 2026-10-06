@@ -36,4 +36,8 @@ class InlineCommentTest < Minitest::Test
       -%}
     LIQUID
   end
+
+  def test_inline_comment_does_not_support_nested_tags
+    assert_template_result(' -%}', "{%- # {% echo 'hello world' %} -%}")
+  end
 end
