@@ -72,6 +72,13 @@ class TemplateTest < Minitest::Test
     assert_equal('from custom assigns', t.parse("{{ foo }}").render!('foo' => 'from custom assigns'))
   end
 
+  def test_persistent_assigns_squash_instance_assigns
+    t = Template.new
+    assert_equal('from instance assigns', t.parse("{% assign foo = 'from instance assigns' %}{{ foo }}").render!)
+    t.assigns['foo'] = 'from persistent assigns'
+    assert_equal('from persistent assigns', t.parse("{{ foo }}").render!)
+  end
+
   def test_lambda_is_called_once_from_persistent_assigns_over_multiple_parses_and_renders
     t = Template.new
     t.assigns['number'] = -> {
