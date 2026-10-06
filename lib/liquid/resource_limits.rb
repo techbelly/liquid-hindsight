@@ -30,6 +30,11 @@ module Liquid
       raise_limits_reached if @cumulative_render_score_limit && @cumulative_render_score > @cumulative_render_score_limit
     end
 
+    def raise_limits_reached
+      @reached_limit = true
+      raise MemoryError, "Memory limits exceeded"
+    end
+
     def reset
       @reached_limit = false
       @last_capture_length = nil
