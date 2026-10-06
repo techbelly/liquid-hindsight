@@ -480,7 +480,9 @@ module Liquid
       InputIterator.new(input, context).map do |e|
         e = e.call if e.is_a?(Proc)
 
-        if e.respond_to?(:[])
+        if property == "to_liquid"
+          e
+        elsif e.respond_to?(:[])
           r = e[property]
           r.is_a?(Proc) ? r.call : r
         end
