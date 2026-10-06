@@ -371,6 +371,14 @@ class TemplateTest < Minitest::Test
     end
   end
 
+  def test_using_range_literal_works_as_expected
+    source = "{% assign foo = (x..y) %}{{ foo }}"
+    assert_template_result("1..5", source, { "x" => 1, "y" => 5 })
+
+    source = "{% assign nums = (x..y) %}{% for num in nums %}{{ num }}{% endfor %}"
+    assert_template_result("12345", source, { "x" => 1, "y" => 5 })
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
