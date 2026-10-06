@@ -19,6 +19,18 @@ class RawTagTest < Minitest::Test
     assert_template_result("{Hello}", "{% raw %}{{% endraw %}Hello{% raw %}}{% endraw %}")
   end
 
+  def test_open_tag_in_raw
+    assert_template_result(' Foobar {% invalid ', '{% raw %} Foobar {% invalid {% endraw %}')
+    assert_template_result(' Foobar invalid %} ', '{% raw %} Foobar invalid %} {% endraw %}')
+    assert_template_result(' Foobar {{ invalid ', '{% raw %} Foobar {{ invalid {% endraw %}')
+    assert_template_result(' Foobar invalid }} ', '{% raw %} Foobar invalid }} {% endraw %}')
+    assert_template_result(' Foobar {% invalid {% {% endraw ', '{% raw %} Foobar {% invalid {% {% endraw {% endraw %}')
+    assert_template_result(' Foobar {% {% {% ', '{% raw %} Foobar {% {% {% {% endraw %}')
+    assert_template_result(' test {% raw %} {% endraw %}', '{% raw %} test {% raw %} {% {% endraw %}endraw %}')
+    assert_template_result(' Foobar {{ invalid 1', '{% raw %} Foobar {{ invalid {% endraw %}{{ 1 }}')
+    assert_template_result(' Foobar {% foo {% bar %}', '{% raw %} Foobar {% foo {% bar %}{% endraw %}')
+  end
+
   def test_invalid_raw
     assert_match_syntax_error(/tag was never closed/, '{% raw %} foo')
     assert_match_syntax_error(/Valid syntax/, '{% raw } foo {% endraw %}')
