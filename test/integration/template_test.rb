@@ -214,6 +214,14 @@ class TemplateTest < Minitest::Test
     assert_equal('something', result)
   end
 
+  def test_undefined_variables_raise
+    t = Template.parse("{{x}} {{y}} {{z.a}} {{z.b}} {{z.c.d}}")
+
+    assert_raises(UndefinedVariable) do
+      t.render!({ 'x' => 33, 'z' => { 'a' => 32, 'c' => { 'e' => 31 } } }, strict_variables: true)
+    end
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
