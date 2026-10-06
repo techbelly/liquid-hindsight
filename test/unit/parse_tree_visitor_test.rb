@@ -33,6 +33,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_elsif_body
+    assert_equal(
+      ["test"],
+      visit(%({% if 1 == 1 %}{% elsif 2 == 2 %}{{ test }}{% endif %})),
+    )
+  end
+
   def test_else_body
     assert_equal(
       ["test"],
