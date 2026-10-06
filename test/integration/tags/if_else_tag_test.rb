@@ -28,6 +28,12 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('',      '{% if a or b or c %} YES {% endif %}', { 'a' => false, 'b' => false, 'c' => false })
   end
 
+  def test_if_or_with_operators
+    assert_template_result(' YES ', '{% if a == true or b == true %} YES {% endif %}', { 'a' => true, 'b' => true })
+    assert_template_result(' YES ', '{% if a == true or b == false %} YES {% endif %}', { 'a' => true, 'b' => true })
+    assert_template_result('', '{% if a == false or b == false %} YES {% endif %}', { 'a' => true, 'b' => true })
+  end
+
   def test_comparison_of_strings_containing_and_or_or
     awful_markup = "a == 'and' and b == 'or' and c == 'foo and bar' and d == 'bar or baz' and e == 'foo' and foo and bar"
     assigns      = { 'a' => 'and', 'b' => 'or', 'c' => 'foo and bar', 'd' => 'bar or baz', 'e' => 'foo', 'foo' => true, 'bar' => true }
