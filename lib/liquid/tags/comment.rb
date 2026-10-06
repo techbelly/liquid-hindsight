@@ -18,6 +18,45 @@ module Liquid
     def unknown_tag(_tag, _markup, _tokens)
     end
 
+    def blank?
+      true
+    end
+
     private
+
+    def parse_body(body, tokenizer)
+      if parse_context.depth >= MAX_DEPTH
+      end
+
+      parse_context.depth += 1
+      comment_tag_depth = 1
+
+      begin
+        # Consume tokens without creating child nodes.
+        # The children tag doesn't require to be a valid Liquid except the comment and raw tag.
+        # The child comment and raw tag must be closed.
+        while (token = tokenizer.send(:shift))
+          tag_name = if tokenizer.for_liquid_tag
+
+          else
+            token =~ BlockBody::FullToken
+            Regexp.last_match(2)
+          end
+
+          case tag_name
+          when "endcomment"
+            comment_tag_depth -= 1
+          end
+
+          if comment_tag_depth.zero?
+            parse_context.trim_whitespace = (token[-3] == WhitespaceControl) unless tokenizer.for_liquid_tag
+            return false
+          end
+        end
+
+      ensure
+        parse_context.depth -= 1
+      end
+    end
   end
 end
