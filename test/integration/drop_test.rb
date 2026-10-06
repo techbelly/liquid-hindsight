@@ -140,6 +140,13 @@ class DropsTest < Minitest::Test
     assert_equal('  ', output)
   end
 
+  def test_object_methods_not_allowed
+    [:dup, :clone, :singleton_class, :eval, :class_eval, :inspect].each do |method|
+      output = Liquid::Template.parse(" {{ product.#{method} }} ").render!('product' => ProductDrop.new)
+      assert_equal('  ', output)
+    end
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
