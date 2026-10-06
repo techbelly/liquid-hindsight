@@ -128,6 +128,13 @@ class TemplateTest < Minitest::Test
     assert(t.resource_limits.reached?)
   end
 
+  def test_resource_limits_hash_in_template_gets_updated_even_if_no_limits_are_set
+    t = Template.parse("{% for a in (1..100) %}x{% assign foo = 1 %} {% endfor %}")
+    t.render!
+    assert(t.resource_limits.assign_score > 0)
+    assert(t.resource_limits.render_score > 0)
+  end
+
   def test_render_length_persists_between_blocks
     t = Template.parse("{% if true %}aaaa{% endif %}")
     t.resource_limits.render_length_limit = 3
