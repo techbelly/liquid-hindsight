@@ -229,6 +229,30 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_including_via_variable_value
+    assert_template_result(
+      "from TestFileSystem",
+      "{% assign page = 'pick_a_source' %}{% include page %}",
+      partials: { "pick_a_source" => "from TestFileSystem" },
+    )
+
+    partials = { "product" => "Product: {{ product.title }} " }
+
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% assign page = 'product' %}{% include page %}",
+      { "product" => { 'title' => 'Draft 151cm' } },
+      partials: partials,
+    )
+
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% assign page = 'product' %}{% include page for foo %}",
+      { "foo" => { 'title' => 'Draft 151cm' } },
+      partials: partials,
+    )
+  end
+
   def test_including_with_strict_variables
     env = Liquid::Environment.build(
       file_system: StubFileSystem.new('simple' => 'simple'),
