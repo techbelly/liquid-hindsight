@@ -170,6 +170,14 @@ end
 class FiltersInTemplate < Minitest::Test
   include Liquid
 
+  def test_local_global
+    with_global_filter(MoneyFilter) do
+      assert_equal(" 1000$ ", Template.parse("{{1000 | money}}").render!(nil, nil))
+      assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, filters: CanadianMoneyFilter))
+      assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, filters: [CanadianMoneyFilter]))
+    end
+  end
+
   def test_local_filter_with_deprecated_syntax
     assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, CanadianMoneyFilter))
     assert_equal(" 1000$ CAD ", Template.parse("{{1000 | money}}").render!(nil, [CanadianMoneyFilter]))
