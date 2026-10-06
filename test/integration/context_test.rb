@@ -338,6 +338,14 @@ class ContextTest < Minitest::Test
     assert_equal('hi', context.apply_global_filter('hi'))
   end
 
+  def test_new_isolated_subcontext_does_not_inherit_variables
+    super_context = Context.new
+    super_context['my_variable'] = 'some value'
+    subcontext = super_context.new_isolated_subcontext
+
+    assert_nil(subcontext['my_variable'])
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do

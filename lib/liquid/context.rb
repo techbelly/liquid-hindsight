@@ -57,6 +57,10 @@ module Liquid
     end
     # rubocop:enable Metrics/ParameterLists
 
+    def warnings
+      @warnings ||= []
+    end
+
     def strainer
       @strainer ||= @environment.create_strainer(self, @filters)
     end
@@ -85,6 +89,27 @@ module Liquid
     def pop
       raise ContextError if @scopes.size == 1
       @scopes.shift
+    end
+
+    # Creates a new context inheriting resource limits, filters, environment etc.,
+    # but with an isolated scope.
+    def new_isolated_subcontext
+      check_overflow
+
+      self.class.build(
+        environment: @environment,
+        resource_limits: resource_limits,
+        static_environments: static_environments,
+        registers: Registers.new(registers),
+      ).tap do |subcontext|
+        subcontext.base_scope_depth   = base_scope_depth + 1
+        subcontext.exception_renderer = exception_renderer
+        subcontext.filters  = @filters
+        subcontext.strainer = nil
+        subcontext.errors   = errors
+        subcontext.warnings = warnings
+        subcontext.disabled_tags = @disabled_tags
+      end
     end
 
     # Only allow String, Numeric, Hash, Array, Proc, Boolean or <tt>Liquid::Drop</tt>

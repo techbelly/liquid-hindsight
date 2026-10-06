@@ -11,6 +11,12 @@ module Liquid
 
   module ContextProfilingHook
     attr_accessor :profiler
+
+    def new_isolated_subcontext
+      new_context = super
+      new_context.profiler = profiler
+      new_context
+    end
   end
   Context.prepend(ContextProfilingHook)
 end
