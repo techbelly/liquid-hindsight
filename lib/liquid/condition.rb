@@ -113,7 +113,20 @@ module Liquid
       # If the object responds to the method (e.g., ActiveSupport is loaded), use it
       if value.respond_to?(method_name)
         value.send(method_name)
+      else
+        # Emulate ActiveSupport's blank?/empty? to make Liquid invariant
+        # to whether ActiveSupport is loaded or not
+        case method_name
+        when :empty?
+          liquid_empty?(value)
+        end
       end
+    end
+
+    # Implement empty? semantics
+    # Note: nil is NOT empty. empty? checks if a collection has zero elements.
+    def liquid_empty?(value)
+      value.respond_to?(:empty?) ? value.empty? : false
     end
 
     def interpret_condition(left, right, op, context)
