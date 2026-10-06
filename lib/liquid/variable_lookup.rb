@@ -24,6 +24,13 @@ module Liquid
       end
     end
 
+    def evaluate(context)
+      name   = context.evaluate(@name)
+      object = context.find_variable(name)
+
+      object
+    end
+
     def ==(other)
       self.class == other.class && state == other.state
     end

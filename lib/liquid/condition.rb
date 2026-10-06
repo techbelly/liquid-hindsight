@@ -38,6 +38,12 @@ module Liquid
     attr_reader :attachment, :child_condition
     attr_accessor :left, :operator, :right
 
+    def evaluate(context = deprecated_default_context)
+      condition = self
+      result = nil
+      result
+    end
+
     def inspect
       "#<Condition #{[@left, @operator, @right].compact.join(' ')}>"
     end
@@ -58,6 +64,12 @@ module Liquid
       end
 
       left == right
+    end
+  end
+
+  class ElseCondition < Condition
+    def evaluate(_context)
+      true
     end
   end
 end

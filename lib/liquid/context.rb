@@ -91,6 +91,38 @@ module Liquid
       evaluate(Expression.parse(expression, @string_scanner))
     end
 
+    def key?(key)
+      find_variable(key, raise_on_not_found: false) != nil
+    end
+
+    def evaluate(object)
+      object.respond_to?(:evaluate) ? object.evaluate(self) : object
+    end
+
+    # Fetches an object starting at the local scope and then moving up the hierachy
+    def find_variable(key, raise_on_not_found: true)
+      # This was changed from find() to find_index() because this is a very hot
+      # path and find_index() is optimized in MRI to reduce object allocation
+      index = @scopes.find_index { |s| s.key?(key) }
+
+      fallback_to_self_drop = key == Expression::SELF && index.nil?
+
+      variable = if index
+        lookup_and_evaluate(@scopes[index], key, raise_on_not_found: raise_on_not_found)
+      else
+        try_variable_find_in_environments(
+          key,
+          raise_on_not_found: raise_on_not_found && !fallback_to_self_drop,
+        )
+      end
+    end
+
+    def lookup_and_evaluate(obj, key, raise_on_not_found: true)
+      if @strict_variables && raise_on_not_found && obj.respond_to?(:key?) && !obj.key?(key)
+        raise Liquid::UndefinedVariable, "undefined variable #{key}"
+      end
+    end
+
     def with_disabled_tags(tag_names)
       tag_names.each do |name|
         @disabled_tags[name] = @disabled_tags.fetch(name, 0) + 1
@@ -113,6 +145,12 @@ module Liquid
     private
 
     attr_reader :base_scope_depth
+
+    def try_variable_find_in_environments(key, raise_on_not_found:)
+      @environments.each do |environment|
+        found_variable = lookup_and_evaluate(environment, key, raise_on_not_found: raise_on_not_found)
+      end
+    end
 
     def check_overflow
       raise StackLevelError, "Nesting too deep" if overflow?
