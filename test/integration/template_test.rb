@@ -255,6 +255,14 @@ class TemplateTest < Minitest::Test
     assert_equal('Liquid error: undefined filter somefilter1', t.errors[0].message)
   end
 
+  def test_undefined_filters_raise
+    t = Template.parse("{{x | somefilter1 | upcase | somefilter2}}")
+
+    assert_raises(UndefinedFilter) do
+      t.render!({ 'x' => 'foo' }, strict_filters: true)
+    end
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
