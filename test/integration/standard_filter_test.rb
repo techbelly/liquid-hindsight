@@ -589,6 +589,10 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_cannot_access_private_methods
+    assert_template_result('a', "{{ 'a' | to_number }}")
+  end
+
   def test_where_string_keys
     input = [
       "alpha", "beta", "gamma", "delta"
