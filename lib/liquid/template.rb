@@ -86,7 +86,9 @@ module Liquid
 
       context = case args.first
       when Liquid::Context
+        c = args.shift
 
+        c
       when Liquid::Drop
       when Hash
         Context.new([args.shift, assigns], instance_assigns, registers, @rethrow_errors, @resource_limits, {}, @environment)
