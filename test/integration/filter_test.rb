@@ -150,6 +150,13 @@ class FiltersTest < Minitest::Test
     assert_equal('hello john, doe', output)
   end
 
+  def test_override_object_method_in_filter
+    assert_equal("tap overridden", Template.parse("{{var | tap}}").render!({ 'var' => 1000 }, filters: [OverrideObjectMethodFilter]))
+
+    # tap still treated as a non-existent filter
+    assert_equal("1000", Template.parse("{{var | tap}}").render!('var' => 1000))
+  end
+
   def test_liquid_argument_error
     source = "{{ '' | size: 'too many args' }}"
     exc = assert_raises(Liquid::ArgumentError) do
