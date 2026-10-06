@@ -35,6 +35,10 @@ module Liquid
       raise MemoryError, "Memory limits exceeded"
     end
 
+    def reached?
+      @reached_limit
+    end
+
     def reset
       @reached_limit = false
       @last_capture_length = nil
