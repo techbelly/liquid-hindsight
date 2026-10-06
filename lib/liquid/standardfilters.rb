@@ -607,6 +607,17 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Removes any instance of a substring inside a string.
+    # @liquid_syntax string | remove: string
+    # @liquid_return [string]
+    def remove(input, string)
+      replace(input, string, '')
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Adds a given string to the end of a string.
     # @liquid_syntax string | append: string
     # @liquid_return [string]

@@ -662,6 +662,10 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result('', '{{ name | last }}', { 'name' => '' })
   end
 
+  def test_pipes_in_string_arguments
+    assert_template_result('foobar', "{{ 'foo|bar' | remove: '|' }}")
+  end
+
   def test_strip
     assert_template_result('ab c', "{{ source | strip }}", { 'source' => " ab c  " })
     assert_template_result('ab c', "{{ source | strip }}", { 'source' => " \tab c  \n \t" })
