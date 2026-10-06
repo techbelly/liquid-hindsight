@@ -20,4 +20,49 @@ module Liquid
       raise FileSystemError, "This liquid context does not allow includes."
     end
   end
+
+  # This implements an abstract file system which retrieves template files named in a manner similar to Rails partials,
+  # ie. with the template name prefixed with an underscore. The extension ".liquid" is also added.
+  #
+  # For security reasons, template paths are only allowed to contain letters, numbers, and underscore.
+  #
+  # Example:
+  #
+  #   file_system = Liquid::LocalFileSystem.new("/some/path")
+  #
+  #   file_system.full_path("mypartial")       # => "/some/path/_mypartial.liquid"
+  #   file_system.full_path("dir/mypartial")   # => "/some/path/dir/_mypartial.liquid"
+  #
+  # Optionally in the second argument you can specify a custom pattern for template filenames.
+  # The Kernel::sprintf format specification is used.
+  # Default pattern is "_%s.liquid".
+  #
+  # Example:
+  #
+  #   file_system = Liquid::LocalFileSystem.new("/some/path", "%s.html")
+  #
+  #   file_system.full_path("index") # => "/some/path/index.html"
+  #
+  class LocalFileSystem
+    attr_accessor :root
+
+    def initialize(root, pattern = "_%s.liquid")
+      @root    = root
+      @pattern = pattern
+    end
+
+    def full_path(template_path)
+      raise FileSystemError, "Illegal template name '#{template_path}'" unless %r{\A[^./][a-zA-Z0-9_/]+\z}.match?(template_path)
+
+      full_path = if template_path.include?('/')
+        File.join(root, File.dirname(template_path), @pattern % File.basename(template_path))
+      else
+        File.join(root, @pattern % template_path)
+      end
+
+      raise FileSystemError, "Illegal template path '#{File.expand_path(full_path)}'" unless File.expand_path(full_path).start_with?(File.expand_path(root))
+
+      full_path
+    end
+  end
 end
