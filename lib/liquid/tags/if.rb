@@ -112,6 +112,9 @@ module Liquid
     end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        @node.blocks
+      end
     end
   end
 end
