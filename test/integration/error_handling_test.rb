@@ -184,6 +184,15 @@ class ErrorHandlingTest < Minitest::Test
     end
   end
 
+  def test_default_exception_renderer_with_internal_error
+    template = Liquid::Template.parse('This is a runtime error: {{ errors.runtime_error }}', line_numbers: true)
+
+    output = template.render('errors' => ErrorDrop.new)
+
+    assert_equal('This is a runtime error: Liquid error (line 1): internal', output)
+    assert_equal([Liquid::InternalError], template.errors.map(&:class))
+  end
+
   class TestFileSystem
     def read_template_file(_template_path)
       "{{ errors.argument_error }}"
