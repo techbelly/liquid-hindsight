@@ -21,6 +21,11 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_false('bob', 'contains', '---')
   end
 
+  def test_contains_binary_encoding_compatibility_with_utf8
+    assert_evaluates_true('🙈'.b, 'contains', '🙈')
+    assert_evaluates_true('🙈', 'contains', '🙈'.b)
+  end
+
   def test_invalid_comparation_operator
     assert_evaluates_argument_error(1, '~~', 0)
   end
