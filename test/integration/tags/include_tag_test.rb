@@ -140,6 +140,25 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_strict2_parsing_errors
+    with_error_modes(:lax, :strict) do
+      assert_template_result(
+        'hello value1 value2',
+        '{% include "snippet" !!! arg1: "value1" ~~~ arg2: "value2" %}',
+        partials: { 'snippet' => 'hello {{ arg1 }} {{ arg2 }}' },
+      )
+    end
+
+    with_error_modes(:strict2) do
+      assert_syntax_error(
+        '{% include "snippet" !!! arg1: "value1" ~~~ arg2: "value2" %}',
+      )
+      assert_syntax_error(
+        '{% include "snippet" | filter %}',
+      )
+    end
+  end
+
   def test_optional_commas
     partials = { 'snippet' => 'hello {{ arg1 }} {{ arg2 }}' }
     assert_template_result('hello value1 value2', '{% include "snippet", arg1: "value1", arg2: "value2" %}', partials: partials)
