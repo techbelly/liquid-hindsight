@@ -19,4 +19,37 @@ class PartialCacheUnitTest < Minitest::Test
 
     assert_equal(1, file_system.file_read_count)
   end
+
+  def test_cache_state_is_stored_per_context
+    parse_context      = Liquid::ParseContext.new
+    shared_file_system = StubFileSystem.new(
+      'my_partial' => 'my shared value',
+    )
+    context_one = Liquid::Context.build(
+      registers: {
+        file_system: shared_file_system,
+      },
+    )
+    context_two = Liquid::Context.build(
+      registers: {
+        file_system: shared_file_system,
+      },
+    )
+
+    2.times do
+      Liquid::PartialCache.load(
+        'my_partial',
+        context: context_one,
+        parse_context: parse_context,
+      )
+    end
+
+    Liquid::PartialCache.load(
+      'my_partial',
+      context: context_two,
+      parse_context: parse_context,
+    )
+
+    assert_equal(2, shared_file_system.file_read_count)
+  end
 end
