@@ -163,6 +163,21 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Strips all HTML tags from a string.
+    # @liquid_syntax string | strip_html
+    # @liquid_return [string]
+    def strip_html(input)
+      input = Utils.to_s(input)
+      empty  = ''
+      result = input.gsub(STRIP_HTML_BLOCKS, empty)
+      result.gsub!(STRIP_HTML_TAGS, empty)
+      result
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.
