@@ -75,6 +75,22 @@ class PartialCacheUnitTest < Minitest::Test
     assert_equal(1, file_system.file_read_count)
   end
 
+  def test_uses_default_template_factory_when_no_template_factory_found_in_register
+    context = Liquid::Context.build(
+      registers: {
+        file_system: StubFileSystem.new('my_partial' => 'my partial body'),
+      },
+    )
+
+    partial = Liquid::PartialCache.load(
+      'my_partial',
+      context: context,
+      parse_context: Liquid::ParseContext.new,
+    )
+
+    assert_equal('my partial body', partial.render)
+  end
+
   def test_uses_template_factory_register_if_present
     template_factory = StubTemplateFactory.new
     context = Liquid::Context.build(
