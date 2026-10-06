@@ -87,6 +87,17 @@ module Liquid
         byte = ss.scan_byte
 
         return false if byte != DASH && (byte < ZERO || byte > NINE)
+
+        # The markup could be a float with multiple dots
+        first_dot_pos = nil
+        num_end_pos = nil
+
+        while (byte = ss.scan_byte)
+          return false if byte != DOT && (byte < ZERO || byte > NINE)
+
+          # we found our number and now we are just scanning the rest of the string
+          next if num_end_pos
+        end
       end
     end
   end
