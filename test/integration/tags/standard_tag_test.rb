@@ -76,6 +76,43 @@ class StandardTagTest < Minitest::Test
     end
   end
 
+  def test_case
+    assigns = { 'condition' => 2 }
+    assert_template_result(
+      ' its 2 ',
+      '{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => 1 }
+    assert_template_result(
+      ' its 1 ',
+      '{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => 3 }
+    assert_template_result(
+      '',
+      '{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => "string here" }
+    assert_template_result(
+      ' hit ',
+      '{% case condition %}{% when "string here" %} hit {% endcase %}',
+      assigns,
+    )
+
+    assigns = { 'condition' => "bad string here" }
+    assert_template_result(
+      '',
+      '{% case condition %}{% when "string here" %} hit {% endcase %}',
+      assigns,
+    )
+  end
+
   def test_assign
     assert_template_result('variable', '{% assign a = "variable"%}{{a}}')
   end
