@@ -22,4 +22,10 @@ class ParsingQuirksTest < Minitest::Test
       Template.parse("TEST {% ")
     end
   end
+
+  def test_raise_on_invalid_tag_delimiter
+    assert_raises(Liquid::SyntaxError) do
+      Template.new.parse('{% end %}')
+    end
+  end
 end # ParsingQuirksTest
