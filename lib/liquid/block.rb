@@ -9,6 +9,17 @@ module Liquid
       @blank = true
     end
 
+    def parse(tokens)
+      @body = new_body
+      while parse_body(@body, tokens)
+      end
+      @body.freeze
+    end
+
+    def blank?
+      @blank
+    end
+
     def raise_tag_never_closed(block_name)
       raise SyntaxError, parse_context.locale.t("errors.syntax.tag_never_closed", block_name: block_name)
     end
