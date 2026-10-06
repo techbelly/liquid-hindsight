@@ -35,4 +35,13 @@ class EnvironmentFilterTest < Minitest::Test
     assert_equal(5, strainer.invoke('size', 'input'))
     assert_equal("public", strainer.invoke("public_filter"))
   end
+
+  def test_strainer_only_invokes_public_filter_methods
+    strainer = @environment.create_strainer(@context)
+    assert_equal(false, strainer.class.invokable?('__test__'))
+    assert_equal(false, strainer.class.invokable?('test'))
+    assert_equal(false, strainer.class.invokable?('instance_eval'))
+    assert_equal(false, strainer.class.invokable?('__send__'))
+    assert_equal(true, strainer.class.invokable?('size')) # from the standard lib
+  end
 end
