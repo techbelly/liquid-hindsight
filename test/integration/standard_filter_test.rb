@@ -293,6 +293,10 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('1121314', @filters.join([1, 2, 3, 4], 1))
   end
 
+  def test_join_calls_to_liquid_on_each_element
+    assert_equal('i did it, i did it', @filters.join([CustomToLiquidDrop.new('i did it'), CustomToLiquidDrop.new('i did it')], ", "))
+  end
+
   def test_sort
     assert_equal([1, 2, 3, 4], @filters.sort([4, 3, 2, 1]))
     assert_equal([{ "a" => 1 }, { "a" => 2 }, { "a" => 3 }, { "a" => 4 }], @filters.sort([{ "a" => 4 }, { "a" => 3 }, { "a" => 1 }, { "a" => 2 }], "a"))
