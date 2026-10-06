@@ -66,4 +66,12 @@ class StatementsTest < Minitest::Test
     text = ' {% if array == empty %} true {% else %} false {% endif %} '
     assert_template_result('  true  ', text, { 'array' => [] })
   end
+
+  def test_nil
+    text = ' {% if var == nil %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text, { 'var' => nil })
+
+    text = ' {% if var == null %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text, { 'var' => nil })
+  end
 end # StatementsTest
