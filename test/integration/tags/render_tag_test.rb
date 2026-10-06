@@ -154,6 +154,17 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_with_drop
+    assert_template_result(
+      "TestEnumerable",
+      "{% render 'loop' with loop as value %}",
+      { "loop" => TestEnumerable.new },
+      partials: {
+        'loop' => "{{ value }}",
+      },
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
