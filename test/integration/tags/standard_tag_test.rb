@@ -75,6 +75,11 @@ class StandardTagTest < Minitest::Test
     assert_template_result('variable', '{% assign a = "variable"%}{{a}}')
   end
 
+  def test_assign_unassigned
+    assigns = { 'var' => 'content' }
+    assert_template_result('var2:  var2:content', 'var2:{{var2}} {%assign var2 = var%} var2:{{var2}}', assigns)
+  end
+
   def test_case_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result('',  '{% case false %}{% when %}true{% endcase %}', {})
