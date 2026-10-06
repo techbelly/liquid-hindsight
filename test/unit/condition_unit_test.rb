@@ -178,6 +178,15 @@ class ConditionUnitTest < Minitest::Test
   # - Arrays and Hashes are blank if empty
   # - true and numbers are never blank
 
+  def test_blank_with_empty_string
+    # An empty string has no content, so it should be considered blank.
+    # This is the most basic case of a blank string.
+    @context['empty_string'] = ''
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_true(VariableLookup.new('empty_string'), '==', blank_literal)
+  end
+
   def test_blank_with_empty_array
     # Empty arrays have no elements, so they are blank.
     # Useful for checking if a collection has items: {% if products == blank %}

@@ -130,6 +130,9 @@ module Liquid
     # empty arrays, and empty hashes
     def liquid_blank?(value)
       case value
+      when String
+        # Blank if empty or whitespace only (matches ActiveSupport)
+        value.empty? || value.match?(/\A\s*\z/)
       when Array, Hash
         value.empty?
       end
