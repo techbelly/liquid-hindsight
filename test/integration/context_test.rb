@@ -106,6 +106,14 @@ class ContextTest < Minitest::Test
     end
   end
 
+  def test_add_item_in_outer_scope
+    @context['test'] = 'test'
+    @context.push
+    assert_equal('test', @context['test'])
+    @context.pop
+    assert_equal('test', @context['test'])
+  end
+
   def test_to_liquid_and_context_at_first_level
     @context['category'] = Category.new("foobar")
     assert_kind_of(CategoryDrop, @context['category'])
