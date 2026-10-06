@@ -85,6 +85,17 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Escapes a string without changing characters that have already been escaped.
+    # @liquid_syntax string | escape_once
+    # @liquid_return [string]
+    def escape_once(input)
+      Utils.to_s(input).gsub(HTML_ESCAPE_ONCE_REGEXP, HTML_ESCAPE)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.

@@ -104,6 +104,10 @@ class StandardFiltersTest < Minitest::Test
     assert_nil(@filters.h(nil))
   end
 
+  def test_escape_once
+    assert_equal('&lt;strong&gt;Hulk&lt;/strong&gt;', @filters.escape_once('&lt;strong&gt;Hulk</strong>'))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))
