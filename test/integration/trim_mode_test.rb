@@ -77,4 +77,14 @@ class TrimModeTest < Minitest::Test
     expected = '<p></p>'
     assert_template_result(expected, text)
   end
+
+  def test_single_line_outer_tag
+    text     = '<p> {%- if true %} yes {% endif -%} </p>'
+    expected = '<p> yes </p>'
+    assert_template_result(expected, text)
+
+    text     = '<p> {%- if false %} no {% endif -%} </p>'
+    expected = '<p></p>'
+    assert_template_result(expected, text)
+  end
 end # TrimModeTest
