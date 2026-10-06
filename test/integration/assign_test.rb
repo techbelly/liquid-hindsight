@@ -26,6 +26,11 @@ class AssignTest < Minitest::Test
     assert_template_result("", "{% assign foo = ('X' | downcase) %}", error_mode: :lax)
   end
 
+  def test_expression_with_whitespace_in_square_brackets
+    source = "{% assign r = a[ 'b' ] %}{{ r }}"
+    assert_template_result('result', source, { 'a' => { 'b' => 'result' } })
+  end
+
   def test_assign_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% assign (a(b(c) = 1234 %}", error_mode: :strict2)
