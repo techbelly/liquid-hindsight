@@ -35,6 +35,7 @@ module Liquid
     def strict2_parse(markup)
       p = @parse_context.new_parser(markup.strip)
       @variable_name = p.consume(:id)
+      p.consume(:end_of_string)
     end
   end
 end
