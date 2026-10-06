@@ -41,7 +41,13 @@ module Liquid
         # The child comment and raw tag must be closed.
         while (token = tokenizer.send(:shift))
           tag_name = if tokenizer.for_liquid_tag
+            next if token.empty? || token.match?(BlockBody::WhitespaceOrNothing)
 
+            tag_name_match = BlockBody::LiquidTagToken.match(token)
+
+            next if tag_name_match.nil?
+
+            tag_name_match[1]
           else
             token =~ BlockBody::FullToken
             Regexp.last_match(2)
