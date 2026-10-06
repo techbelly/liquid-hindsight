@@ -42,6 +42,8 @@ module Liquid
         if (markup.start_with?('"') && markup.end_with?('"')) ||
           (markup.start_with?("'") && markup.end_with?("'"))
           return markup[1..-2]
+        elsif LITERALS.key?(markup)
+          return LITERALS[markup]
         end
 
         # Cache only exists during parsing
