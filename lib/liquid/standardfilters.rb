@@ -51,6 +51,17 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Converts a string to all lowercase characters.
+    # @liquid_syntax string | downcase
+    # @liquid_return [string]
+    def downcase(input)
+      Utils.to_s(input).downcase
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the first item in an array.

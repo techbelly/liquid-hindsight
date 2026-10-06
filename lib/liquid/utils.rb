@@ -70,23 +70,7 @@ module Liquid
     private_class_method :range_method_overridden?
 
     def self.to_s(obj, seen = {})
-      case obj
-      when BigDecimal
-        obj.to_s("F")
-      when Hash
-        # If the custom hash implementation overrides `#to_s`, use their
-        # custom implementation. Otherwise we use Liquid's default
-        # implementation.
-        if obj.class.instance_method(:to_s) == HASH_TO_S_METHOD
-          hash_inspect(obj, seen)
-        else
-          obj.to_s
-        end
-      when Array
-        array_inspect(obj, seen)
-      else
-        obj.to_s
-      end
+      obj.to_s
     end
 
     def self.inspect(obj, seen = {})
