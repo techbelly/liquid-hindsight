@@ -139,6 +139,19 @@ class ContextTest < Minitest::Test
     assert_equal('Hello', @context['dynamic'])
   end
 
+  def test_lambda_is_called_once
+    @global = 0
+
+    @context['callcount'] = proc {
+      @global += 1
+      @global.to_s
+    }
+
+    assert_equal('1', @context['callcount'])
+    assert_equal('1', @context['callcount'])
+    assert_equal('1', @context['callcount'])
+  end
+
   def test_to_liquid_and_context_at_first_level
     @context['category'] = Category.new("foobar")
     assert_kind_of(CategoryDrop, @context['category'])
