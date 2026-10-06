@@ -152,6 +152,31 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Returns a substring or series of array items, starting at a given 0-based index.
+    # @liquid_description
+    #   By default, the substring has a length of one character, and the array series has one array item. However, you can
+    #   provide a second parameter to specify the number of characters or array items.
+    # @liquid_syntax string | slice
+    # @liquid_return [string]
+    def slice(input, offset, length = nil)
+      offset = Utils.to_integer(offset)
+      length = length ? Utils.to_integer(length) : 1
+
+      begin
+        if input.is_a?(Array)
+          input.slice(offset, length) || []
+        end
+      rescue RangeError
+        offset = offset.clamp(INDEX_RANGE)
+        length = length.clamp(INDEX_RANGE)
+        retry
+      end
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Truncates a string down to a given number of characters.
     # @liquid_description
     #   If the specified number of characters is less than the length of the string, then an ellipsis (`...`) is appended to
