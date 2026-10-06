@@ -17,6 +17,14 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_blank_string_not_iterable
+    assert_template_result(
+      "<tr class=\"row1\">\n</tr>\n",
+      "{% tablerow char in characters cols:3 %}I WILL NOT BE OUTPUT{% endtablerow %}",
+      { 'characters' => '' },
+    )
+  end
+
   def test_table_row_renders_correct_error_message_for_invalid_parameters
     assert_template_result(
       "Liquid error (line 1): invalid integer",

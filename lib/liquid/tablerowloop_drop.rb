@@ -7,6 +7,14 @@ module Liquid
   # @liquid_summary
   #   Information about a parent [`tablerow` loop](/docs/api/liquid/tags/tablerow).
   class TablerowloopDrop < Drop
+    def initialize(length, cols)
+      @length = length
+      @row    = 1
+      @col    = 1
+      @cols   = cols
+      @index  = 0
+    end
+
     # @liquid_public_docs
     # @liquid_summary
     #   The total number of iterations in the loop.
