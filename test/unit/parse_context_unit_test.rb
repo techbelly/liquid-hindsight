@@ -77,6 +77,11 @@ class ParseContextUnitTest < Minitest::Test
     parser.consume(:end_of_string)
   end
 
+  def test_parse_expression_with_whitespace_in_strict2_mode
+    result = strict2_parse_context.parse_expression('   ', safe: true)
+    assert_nil(result)
+  end
+
   private
 
   def strict_parse_context
