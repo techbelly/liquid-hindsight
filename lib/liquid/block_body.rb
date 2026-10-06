@@ -95,6 +95,8 @@ module Liquid
       case exc
       when MemoryError
         raise
+      else
+        error_message = context.handle_error(exc, line_number)
       end
     end
 

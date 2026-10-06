@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+class BlankBodyErrorHandlingTest < Minitest::Test
+  COMPARISON_ERROR = 'Liquid error (line 1): comparison of Integer with String failed'
+  INVALID_INTEGER_ERROR = 'Liquid error (line 1): invalid integer'
+
+  def render_inline(source, error_mode:, assigns: {})
+    Liquid::Template.parse(source, line_numbers: true, error_mode: error_mode).render(assigns, render_errors: true)
+  end
+
+  def assert_render_raises(source, error_mode:, assigns: {}, message: nil)
+    error = assert_raises(Liquid::ArgumentError) do
+      Liquid::Template.parse(source, line_numbers: true, error_mode: error_mode).render!(assigns)
+    end
+    assert_includes(error.message, message) if message
+  end
+
+  def test_raised_errors_are_not_swallowed_by_blank_if_body
+    [:lax, :strict, :strict2].each do |mode|
+      assert_render_raises('{% if 5 > "x" %}{% endif %}', error_mode: mode, message: 'comparison of Integer with String failed')
+    end
+  end
+end
