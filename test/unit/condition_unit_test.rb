@@ -89,6 +89,13 @@ class ConditionUnitTest < Minitest::Test
     Condition.operators.delete('starts_with')
   end
 
+  def test_left_or_right_may_contain_operators
+    @context        = Liquid::Context.new
+    @context['one'] = @context['another'] = "gnomeslab-and-or-liquid"
+
+    assert_evaluates_true(VariableLookup.new("one"), '==', VariableLookup.new("another"))
+  end
+
   # Tests for blank? comparison without ActiveSupport
   #
   # Ruby's standard library does not include blank? on String, Array, Hash, etc.
