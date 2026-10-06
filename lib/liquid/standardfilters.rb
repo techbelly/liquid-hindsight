@@ -810,6 +810,21 @@ module Liquid
     # @liquid_type filter
     # @liquid_category math
     # @liquid_summary
+    #   Limits a number to a minimum value.
+    # @liquid_syntax number | at_least
+    # @liquid_return [number]
+    def at_least(input, n)
+      min_value = Utils.to_number(n)
+
+      result = Utils.to_number(input)
+      result = min_value if min_value > result
+      result.is_a?(BigDecimal) ? result.to_f : result
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
     #   Limits a number to a maximum value.
     # @liquid_syntax number | at_most
     # @liquid_return [number]
