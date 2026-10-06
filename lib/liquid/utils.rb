@@ -79,6 +79,24 @@ module Liquid
       end
     end
 
+    def self.to_date(obj)
+      return obj if obj.respond_to?(:strftime)
+
+      if obj.is_a?(String)
+        return if obj.empty?
+        obj = obj.downcase
+      end
+
+      case obj
+      when 'now', 'today'
+        Time.now
+      when UNIX_TIMESTAMP_REGEX, Integer
+        Time.at(obj.to_i)
+      when String
+        Time.parse(obj)
+      end
+    end
+
     def self.to_liquid_value(obj)
       # Enable "obj" to represent itself as a primitive value like integer, string, or boolean
       return obj.to_liquid_value if obj.respond_to?(:to_liquid_value)
