@@ -54,6 +54,8 @@ module Liquid
       first_condition = condition
       while (op = p.id?('and') || p.id?('or'))
         child_condition = parse_comparison(p)
+        condition.send(op, child_condition)
+        condition = child_condition
       end
       first_condition
     end
