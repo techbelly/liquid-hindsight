@@ -313,6 +313,25 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Creates an array of values from a specific property of the items in an array.
+    # @liquid_syntax array | map: string
+    # @liquid_return [array[untyped]]
+    def map(input, property)
+      InputIterator.new(input, context).map do |e|
+        e = e.call if e.is_a?(Proc)
+
+        if e.respond_to?(:[])
+          r = e[property]
+        end
+      end
+    rescue TypeError
+      raise_property_error(property)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Removes any `nil` items from an array.
     # @liquid_syntax array | compact
     # @liquid_return [array[untyped]]
