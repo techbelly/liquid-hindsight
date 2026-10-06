@@ -31,6 +31,10 @@ class BlankTest < Minitest::Test
     end
   end
 
+  def test_loops_are_blank
+    assert_template_result("", wrap_in_for(" "))
+  end
+
   def test_if_else_are_blank
     assert_template_result("", "{% if true %} {% elsif false %} {% else %} {% endif %}")
   end
