@@ -98,6 +98,23 @@ class CommentTagUnitTest < Minitest::Test
     end
   end
 
+  def test_error_line_number_is_correct
+    template = Liquid::Template.parse(<<~LIQUID.chomp, line_numbers: true)
+      {% comment %}
+        {% if true %}
+      {% endcomment %}
+      {{ errors.standard_error }}
+    LIQUID
+
+    output = template.render('errors' => ErrorDrop.new)
+    expected = <<~TEXT.chomp
+
+      Liquid error (line 4): standard error
+    TEXT
+
+    assert_equal(expected, output)
+  end
+
   def test_comment_tag_delimiter_with_extra_strings
     assert_template_result(
       '',
