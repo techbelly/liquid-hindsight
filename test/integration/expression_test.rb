@@ -17,6 +17,12 @@ class ExpressionTest < Minitest::Test
     assert_template_result("emoji🔥", "{{ 'emoji🔥' }}")
   end
 
+  def test_int
+    assert_template_result("456", "{{ 456 }}")
+    assert_expression_result(123, "123")
+    assert_expression_result(12, "012")
+  end
+
   def test_quirky_negative_sign_expression_markup
     result = Expression.parse("-", nil)
     assert(result.is_a?(VariableLookup))
