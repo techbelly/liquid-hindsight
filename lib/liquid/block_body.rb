@@ -50,12 +50,20 @@ module Liquid
           end
 
           unless (tag = parse_context.environment.tag_for_name(tag_name))
+            # end parsing if we reach an unknown tag and let the caller decide
+            # determine how to proceed
+            return yield tag_name, markup
           end
           new_tag = tag.parse(tag_name, markup, tokenizer, parse_context)
         end
       end
 
       yield nil, nil
+    end
+
+    # @api private
+    def self.unknown_tag_in_liquid_tag(tag, parse_context)
+      Block.raise_unknown_tag(tag, 'liquid', '%}', parse_context)
     end
 
     # @api private
@@ -123,6 +131,7 @@ module Liquid
           @blank = false
         else
           if parse_context.trim_whitespace
+            token.lstrip!
           end
           parse_context.trim_whitespace = false
           @nodelist << token

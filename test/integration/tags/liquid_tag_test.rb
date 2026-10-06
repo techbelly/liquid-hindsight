@@ -14,6 +14,14 @@ class LiquidTagTest < Minitest::Test
     LIQUID
   end
 
+  def test_cannot_close_blocks_created_before_a_liquid_tag
+    assert_match_syntax_error("syntax error (line 3): 'endif' is not a valid delimiter for liquid tags. use %}", <<~LIQUID)
+      {%- if true -%}
+      42
+      {%- liquid endif -%}
+    LIQUID
+  end
+
   def test_next_liquid_with_unclosed_if_tag
     assert_match_syntax_error("Liquid syntax error (line 2): 'if' tag was never closed", <<~LIQUID)
       {%- liquid
