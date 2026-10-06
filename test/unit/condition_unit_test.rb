@@ -9,6 +9,11 @@ class ConditionUnitTest < Minitest::Test
     @context = Liquid::Context.new
   end
 
+  def test_basic_condition
+    assert_equal(false, Condition.new(1, '==', 2).evaluate(Context.new))
+    assert_equal(true,  Condition.new(1, '==', 1).evaluate(Context.new))
+  end
+
   def test_contains_works_on_strings
     assert_evaluates_true('bob', 'contains', 'o')
     assert_evaluates_true('bob', 'contains', 'b')
