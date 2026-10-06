@@ -137,11 +137,19 @@ module Liquid
               else
                 [type, t]
               end
+            else
+              raise_syntax_error(start_pos, ss)
             end
           end
         end
         # rubocop:enable Metrics/BlockNesting
         output << EOS
+      end
+
+      def raise_syntax_error(start_pos, ss)
+        ss.pos = start_pos
+        # the character could be a UTF-8 character, use getch to get all the bytes
+        raise SyntaxError, "Unexpected character #{ss.getch}"
       end
     end
   end

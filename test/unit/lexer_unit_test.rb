@@ -58,6 +58,12 @@ class LexerUnitTest < Minitest::Test
     assert_equal([[:number, '2'], [:id, 'foo'], [:end_of_string]], tokenize('2foo'))
   end
 
+  def test_unexpected_character
+    assert_raises(SyntaxError) do
+      tokenize("%")
+    end
+  end
+
   def test_negative_numbers
     assert_equal(
       [[:id, 'foo'], [:pipe, '|'], [:id, 'default'], [:colon, ":"], [:number, '-1'], [:end_of_string]],
