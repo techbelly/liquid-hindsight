@@ -51,7 +51,11 @@ module Liquid
     private
 
     def tokenize
-      @tokens << shift_normal until @ss.eos?
+      if @for_liquid_tag
+        @tokens = @source.split("\n")
+      else
+        @tokens << shift_normal until @ss.eos?
+      end
 
       @source = nil
       @ss = nil
