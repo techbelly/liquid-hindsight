@@ -112,6 +112,11 @@ module Liquid
 
       output = nil
 
+      case args.last
+      when Module, Array
+        context.add_filters(args.pop)
+      end
+
       # Retrying a render resets resource usage
       context.resource_limits.reset
 
