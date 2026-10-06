@@ -72,6 +72,8 @@ module Liquid
       while (token = tokenizer.send(:shift))
         return if token =~ BlockBody::FullTokenPossiblyInvalid && "endraw" == Regexp.last_match(2)
       end
+
+      raise_tag_never_closed("raw")
     end
   end
 end
