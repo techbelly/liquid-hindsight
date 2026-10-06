@@ -659,6 +659,15 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_sum_with_indexable_map_values
+    input = [{ "quantity" => 1 }, { "quantity" => 2, "weight" => 3 }, { "weight" => 4 }]
+
+    assert_equal(0, @filters.sum(input))
+    assert_equal(3, @filters.sum(input, "quantity"))
+    assert_equal(7, @filters.sum(input, "weight"))
+    assert_equal(0, @filters.sum(input, "subtotal"))
+  end
+
   def test_uniq_with_to_liquid_value
     input = [StringDrop.new("foo"), StringDrop.new("bar"), "foo"]
     expected = [StringDrop.new("foo"), StringDrop.new("bar")]

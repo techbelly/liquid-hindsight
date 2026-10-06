@@ -85,6 +85,8 @@ module Liquid
         obj
       when String
         DECIMAL_REGEX.match?(obj.strip) ? BigDecimal(obj) : obj.to_i
+      else
+        0
       end
     end
 
