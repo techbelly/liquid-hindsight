@@ -49,6 +49,15 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_include_tag_with_default_name
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% include 'product' %}",
+      { "product" => { 'title' => 'Draft 151cm' } },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
   def test_included_templates_assigns_variables
     assert_template_result(
       "bar",
