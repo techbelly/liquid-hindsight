@@ -107,13 +107,6 @@ module Liquid
             interrupt = context.pop_interrupt
             break if interrupt.is_a?(BreakInterrupt)
           end
-
-          if tablerowloop.col_last && !tablerowloop.last
-            output << "</tr>\n<tr class=\"row#{tablerowloop.row + 1}\">"
-            context.resource_limits.increment_write_score(output)
-          end
-
-          tablerowloop.send(:increment!)
         end
       end
 

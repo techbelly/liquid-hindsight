@@ -64,6 +64,42 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_table_row_does_not_leak_interrupts
+    template = <<~LIQUID
+      {% for i in (1..2) -%}
+      {% for j in (1..2) -%}
+      {% tablerow k in (1..3) %}{% break %}{% endtablerow -%}
+      loop j={{ j }}
+      {% endfor -%}
+      loop i={{ i }}
+      {% endfor -%}
+      after loop
+    LIQUID
+
+    expected = <<~STR
+      <tr class="row1">
+      <td class="col1"></td></tr>
+      loop j=1
+      <tr class="row1">
+      <td class="col1"></td></tr>
+      loop j=2
+      loop i=1
+      <tr class="row1">
+      <td class="col1"></td></tr>
+      loop j=1
+      <tr class="row1">
+      <td class="col1"></td></tr>
+      loop j=2
+      loop i=2
+      after loop
+    STR
+
+    assert_template_result(
+      expected,
+      template,
+    )
+  end
+
   def test_tablerow_without_in_keyword_in_strict2_mode
     template = '{% tablerow i (1..10) %}{{ i }}{% endtablerow %}'
 
