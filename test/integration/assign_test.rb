@@ -27,6 +27,14 @@ class AssignTest < Minitest::Test
     )
   end
 
+  def test_assign_with_filter
+    assert_template_result(
+      '.bar.',
+      '{% assign foo = values | split: "," %}.{{ foo[1] }}.',
+      { 'values' => "foo,bar,baz" },
+    )
+  end
+
   def test_assign_syntax_error
     assert_match_syntax_error(/assign/, '{% assign foo not values %}.')
   end
