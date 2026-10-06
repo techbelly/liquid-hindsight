@@ -70,6 +70,39 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('', '{% if foo.bar %} NO {% endif %}', { 'foo' => {} })
   end
 
+  def test_if_from_variable
+    assert_template_result('', '{% if var %} NO {% endif %}', { 'var' => false })
+    assert_template_result('', '{% if var %} NO {% endif %}', { 'var' => nil })
+    assert_template_result('', '{% if foo.bar %} NO {% endif %}', { 'foo' => { 'bar' => false } })
+    assert_template_result('', '{% if foo.bar %} NO {% endif %}', { 'foo' => {} })
+    assert_template_result('', '{% if foo.bar %} NO {% endif %}', { 'foo' => nil })
+    assert_template_result('', '{% if foo.bar %} NO {% endif %}', { 'foo' => true })
+
+    assert_template_result(' YES ', '{% if var %} YES {% endif %}', { 'var' => "text" })
+    assert_template_result(' YES ', '{% if var %} YES {% endif %}', { 'var' => true })
+    assert_template_result(' YES ', '{% if var %} YES {% endif %}', { 'var' => 1 })
+    assert_template_result(' YES ', '{% if var %} YES {% endif %}', { 'var' => {} })
+    assert_template_result(' YES ', '{% if var %} YES {% endif %}', { 'var' => [] })
+    assert_template_result(' YES ', '{% if "foo" %} YES {% endif %}')
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% endif %}', { 'foo' => { 'bar' => true } })
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% endif %}', { 'foo' => { 'bar' => "text" } })
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% endif %}', { 'foo' => { 'bar' => 1 } })
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% endif %}', { 'foo' => { 'bar' => {} } })
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% endif %}', { 'foo' => { 'bar' => [] } })
+
+    assert_template_result(' YES ', '{% if var %} NO {% else %} YES {% endif %}', { 'var' => false })
+    assert_template_result(' YES ', '{% if var %} NO {% else %} YES {% endif %}', { 'var' => nil })
+    assert_template_result(' YES ', '{% if var %} YES {% else %} NO {% endif %}', { 'var' => true })
+    assert_template_result(' YES ', '{% if "foo" %} YES {% else %} NO {% endif %}', { 'var' => "text" })
+
+    assert_template_result(' YES ', '{% if foo.bar %} NO {% else %} YES {% endif %}', { 'foo' => { 'bar' => false } })
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% else %} NO {% endif %}', { 'foo' => { 'bar' => true } })
+    assert_template_result(' YES ', '{% if foo.bar %} YES {% else %} NO {% endif %}', { 'foo' => { 'bar' => "text" } })
+    assert_template_result(' YES ', '{% if foo.bar %} NO {% else %} YES {% endif %}', { 'foo' => { 'notbar' => true } })
+    assert_template_result(' YES ', '{% if foo.bar %} NO {% else %} YES {% endif %}', { 'foo' => {} })
+    assert_template_result(' YES ', '{% if foo.bar %} NO {% else %} YES {% endif %}', { 'notfoo' => { 'bar' => true } })
+  end
+
   def test_nested_if
     assert_template_result('', '{% if false %}{% if false %} NO {% endif %}{% endif %}')
     assert_template_result('', '{% if false %}{% if true %} NO {% endif %}{% endif %}')
