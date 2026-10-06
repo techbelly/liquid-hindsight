@@ -1,0 +1,120 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+class HundredCentes
+  def to_liquid
+    100
+  end
+end
+
+class CentsDrop < Liquid::Drop
+  def amount
+    HundredCentes.new
+  end
+
+  def non_zero?
+    true
+  end
+end
+
+class ContextSensitiveDrop < Liquid::Drop
+  def test
+    @context['test']
+  end
+end
+
+class Category
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def to_liquid
+    CategoryDrop.new(self)
+  end
+end
+
+class ProductsDrop < Liquid::Drop
+  def initialize(products)
+    @products = products
+  end
+
+  def size
+    @products.size
+  end
+
+  def to_liquid
+    if @context["forloop"]
+      @products.first(@context["forloop"].length)
+    else
+      @products
+    end
+  end
+end
+
+class CategoryDrop < Liquid::Drop
+  attr_accessor :category, :context
+
+  def initialize(category)
+    @category = category
+  end
+end
+
+class CounterDrop < Liquid::Drop
+  def count
+    @count ||= 0
+    @count  += 1
+  end
+end
+
+class ArrayLike
+  def fetch(index)
+  end
+
+  def [](index)
+    @counts        ||= []
+    @counts[index] ||= 0
+    @counts[index]  += 1
+  end
+
+  def to_liquid
+    self
+  end
+end
+
+class ContextTest < Minitest::Test
+  include Liquid
+
+  def setup
+    @context = Liquid::Context.new
+  end
+
+  def test_context_always_uses_static_registers
+    registers = {
+      my_register: :my_value,
+    }
+    c = Context.new({}, {}, registers)
+    assert_instance_of(Registers, c.registers)
+    assert_equal(:my_value, c.registers[:my_register])
+
+    r = Registers.new(registers)
+    c = Context.new({}, {}, r)
+    assert_instance_of(Registers, c.registers)
+    assert_equal(:my_value, c.registers[:my_register])
+  end
+
+  private
+
+  def assert_no_object_allocations
+    unless RUBY_ENGINE == 'ruby'
+      skip("stackprof needed to count object allocations")
+    end
+    require 'stackprof'
+
+    profile = StackProf.run(mode: :object) do
+    end
+    assert_equal(0, profile[:samples])
+  end
+end # ContextTest
