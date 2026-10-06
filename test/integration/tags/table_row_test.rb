@@ -25,6 +25,22 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_nil_limit_is_treated_as_zero
+    expect = "<tr class=\"row1\">\n" \
+      "</tr>\n"
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) limit:nil %}{{ i }}{% endtablerow %}",
+    )
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) limit:var %}{{ i }}{% endtablerow %}",
+      { "var" => nil },
+    )
+  end
+
   def test_table_row_renders_correct_error_message_for_invalid_parameters
     assert_template_result(
       "Liquid error (line 1): invalid integer",
