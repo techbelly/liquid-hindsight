@@ -20,6 +20,7 @@ end
 
 module SubstituteFilter
   def substitute(input, params = {})
+    input.gsub(/%\{(\w+)\}/) { |_match| params[Regexp.last_match(1)] }
   end
 end
 
@@ -139,6 +140,14 @@ class FiltersTest < Minitest::Test
 
   def test_nonexistent_filter_is_ignored
     assert_template_result("1000", "{{ var | xyzzy }}", { "var" => 1000 })
+  end
+
+  def test_filter_with_keyword_arguments
+    @context['surname'] = 'john'
+    @context['input']   = 'hello %{first_name}, %{last_name}'
+    @context.add_filters(SubstituteFilter)
+    output              = Template.parse(%({{ input | substitute: first_name: surname, last_name: 'doe' }})).render(@context)
+    assert_equal('hello john, doe', output)
   end
 
   def test_liquid_argument_error
