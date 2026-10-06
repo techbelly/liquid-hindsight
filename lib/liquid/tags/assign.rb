@@ -51,6 +51,7 @@ module Liquid
 
       p = @parse_context.new_parser(lhs)
       @to = p.consume(:id)
+      p.consume(:end_of_string)
     end
 
     private
