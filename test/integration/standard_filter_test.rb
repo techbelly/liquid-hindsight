@@ -531,6 +531,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal("foobar", output)
   end
 
+  def test_map_works_on_enumerables
+    output = Liquid::Template.parse('{{ foo | map: "foo" }}').render!({ "foo" => TestEnumerable.new })
+    assert_equal("123", output)
+  end
+
   def test_map_returns_empty_on_2d_input_array
     foo = [
       [1],
