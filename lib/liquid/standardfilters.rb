@@ -607,6 +607,41 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Replaces the first instance of a substring inside a string with a given string.
+    # @liquid_syntax string | replace_first: string, string
+    # @liquid_return [string]
+    def replace_first(input, string, replacement = '')
+      string = Utils.to_s(string)
+      replacement = Utils.to_s(replacement)
+      input = Utils.to_s(input)
+      input.sub(string, replacement)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
+    #   Replaces the last instance of a substring inside a string with a given string.
+    # @liquid_syntax string | replace_last: string, string
+    # @liquid_return [string]
+    def replace_last(input, string, replacement)
+      input = Utils.to_s(input)
+      string = Utils.to_s(string)
+      replacement = Utils.to_s(replacement)
+
+      start_index = input.rindex(string)
+
+      return input unless start_index
+
+      output = input.dup
+      output[start_index, string.length] = replacement
+      output
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Removes any instance of a substring inside a string.
     # @liquid_syntax string | remove: string
     # @liquid_return [string]
