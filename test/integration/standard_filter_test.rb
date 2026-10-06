@@ -80,6 +80,13 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(0, @filters.size(nil))
   end
 
+  def test_first_last
+    assert_equal(1, @filters.first([1, 2, 3]))
+    assert_equal(3, @filters.last([1, 2, 3]))
+    assert_nil(@filters.first([]))
+    assert_nil(@filters.last([]))
+  end
+
   def test_first_last_on_strings
     # Ruby's String class does not have first/last methods by default.
     # ActiveSupport adds String#first and String#last to return the first/last character.

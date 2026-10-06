@@ -59,6 +59,7 @@ module Liquid
     def first(array)
       # ActiveSupport returns "" for empty strings, not nil
       return array[0] || "" if array.is_a?(String)
+      array.first if array.respond_to?(:first)
     end
 
     # @liquid_public_docs
@@ -71,6 +72,7 @@ module Liquid
     def last(array)
       # ActiveSupport returns "" for empty strings, not nil
       return array[-1] || "" if array.is_a?(String)
+      array.last if array.respond_to?(:last)
     end
 
     private
