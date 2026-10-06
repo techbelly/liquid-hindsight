@@ -38,6 +38,15 @@ class BlockUnitTest < Minitest::Test
     assert_equal(Variable, template.root.nodelist[0].class)
   end
 
+  def test_variable_many_embedded_fragments
+    template = Liquid::Template.parse("  {{funk}} {{so}} {{brother}} ")
+    assert_equal(7, template.root.nodelist.size)
+    assert_equal(
+      [String, Variable, String, Variable, String, Variable, String],
+      block_types(template.root.nodelist),
+    )
+  end
+
   private
 
   def block_types(nodelist)
