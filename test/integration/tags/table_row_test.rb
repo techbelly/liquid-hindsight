@@ -59,6 +59,24 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_nil_offset_is_treated_as_zero
+    expect = "<tr class=\"row1\">\n" \
+      "<td class=\"col1\">1:false</td>" \
+      "<td class=\"col2\">2:true</td>" \
+      "</tr>\n"
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) offset:nil %}{{ i }}:{{ tablerowloop.col_last }}{% endtablerow %}",
+    )
+
+    assert_template_result(
+      expect,
+      "{% tablerow i in (1..2) offset:var %}{{ i }}:{{ tablerowloop.col_last }}{% endtablerow %}",
+      { "var" => nil },
+    )
+  end
+
   def test_table_row_renders_correct_error_message_for_invalid_parameters
     assert_template_result(
       "Liquid error (line 1): invalid integer",
