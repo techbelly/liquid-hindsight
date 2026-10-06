@@ -14,6 +14,13 @@ module Liquid
       lookups = markup.scan(VariableParser)
 
       name = lookups.shift
+      if name&.start_with?('[') && name&.end_with?(']')
+        name = Expression.parse(
+          name[1..-2],
+          string_scanner,
+          cache,
+        )
+      end
       @name = name
 
       @lookups       = lookups
