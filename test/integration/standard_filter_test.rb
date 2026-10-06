@@ -817,6 +817,12 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("0.6", "{{ input | sum }}", { "input" => input })
   end
 
+  def test_sum_resulting_in_negative_float
+    input = [0.1, -0.2, -0.3]
+    assert_equal(-0.4, @filters.sum(input))
+    assert_template_result("-0.4", "{{ input | sum }}", { "input" => input })
+  end
+
   def test_sum_with_non_string_property
     input = [{ true => 1 }, { 1.0 => 0.2, 1 => -0.3 }, { 1..5 => 0.4 }]
 
