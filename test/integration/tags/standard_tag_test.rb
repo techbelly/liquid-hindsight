@@ -56,6 +56,11 @@ class StandardTagTest < Minitest::Test
                                      {%endcomment%}bar')
   end
 
+  def test_assign_with_colon_and_spaces
+    assigns = { 'var' => { 'a:b c' => { 'paged' => '1' } } }
+    assert_template_result('var2: 1', '{%assign var2 = var["a:b c"].paged %}var2: {{var2}}', assigns)
+  end
+
   def test_capture_detects_bad_syntax
     assert_raises(SyntaxError) do
       assert_template_result(
