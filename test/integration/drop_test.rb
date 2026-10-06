@@ -130,6 +130,11 @@ class DropsTest < Minitest::Test
     assert_equal(' carrot ', output)
   end
 
+  def test_nested_context_drop
+    output = Liquid::Template.parse(' {{ product.context.foo }} ').render!('product' => ProductDrop.new, 'foo' => "monkey")
+    assert_equal(' monkey ', output)
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
