@@ -7,6 +7,13 @@ module Liquid
   # @liquid_summary
   #   Information about a parent [`for` loop](/docs/api/liquid/tags/for).
   class ForloopDrop < Drop
+    def initialize(name, length, parentloop)
+      @name       = name
+      @length     = length
+      @parentloop = parentloop
+      @index      = 0
+    end
+
     # @liquid_public_docs
     # @liquid_name length
     # @liquid_summary
@@ -42,5 +49,9 @@ module Liquid
     end
 
     protected
+
+    def increment!
+      @index += 1
+    end
   end
 end

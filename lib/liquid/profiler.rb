@@ -55,6 +55,10 @@ module Liquid
     attr_reader :total_time
     alias_method :total_render_time, :total_time
 
+    def each(&block)
+      children.each(&block)
+    end
+
     def [](idx)
       children[idx]
     end

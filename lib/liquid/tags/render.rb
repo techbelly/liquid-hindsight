@@ -70,7 +70,12 @@ module Liquid
       }
 
       variable = @variable_name_expr ? context.evaluate(@variable_name_expr) : nil
-      render_partial_func.call(variable, nil)
+      if @is_for_loop && variable.respond_to?(:each) && variable.respond_to?(:count)
+        forloop = Liquid::ForloopDrop.new(template_name, variable.count, nil)
+        variable.each { |var| render_partial_func.call(var, forloop) }
+      else
+        render_partial_func.call(variable, nil)
+      end
 
       output
     end

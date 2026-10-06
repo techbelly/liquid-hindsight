@@ -196,6 +196,18 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_for_alias
+    assert_template_result(
+      "Product: Draft 151cm Product: Element 155cm ",
+      "{% render 'product_alias' for products as product %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: {
+        'product' => "Product: {{ product.title }} ",
+        'product_alias' => "Product: {{ product.title }} ",
+      },
+    )
+  end
+
   def test_render_tag_with_drop
     assert_template_result(
       "TestEnumerable",
