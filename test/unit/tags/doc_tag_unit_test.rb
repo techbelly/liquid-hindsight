@@ -58,9 +58,24 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(exp_error, act_error)
   end
 
+  def test_doc_tag_visitor
+    template_source = '{% doc %}{% enddoc %}'
+
+    assert_equal(
+      [Liquid::Doc],
+      visit(template_source),
+    )
+  end
+
   private
 
   def traversal(template)
+    ParseTreeVisitor
+      .for(Template.parse(template).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        tag_class = tag.class
+        tag_class
+      end
   end
 
   def visit(template)
