@@ -3,6 +3,17 @@
 require 'test_helper'
 
 class RangeSliceUnitTest < Minitest::Test
+  def test_selects_and_reverses_an_integer_range_without_enumerating_it
+    limits = Liquid::ResourceLimits.new({})
+    slice = Liquid::RangeSlice.new(bounded_integer_range_with_tripwires, 997, 999, limits)
+
+    assert_equal(2, slice.length)
+    refute(slice.empty?)
+    slice.reverse!
+    assert_equal([999, 998], slice.each.to_a)
+    assert_equal(2, limits.render_score)
+  end
+
   def test_charges_only_values_yielded_before_a_break
     limits = Liquid::ResourceLimits.new({})
     slice = Liquid::RangeSlice.new(bounded_integer_range_with_tripwires, 0, nil, limits)

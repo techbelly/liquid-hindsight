@@ -32,5 +32,13 @@ module Liquid
         value += @direction
       end
     end
+
+    def reverse!
+      unless empty?
+        @first += @direction * (@length - 1)
+        @direction = -@direction
+      end
+      self
+    end
   end
 end
