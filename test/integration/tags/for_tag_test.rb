@@ -53,6 +53,10 @@ class ForTagTest < Minitest::Test
     assert_equal("Liquid error: invalid integer", exception.message)
   end
 
+  def test_inner_for_over_empty_input
+    assert_template_result('oo', '{% for a in (1..2) %}o{% for b in empty %}{% endfor %}{% endfor %}')
+  end
+
   def test_blank_string_not_iterable
     assert_template_result('', "{% for char in characters %}I WILL NOT BE OUTPUT{% endfor %}", { 'characters' => '' })
   end
