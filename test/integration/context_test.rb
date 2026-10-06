@@ -114,6 +114,14 @@ class ContextTest < Minitest::Test
     assert_equal('test', @context['test'])
   end
 
+  def test_merge
+    @context.merge("test" => "test")
+    assert_equal('test', @context['test'])
+    @context.merge("test" => "newvalue", "foo" => "bar")
+    assert_equal('newvalue', @context['test'])
+    assert_equal('bar', @context['foo'])
+  end
+
   def test_to_liquid_and_context_at_first_level
     @context['category'] = Category.new("foobar")
     assert_kind_of(CategoryDrop, @context['category'])

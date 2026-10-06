@@ -73,6 +73,11 @@ module Liquid
       check_overflow
     end
 
+    # Merge a hash of variables in the current local scope
+    def merge(new_scopes)
+      @scopes[0].merge!(new_scopes)
+    end
+
     # Pop from the stack. use <tt>Context#stack</tt> instead
     def pop
       raise ContextError if @scopes.size == 1
