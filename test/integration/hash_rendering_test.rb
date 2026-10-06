@@ -16,4 +16,11 @@ class HashRenderingTest < Minitest::Test
   def test_rendering_hash_with_custom_to_s_method_uses_custom_to_s
     assert_template_result("kewl", "{{ my_hash }}", { "my_hash" => HashWithCustomToS.new })
   end
+
+  def test_rendering_hash_without_custom_to_s_uses_default_inspect
+    my_hash = HashWithoutCustomToS.new
+    my_hash[:foo] = :bar
+
+    assert_template_result("{:foo=>:bar}", "{{ my_hash }}", { "my_hash" => my_hash })
+  end
 end
