@@ -40,6 +40,9 @@ module Liquid
       while (token = tokenizer.shift)
         unless token.empty? || token.match?(WhitespaceOrNothing)
           unless token =~ LiquidTagToken
+            # line isn't empty but didn't match tag syntax, yield and let the
+            # caller raise a syntax error
+            return yield token, token
           end
           tag_name = Regexp.last_match(1)
           markup   = Regexp.last_match(2)
