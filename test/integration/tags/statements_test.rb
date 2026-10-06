@@ -74,4 +74,12 @@ class StatementsTest < Minitest::Test
     text = ' {% if var == null %} true {% else %} false {% endif %} '
     assert_template_result('  true  ', text, { 'var' => nil })
   end
+
+  def test_not_nil
+    text = ' {% if var != nil %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text, { 'var' => 1 })
+
+    text = ' {% if var != null %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text, { 'var' => 1 })
+  end
 end # StatementsTest
