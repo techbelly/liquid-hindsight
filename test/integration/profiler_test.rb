@@ -43,6 +43,16 @@ class ProfilerTest < Minitest::Test
     assert_nil(t.profiler)
   end
 
+  def test_parse_makes_available_simple_profiling
+    t = Template.parse("{{ 'a string' | upcase }}", profile: true)
+    t.render!
+
+    assert_equal(1, t.profiler.length)
+
+    node = t.profiler[0]
+    assert_equal(" 'a string' | upcase ", node.code)
+  end
+
   def test_render_ignores_raw_strings_when_profiling
     t = Template.parse("This is raw string\nstuff\nNewline", profile: true)
     t.render!
