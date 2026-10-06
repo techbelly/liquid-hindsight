@@ -17,6 +17,15 @@ class AssignTest < Minitest::Test
     assert_match_syntax_error(/assign/, '{% assign foo not values %}.')
   end
 
+  def test_assign_uses_error_mode
+    assert_match_syntax_error(
+      "Expected dotdot but found pipe in ",
+      "{% assign foo = ('X' | downcase) %}",
+      error_mode: :strict,
+    )
+    assert_template_result("", "{% assign foo = ('X' | downcase) %}", error_mode: :lax)
+  end
+
   def test_assign_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% assign (a(b(c) = 1234 %}", error_mode: :strict2)
