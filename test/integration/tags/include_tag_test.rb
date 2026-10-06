@@ -124,6 +124,14 @@ class IncludeTagTest < Minitest::Test
     assert_equal(2, file_system.count)
   end
 
+  def test_include_tag_within_if_statement
+    assert_template_result(
+      "foo_if_true",
+      "{% if true %}{% include 'foo_if_true' %}{% endif %}",
+      partials: { "foo_if_true" => "foo_if_true" },
+    )
+  end
+
   def test_custom_include_tag
     original_tag = Liquid::Template.tags['include']
     Liquid::Template.tags['include'] = CustomInclude
