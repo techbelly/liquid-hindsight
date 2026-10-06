@@ -75,6 +75,9 @@ module Liquid
     private
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
+      def children
+        (super + [@node.limit, @node.from, @node.collection_name]).compact
+      end
     end
   end
 end
