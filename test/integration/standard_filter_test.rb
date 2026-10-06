@@ -121,6 +121,13 @@ class StandardFiltersTest < Minitest::Test
     assert_equal('', @filters.base64_url_safe_encode(nil))
   end
 
+  def test_url_encode
+    assert_equal('foo%2B1%40example.com', @filters.url_encode('foo+1@example.com'))
+    assert_equal('1', @filters.url_encode(1))
+    assert_equal('2001-02-03', @filters.url_encode(Date.new(2001, 2, 3)))
+    assert_nil(@filters.url_encode(nil))
+  end
+
   def test_first_last
     assert_equal(1, @filters.first([1, 2, 3]))
     assert_equal(3, @filters.last([1, 2, 3]))

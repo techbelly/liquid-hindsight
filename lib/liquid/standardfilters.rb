@@ -98,6 +98,21 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Converts any URL-unsafe characters in a string to the
+    #   [percent-encoded](https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding) equivalent.
+    # @liquid_description
+    #   > Note:
+    #   > Spaces are converted to a `+` character, instead of a percent-encoded character.
+    # @liquid_syntax string | url_encode
+    # @liquid_return [string]
+    def url_encode(input)
+      CGI.escape(Utils.to_s(input)) unless input.nil?
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Encodes a string to [Base64 format](https://developer.mozilla.org/en-US/docs/Glossary/Base64).
     # @liquid_syntax string | base64_encode
     # @liquid_return [string]
