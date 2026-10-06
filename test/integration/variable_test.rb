@@ -6,6 +6,10 @@ require 'timeout'
 class VariableTest < Minitest::Test
   include Liquid
 
+  def test_variable_render_calls_to_liquid
+    assert_template_result('foobar', '{{ foo }}', { 'foo' => ThingWithToLiquid.new })
+  end
+
   def test_if_tag_calls_to_liquid_value
     assert_template_result('one', '{% if foo == 1 %}one{% endif %}', { 'foo' => IntegerDrop.new('1') })
     assert_template_result('one', '{% if foo == eqv %}one{% endif %}', { 'foo' => IntegerDrop.new(1), 'eqv' => IntegerDrop.new(1) })
