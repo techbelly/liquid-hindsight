@@ -67,4 +67,9 @@ class BlankTest < Minitest::Test
   def test_assigns_are_blank
     assert_template_result("", wrap(' {% assign foo = "bar" %} '))
   end
+
+  def test_whitespace_is_blank
+    assert_template_result("", wrap(" "))
+    assert_template_result("", wrap("\t"))
+  end
 end
