@@ -201,4 +201,19 @@ class TableRowTest < Minitest::Test
     template.render!
     assert_raises(Liquid::MemoryError) { template.render! }
   end
+
+  def test_range_subclass_uses_its_custom_each_with_beginless_bounds
+    range = Class.new(Range) do
+      def each
+        yield 10
+        yield 20
+      end
+    end.new(nil, 3)
+
+    assert_template_result(
+      "<tr class=\"row1\">\n<td class=\"col1\">10</td><td class=\"col2\">20</td></tr>\n",
+      '{% tablerow i in numbers %}{{ i }}{% endtablerow %}',
+      { 'numbers' => range },
+    )
+  end
 end
