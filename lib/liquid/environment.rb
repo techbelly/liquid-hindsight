@@ -103,6 +103,16 @@ module Liquid
       @strainer_template.add_filter(filter)
     end
 
+    # Registers multiple filters with this environment.
+    #
+    # @param filters [Array<Module>] The modules that contain the filter methods.
+    # @return [self]
+    def register_filters(filters)
+      @strainer_template_class_cache.clear
+      filters.each { |f| @strainer_template.add_filter(f) }
+      self
+    end
+
     # Creates a new strainer instance with the given filters, caching the result
     # for faster lookup.
     #

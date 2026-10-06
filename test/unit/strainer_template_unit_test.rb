@@ -60,6 +60,15 @@ class StrainerTemplateUnitTest < Minitest::Test
     end
   end
 
+  def test_add_filter_does_not_raise_when_module_overrides_previously_registered_method
+    with_global_filter do
+      context = Context.new
+      context.add_filters([PublicMethodOverrideFilter])
+      strainer = context.strainer
+      assert(strainer.class.send(:filter_methods).include?('public_filter'))
+    end
+  end
+
   def test_add_filter_does_not_include_already_included_module
     mod = Module.new do
       class << self

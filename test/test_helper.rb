@@ -75,6 +75,7 @@ module Minitest
 
     def with_global_filter(*globals, &blk)
       environment = Liquid::Environment.build do |w|
+        w.register_filters(globals)
       end
 
       Environment.dangerously_override(environment, &blk)
