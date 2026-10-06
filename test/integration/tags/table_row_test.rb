@@ -151,6 +151,24 @@ class TableRowTest < Minitest::Test
     end
   end
 
+  def test_tablerow_with_invalid_attribute_strict_vs_strict2
+    template = '{% tablerow i in (1..5) invalid_attr: 10 %}{{ i }}{% endtablerow %}'
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td><td class="col3">3</td><td class="col4">4</td><td class="col5">5</td></tr>
+    OUTPUT
+
+    with_error_modes(:lax, :strict) do
+      assert_template_result(expected, template)
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(SyntaxError) { Template.parse(template) }
+      assert_match(/Invalid attribute 'invalid_attr'/, error.message)
+    end
+  end
+
   def test_tablerow_with_invalid_expression_strict_vs_strict2
     template = '{% tablerow i in (1..5) limit: foo=>bar %}{{ i }}{% endtablerow %}'
 
