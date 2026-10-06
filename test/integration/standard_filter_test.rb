@@ -366,6 +366,18 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_where_string_keys
+    input = [
+      "alpha", "beta", "gamma", "delta"
+    ]
+
+    expectation = [
+      "beta",
+    ]
+
+    assert_equal(expectation, @filters.where(input, "be"))
+  end
+
   private
 
   def with_timezone(tz)

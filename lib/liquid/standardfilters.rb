@@ -234,6 +234,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Filters an array to include only items with a specific property value.
+    # @liquid_description
+    #   This requires you to provide both the property name and the associated value.
+    # @liquid_syntax array | where: string, string
+    # @liquid_return [array[untyped]]
+    def where(input, property, target_value = nil)
+      filter_array(input, property, target_value) { |ary, &block| ary.select(&block) }
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Tests if any item in an array has a specific property value.
     # @liquid_description
     #   This requires you to provide both the property name and the associated value.
@@ -372,6 +385,17 @@ module Liquid
       ary = InputIterator.new(input, context)
 
       return default_value if ary.empty?
+
+      block.call(ary) do |item|
+        if target_value.nil?
+          item[property]
+        end
+      rescue TypeError
+        raise_property_error(property)
+      rescue NoMethodError
+        return nil unless item.respond_to?(:[])
+        raise
+      end
     end
 
     def raise_property_error(property)
