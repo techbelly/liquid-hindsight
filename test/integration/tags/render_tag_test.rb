@@ -80,6 +80,14 @@ class RenderTagTest < Minitest::Test
     assert_syntax_error("{% assign name = 'snippet' %}{% render name %}")
   end
 
+  def test_render_tag_within_if_statement
+    assert_template_result(
+      'my message',
+      '{% if true %}{% render "snippet" %}{% endif %}',
+      partials: { 'snippet' => 'my message' },
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
