@@ -45,6 +45,19 @@ class ParsingQuirksTest < Minitest::Test
     end
   end
 
+  def test_unexpected_characters_syntax_error
+    with_error_modes(:strict) do
+      assert_raises(SyntaxError) do
+        markup = "true && false"
+        Template.parse("{% if #{markup} %} YES {% endif %}")
+      end
+      assert_raises(SyntaxError) do
+        markup = "false || true"
+        Template.parse("{% if #{markup} %} YES {% endif %}")
+      end
+    end
+  end
+
   def test_no_error_on_lax_empty_filter
     assert(Template.parse("{{test |a|b|}}", error_mode: :lax))
     assert(Template.parse("{{test}}", error_mode: :lax))
