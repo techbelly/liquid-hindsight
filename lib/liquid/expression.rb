@@ -48,6 +48,8 @@ module Liquid
 
         if (num = parse_number(markup, ss))
           num
+        else
+          VariableLookup.parse(markup, ss, cache)
         end
       end
 
@@ -57,6 +59,12 @@ module Liquid
         when INTEGER_REGEX
           return Integer(markup, 10)
         end
+
+        ss.string = markup
+        # the first byte must be a digit or  a dash
+        byte = ss.scan_byte
+
+        return false if byte != DASH && (byte < ZERO || byte > NINE)
       end
     end
   end
