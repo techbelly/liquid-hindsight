@@ -113,7 +113,11 @@ module Liquid
 
           if (special = SPECIAL_TABLE[peeked])
             ss.scan_byte
-            output << special
+            if special == DASH
+              output << special
+            else
+              output << special
+            end
           elsif (sub_table = COMPARISON_JUMP_TABLE[peeked])
             ss.scan_byte
             output << SINGLE_COMPARISON_TOKENS[peeked]
