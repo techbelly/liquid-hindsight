@@ -239,6 +239,13 @@ class ContextTest < Minitest::Test
     assert_equal('bar', @context['foo'])
   end
 
+  def test_array_notation
+    assigns = { "test" => ["a", "b"] }
+    assert_template_result("a", "{{ test[0] }}", assigns)
+    assert_template_result("b", "{{ test[1] }}", assigns)
+    assert_template_result("pass", "{% if test[2] == nil %}pass{% endif %}", assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
