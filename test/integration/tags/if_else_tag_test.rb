@@ -66,6 +66,10 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('', '{% if true and false %} YES {% endif %}')
   end
 
+  def test_hash_miss_generates_false
+    assert_template_result('', '{% if foo.bar %} NO {% endif %}', { 'foo' => {} })
+  end
+
   def test_nested_if
     assert_template_result('', '{% if false %}{% if false %} NO {% endif %}{% endif %}')
     assert_template_result('', '{% if false %}{% if true %} NO {% endif %}{% endif %}')

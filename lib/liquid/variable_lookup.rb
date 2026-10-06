@@ -62,6 +62,9 @@ module Liquid
           # as commands and call them on the current object
         elsif lookup_command?(i) && object.respond_to?(key)
           object = object.send(key).to_liquid
+
+        else
+          return nil unless context.strict_variables
         end
 
         # If we are dealing with a drop here we have to
