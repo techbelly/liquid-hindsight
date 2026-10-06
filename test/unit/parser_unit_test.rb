@@ -58,6 +58,14 @@ class ParserUnitTest < Minitest::Test
     assert_equal('"wut"', p.expression)
   end
 
+  def test_ranges
+    p = new_parser("(5..7) (1.5..9.6) (young..old) (hi[5].wat..old)")
+    assert_equal('(5..7)', p.expression)
+    assert_equal('(1.5..9.6)', p.expression)
+    assert_equal('(young..old)', p.expression)
+    assert_equal('(hi[5].wat..old)', p.expression)
+  end
+
   def test_arguments
     p = new_parser("filter: hi.there[5], keyarg: 7")
     assert_equal('filter', p.consume(:id))

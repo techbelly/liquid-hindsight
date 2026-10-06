@@ -113,7 +113,11 @@ module Liquid
 
           if (special = SPECIAL_TABLE[peeked])
             ss.scan_byte
-            if special == DASH
+            # Special case for ".."
+            if special == DOT && ss.peek_byte == DOT_ORD
+              ss.scan_byte
+              output << DOTDOT
+            elsif special == DASH
               # Special case for negative numbers
               if (peeked_byte = ss.peek_byte) && NUMBER_TABLE[peeked_byte]
                 ss.pos -= 1
