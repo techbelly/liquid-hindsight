@@ -201,4 +201,17 @@ class VariableTest < Minitest::Test
       assert_template_result('TESTX', template)
     end
   end
+
+  def test_combining_trailing_comma_and_empty_args
+    template = '{{ "test" | append: "x", | upcase: }}'
+
+    with_error_modes(:strict) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/is not a valid expression/, error.message)
+    end
+
+    with_error_modes(:strict2) do
+      assert_template_result('TESTX', template)
+    end
+  end
 end
