@@ -171,6 +171,11 @@ class ContextTest < Minitest::Test
     assert_equal(100, @context['cents.cents.amount'])
   end
 
+  def test_cents_through_drop
+    @context.merge("cents" => CentsDrop.new)
+    assert_equal(100, @context['cents.amount'])
+  end
+
   def test_proc_as_variable
     @context['dynamic'] = proc { 'Hello' }
 
