@@ -70,6 +70,13 @@ module Liquid
     end
 
     def whitespace_handler(token, parse_context)
+      if token[2] == WhitespaceControl
+        previous_token = @nodelist.last
+        if previous_token.is_a?(String)
+          first_byte = previous_token.getbyte(0)
+          previous_token.rstrip!
+        end
+      end
       parse_context.trim_whitespace = (token[-3] == WhitespaceControl)
     end
 
