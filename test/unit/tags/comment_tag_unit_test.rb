@@ -25,4 +25,12 @@ class CommentTagUnitTest < Minitest::Test
       {% endcomment %}
     LIQUID
   end
+
+  def test_delimiter_can_have_extra_strings
+    assert_template_result('', "{% comment %}123{% endcomment xyz %}")
+    assert_template_result('', "{% comment %}123{% endcomment\txyz %}")
+    assert_template_result('', "{% comment %}123{% endcomment\nxyz %}")
+    assert_template_result('', "{% comment %}123{% endcomment\n   xyz  endcomment %}")
+    assert_template_result('', "{%comment}{% assign a = 1 %}{%endcomment}{% endif %}")
+  end
 end
