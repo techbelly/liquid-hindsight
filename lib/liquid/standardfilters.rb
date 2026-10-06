@@ -469,6 +469,7 @@ module Liquid
 
         if e.respond_to?(:[])
           r = e[property]
+          r.is_a?(Proc) ? r.call : r
         end
       end
     rescue TypeError

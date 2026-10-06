@@ -110,6 +110,15 @@ class DropsTest < Minitest::Test
     assert_equal('  ', tpl.render!('product' => ProductDrop.new))
   end
 
+  def test_drop_does_only_respond_to_whitelisted_methods
+    assert_equal("", Liquid::Template.parse("{{ product.inspect }}").render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse("{{ product.pretty_inspect }}").render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse("{{ product.whatever }}").render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse('{{ product | map: "inspect" }}').render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse('{{ product | map: "pretty_inspect" }}').render!('product' => ProductDrop.new))
+    assert_equal("", Liquid::Template.parse('{{ product | map: "whatever" }}').render!('product' => ProductDrop.new))
+  end
+
   def test_text_drop
     output = Liquid::Template.parse(' {{ product.texts.text }} ').render!('product' => ProductDrop.new)
     assert_equal(' text1 ', output)
