@@ -330,6 +330,8 @@ module Liquid
         @context = context
         @input   = if input.is_a?(Array)
           input.flatten
+        elsif input.is_a?(Hash)
+          [input]
         end
       end
 
