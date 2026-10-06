@@ -117,6 +117,29 @@ class IncludeTagTest < Minitest::Test
     end
   end
 
+  def test_dynamically_choosen_template
+    assert_template_result(
+      "Test123",
+      "{% include template %}",
+      { "template" => 'Test123' },
+      partials: { "Test123" => "Test123" },
+    )
+
+    assert_template_result(
+      "Test321",
+      "{% include template %}",
+      { "template" => 'Test321' },
+      partials: { "Test321" => "Test321" },
+    )
+
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% include template for product %}",
+      { "template" => 'product', 'product' => { 'title' => 'Draft 151cm' } },
+      partials: { "product" => "Product: {{ product.title }} " },
+    )
+  end
+
   def test_include_tag_caches_second_read_of_same_partial
     file_system = CountingFileSystem.new
     environment = Liquid::Environment.build(file_system: file_system)
