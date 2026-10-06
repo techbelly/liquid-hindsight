@@ -166,6 +166,7 @@ module Liquid
             next unless context.interrupt?
             interrupt = context.pop_interrupt
             break if interrupt.is_a?(BreakInterrupt)
+            next if interrupt.is_a?(ContinueInterrupt)
           end
         ensure
           for_stack.pop
