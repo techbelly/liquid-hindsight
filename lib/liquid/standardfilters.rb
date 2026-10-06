@@ -304,6 +304,18 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Combines all of the items in an array into a single string, separated by a space.
+    # @liquid_syntax array | join
+    # @liquid_return [string]
+    def join(input, glue = ' ')
+      glue = Utils.to_s(glue)
+      InputIterator.new(input, context).join(glue)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Sorts the items in an array in case-sensitive alphabetical, or numerical, order.
     # @liquid_syntax array | sort
     # @liquid_return [array[untyped]]
@@ -594,6 +606,21 @@ module Liquid
         else
           Array(input)
         end
+      end
+
+      def join(glue)
+        first = true
+        output = +""
+        each do |item|
+          if first
+            first = false
+          else
+            output << glue
+          end
+
+          output << Liquid::Utils.to_s(item)
+        end
+        output
       end
 
       def concat(args)
