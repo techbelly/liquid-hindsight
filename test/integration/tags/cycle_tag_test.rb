@@ -11,6 +11,23 @@ class CycleTagTest < Minitest::Test
     assert_match(/Syntax Error in 'cycle' - Valid syntax: cycle \[name :\] var/, error.message)
   end
 
+  def test_cycle_name_with_invalid_expression
+    template = <<~LIQUID
+      {% for i in (1..3) %}
+        {% cycle foo=>bar: "a", "b" %}
+      {% endfor %}
+    LIQUID
+
+    with_error_modes(:lax, :strict) do
+      refute_nil(Template.parse(template))
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
+
   def test_cycle_variable_with_invalid_expression
     template = <<~LIQUID
       {% for i in (1..3) %}
