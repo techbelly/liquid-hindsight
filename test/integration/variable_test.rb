@@ -36,6 +36,11 @@ class VariableTest < Minitest::Test
     assert_template_result("  worked wonderfully  ", "  {{ test }}  ", { "test" => "worked wonderfully" })
   end
 
+  def test_expression_with_whitespace_in_square_brackets
+    assert_template_result('result', "{{ a[ 'b' ] }}", { 'a' => { 'b' => 'result' } })
+    assert_template_result('result', "{{ a[ self[ 'b' ] ] }}", { 'b' => 'c', 'a' => { 'c' => 'result' } })
+  end
+
   def test_ignore_unknown
     assert_template_result("", "{{ test }}")
   end
