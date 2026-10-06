@@ -58,6 +58,12 @@ module Liquid
 
       def inner_parse(markup, ss, cache)
         if markup.start_with?("(") && markup.end_with?(")") && markup =~ RANGES_REGEX
+          return RangeLookup.parse(
+            Regexp.last_match(1),
+            Regexp.last_match(2),
+            ss,
+            cache,
+          )
         end
 
         if (num = parse_number(markup, ss))

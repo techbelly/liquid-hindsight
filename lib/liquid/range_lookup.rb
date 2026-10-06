@@ -2,6 +2,14 @@
 
 module Liquid
   class RangeLookup
+    def self.parse(start_markup, end_markup, string_scanner, cache = nil)
+      start_obj = Expression.parse(start_markup, string_scanner, cache)
+      end_obj   = Expression.parse(end_markup, string_scanner, cache)
+      begin
+        start_obj.to_i..end_obj.to_i
+      end
+    end
+
     attr_reader :start_obj, :end_obj
 
     def evaluate(context)
