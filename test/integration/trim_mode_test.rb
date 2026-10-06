@@ -5,6 +5,25 @@ require 'test_helper'
 class TrimModeTest < Minitest::Test
   include Liquid
 
+  # Make sure the trim isn't applied to standard output
+  def test_standard_output
+    text = <<-END_TEMPLATE
+      <div>
+        <p>
+          {{ 'John' }}
+        </p>
+      </div>
+    END_TEMPLATE
+    expected = <<-END_EXPECTED
+      <div>
+        <p>
+          John
+        </p>
+      </div>
+    END_EXPECTED
+    assert_template_result(expected, text)
+  end
+
   def test_tag_output_with_multiple_blank_lines
     text = <<-END_TEMPLATE
       <div>
