@@ -82,6 +82,10 @@ class VariableTest < Minitest::Test
     assert_template_result("worked", "{{\ntest\n}}", { "test" => "worked" })
   end
 
+  def test_render_symbol
+    assert_template_result('bar', '{{ foo }}', { 'foo' => :bar })
+  end
+
   def test_double_nested_variable_lookup
     assert_template_result(
       'bar',
