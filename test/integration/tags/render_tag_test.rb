@@ -220,6 +220,17 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_for_drop
+    assert_template_result(
+      "123",
+      "{% render 'loop' for loop as value %}",
+      { "loop" => TestEnumerable.new },
+      partials: {
+        'loop' => "{{ value.foo }}",
+      },
+    )
+  end
+
   def test_render_tag_with_drop
     assert_template_result(
       "TestEnumerable",
