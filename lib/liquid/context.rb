@@ -79,6 +79,11 @@ module Liquid
       @scopes.shift
     end
 
+    # Only allow String, Numeric, Hash, Array, Proc, Boolean or <tt>Liquid::Drop</tt>
+    def []=(key, value)
+      @scopes[0][key] = value
+    end
+
     # Look up variable, either resolve directly after considering the name. We can directly handle
     # Strings, digits, floats and booleans (true,false).
     # If no match is made we lookup the variable in the current scope and
@@ -115,12 +120,29 @@ module Liquid
           raise_on_not_found: raise_on_not_found && !fallback_to_self_drop,
         )
       end
+
+      # `self` resolves to a SelfDrop (enabling `self['var']` lookups),
+      # but only after the normal environment lookup doesn't find a value.
+      return @self_drop ||= SelfDrop.new(self) if fallback_to_self_drop && variable.nil?
+
+      # update variable's context before invoking #to_liquid
+      variable.context = self if variable.respond_to?(:context=)
+
+      liquid_variable = variable.to_liquid
+
+      liquid_variable.context = self if variable != liquid_variable && liquid_variable.respond_to?(:context=)
+
+      liquid_variable
     end
 
     def lookup_and_evaluate(obj, key, raise_on_not_found: true)
       if @strict_variables && raise_on_not_found && obj.respond_to?(:key?) && !obj.key?(key)
         raise Liquid::UndefinedVariable, "undefined variable #{key}"
       end
+
+      value = obj[key]
+
+      value
     end
 
     def with_disabled_tags(tag_names)

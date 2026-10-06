@@ -106,6 +106,12 @@ class ContextTest < Minitest::Test
     end
   end
 
+  def test_to_liquid_and_context_at_first_level
+    @context['category'] = Category.new("foobar")
+    assert_kind_of(CategoryDrop, @context['category'])
+    assert_equal(@context, @context['category'].context)
+  end
+
   def test_interrupt_avoids_object_allocations
     @context.interrupt? # ruby 3.0.0 allocates on the first call
     assert_no_object_allocations do
