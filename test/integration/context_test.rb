@@ -238,6 +238,12 @@ class ContextTest < Minitest::Test
     assert_equal('Hello', @context['dynamic.lambda'])
   end
 
+  def test_array_containing_lambda_as_variable
+    @context['dynamic'] = [1, 2, proc { 'Hello' }, 4, 5]
+
+    assert_equal('Hello', @context['dynamic[2]'])
+  end
+
   def test_lambda_is_called_once
     @global = 0
 
