@@ -177,6 +177,11 @@ class DropsTest < Minitest::Test
     assert_equal('', Liquid::Template.parse('{{ product[value] }}').render!('product' => ProductDrop.new, 'value' => nil))
   end
 
+  def test_default_to_s_on_drops
+    assert_equal('ProductDrop', Liquid::Template.parse("{{ product }}").render!('product' => ProductDrop.new))
+    assert_equal('EnumerableDrop', Liquid::Template.parse('{{ collection }}').render!('collection' => EnumerableDrop.new))
+  end
+
   def test_invokable_methods
     assert_equal(%w(to_liquid catchall context texts).to_set, ProductDrop.invokable_methods)
     assert_equal(%w(to_liquid scopes_as_array loop_pos scopes).to_set, ContextDrop.invokable_methods)
