@@ -61,6 +61,13 @@ class ParseTreeVisitorTest < Minitest::Test
     )
   end
 
+  def test_include_with
+    assert_equal(
+      ["test"],
+      visit(%({% include "hai" with test %})),
+    )
+  end
+
   private
 
   def traversal(template)
