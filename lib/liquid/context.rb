@@ -121,6 +121,21 @@ module Liquid
       @scopes.shift
     end
 
+    # Pushes a new local scope on the stack, pops it at the end of the block
+    #
+    # Example:
+    #   context.stack do
+    #      context['var'] = 'hi'
+    #   end
+    #
+    #   context['var']  #=> nil
+    def stack(new_scope = {})
+      push(new_scope)
+      yield
+    ensure
+      pop
+    end
+
     # Creates a new context inheriting resource limits, filters, environment etc.,
     # but with an isolated scope.
     def new_isolated_subcontext

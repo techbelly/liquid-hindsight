@@ -63,6 +63,8 @@ module Liquid
 
       if segment.empty?
         render_else(context, output)
+      else
+        render_segment(context, output, segment)
       end
 
       output
@@ -141,6 +143,28 @@ module Liquid
       offsets[@name] = from + segment.length
 
       segment
+    end
+
+    def render_segment(context, output, segment)
+      for_stack = context.registers[:for_stack] ||= []
+      length    = segment.length
+
+      context.stack do
+        loop_vars = Liquid::ForloopDrop.new(@name, length, for_stack[-1])
+
+        for_stack.push(loop_vars)
+
+        begin
+          context['forloop'] = loop_vars
+
+          segment.each do |item|
+            context[@variable_name] = item
+            @for_block.render_to_output_buffer(context, output)
+          end
+        ensure
+          for_stack.pop
+        end
+      end
     end
 
     def set_attribute(key, expr, safe: false)
