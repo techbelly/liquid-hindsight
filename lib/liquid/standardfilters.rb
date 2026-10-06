@@ -243,6 +243,39 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Truncates a string down to a given number of words.
+    # @liquid_description
+    #   If the specified number of words is less than the number of words in the string, then an ellipsis (`...`) is appended to
+    #   the truncated string.
+    #
+    #   > Caution:
+    #   > HTML tags are treated as words, so you should strip any HTML from truncated content. If you don't strip HTML, then
+    #   > closing HTML tags can be removed, which can result in unexpected behavior.
+    # @liquid_syntax string | truncatewords: number
+    # @liquid_return [string]
+    def truncatewords(input, words = 15, truncate_string = "...")
+      return if input.nil?
+      input = Utils.to_s(input)
+      words = Utils.to_integer(words)
+      words = 1 if words <= 0
+
+      wordlist = begin
+        input.split(" ", words + 1)
+      rescue RangeError
+        # integer too big for String#split, but we can semantically assume no truncation is needed
+        return input if words + 1 > MAX_I32
+      end
+      return input if wordlist.length <= words
+
+      wordlist.pop
+      truncate_string = Utils.to_s(truncate_string)
+      wordlist.join(" ").concat(truncate_string)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Splits a string into an array of substrings based on a given separator.
     # @liquid_syntax string | split: string
     # @liquid_return [array[string]]
