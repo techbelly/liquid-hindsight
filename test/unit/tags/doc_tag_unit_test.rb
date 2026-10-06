@@ -67,6 +67,20 @@ class DocTagUnitTest < Minitest::Test
     )
   end
 
+  def test_doc_tag_blank_with_empty_content
+    template_source = "{% doc %}{% enddoc %}"
+
+    doc_tag = nil
+    ParseTreeVisitor
+      .for(Template.parse(template_source).root)
+      .add_callback_for(Liquid::Doc) do |tag|
+        doc_tag = tag
+      end
+      .visit
+
+    assert_equal(true, doc_tag.blank?)
+  end
+
   private
 
   def traversal(template)
