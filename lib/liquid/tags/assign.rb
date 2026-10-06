@@ -57,6 +57,8 @@ module Liquid
       p = @parse_context.new_parser(lhs)
       @to = p.consume(:id)
       p.consume(:end_of_string)
+
+      @from = Variable.new(rhs, parse_context)
     end
 
     def render_to_output_buffer(context, output)

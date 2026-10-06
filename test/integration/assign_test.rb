@@ -37,6 +37,10 @@ class AssignTest < Minitest::Test
     assert_equal(9, assign_score_of('すごい'))
   end
 
+  def test_assign_with_valid_identifier_in_strict2
+    assert_template_result("hello", "{% assign my_var = 'hello' %}{{ my_var }}", error_mode: :strict2)
+  end
+
   def test_assign_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% assign (a(b(c) = 1234 %}", error_mode: :strict2)
