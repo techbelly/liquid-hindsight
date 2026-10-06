@@ -136,6 +136,26 @@ class ContextTest < Minitest::Test
     end
   end
 
+  def test_disables_nested_tags
+    context = Context.new
+    context.with_disabled_tags(["foo"]) do
+      context.with_disabled_tags(["foo"]) do
+        assert_equal(true, context.tag_disabled?("foo"))
+        assert_equal(false, context.tag_disabled?("bar"))
+      end
+      context.with_disabled_tags(["bar"]) do
+        assert_equal(true, context.tag_disabled?("foo"))
+        assert_equal(true, context.tag_disabled?("bar"))
+        context.with_disabled_tags(["foo"]) do
+          assert_equal(true, context.tag_disabled?("foo"))
+          assert_equal(true, context.tag_disabled?("bar"))
+        end
+      end
+      assert_equal(true, context.tag_disabled?("foo"))
+      assert_equal(false, context.tag_disabled?("bar"))
+    end
+  end
+
   def test_context_always_uses_static_registers
     registers = {
       my_register: :my_value,
