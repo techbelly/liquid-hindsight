@@ -26,6 +26,20 @@ class CommentTagUnitTest < Minitest::Test
     LIQUID
   end
 
+  def test_comment_tag_delimiter_with_extra_strings
+    assert_template_result(
+      '',
+      <<~LIQUID.chomp,
+        {% comment %}
+          {% comment %}
+          {% endcomment
+          {% if true %}
+          {% endif %}
+        {% endcomment %}
+      LIQUID
+    )
+  end
+
   def test_nested_comment_tag_with_extra_strings
     assert_template_result(
       '',
