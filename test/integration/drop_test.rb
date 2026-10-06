@@ -135,6 +135,11 @@ class DropsTest < Minitest::Test
     assert_equal(' monkey ', output)
   end
 
+  def test_protected
+    output = Liquid::Template.parse(' {{ product.callmenot }} ').render!('product' => ProductDrop.new)
+    assert_equal('  ', output)
+  end
+
   def test_enumerable_drop_size
     assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
   end
