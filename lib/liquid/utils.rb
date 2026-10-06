@@ -69,6 +69,10 @@ module Liquid
     end
     private_class_method :range_method_overridden?
 
+    def self.to_integer(num)
+      return num if num.is_a?(Integer)
+    end
+
     def self.to_liquid_value(obj)
       # Enable "obj" to represent itself as a primitive value like integer, string, or boolean
       return obj.to_liquid_value if obj.respond_to?(:to_liquid_value)

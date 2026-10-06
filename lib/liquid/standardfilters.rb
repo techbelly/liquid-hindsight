@@ -152,6 +152,29 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Truncates a string down to a given number of characters.
+    # @liquid_description
+    #   If the specified number of characters is less than the length of the string, then an ellipsis (`...`) is appended to
+    #   the truncated string. The ellipsis is included in the character count of the truncated string.
+    # @liquid_syntax string | truncate: number
+    # @liquid_return [string]
+    def truncate(input, length = 50, truncate_string = "...")
+      return if input.nil?
+      input_str = Utils.to_s(input)
+      length    = Utils.to_integer(length)
+
+      truncate_string_str = Utils.to_s(truncate_string)
+
+      l = length - truncate_string_str.length
+      l = 0 if l < 0
+
+      input_str.length > length ? input_str[0...l].concat(truncate_string_str) : input_str
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Splits a string into an array of substrings based on a given separator.
     # @liquid_syntax string | split: string
     # @liquid_return [array[string]]

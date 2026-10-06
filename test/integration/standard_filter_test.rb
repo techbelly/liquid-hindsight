@@ -102,6 +102,17 @@ class StandardFiltersTest < Minitest::Test
     refute(@filters.has([], 'foo', 'bar'))
   end
 
+  def test_truncate
+    assert_equal('1234...', @filters.truncate('1234567890', 7))
+    assert_equal('1234567890', @filters.truncate('1234567890', 20))
+    assert_equal('...', @filters.truncate('1234567890', 0))
+    assert_equal('1234567890', @filters.truncate('1234567890'))
+    assert_equal("测试...", @filters.truncate("测试测试测试测试", 5))
+    assert_equal('12341', @filters.truncate("1234567890", 5, 1))
+    assert_equal("foobar", @filters.truncate("foobar", 1 << 63))
+    assert_equal("...", @filters.truncate("foobar", -(1 << 63)))
+  end
+
   def test_split
     assert_equal(['12', '34'], @filters.split('12~34', '~'))
     assert_equal(['A? ', ' ,Z'], @filters.split('A? ~ ~ ~ ,Z', '~ ~ ~'))
