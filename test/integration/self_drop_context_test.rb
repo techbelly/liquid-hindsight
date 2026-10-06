@@ -5,6 +5,23 @@ require 'test_helper'
 class SelfDropContextTest < Minitest::Test
   include Liquid
 
+  def test_self_drop_passed_as_render_param_preserves_original_scope
+    source = <<~LIQUID
+      {%- assign var = 42 -%}
+      {%- assign s = self -%}
+      {%- render "snippet1", other_self: s -%}
+    LIQUID
+
+    partials = {
+      'snippet1' => <<~LIQUID,
+        {%- assign var = 43 -%}
+        {{- other_self.var }}|{{ self.var -}}
+      LIQUID
+    }
+
+    assert_template_result('42|43', source, partials: partials)
+  end
+
   def test_self_drop_in_render_without_passing_resolves_inner_scope
     source = <<~LIQUID
       {%- assign var = 42 -%}
