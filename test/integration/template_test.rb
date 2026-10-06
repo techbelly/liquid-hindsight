@@ -48,6 +48,12 @@ class TemplateTest < Minitest::Test
     assert_equal([], Timeout.timeout(1) { t.warnings })
   end
 
+  def test_custom_assigns_do_not_persist_on_same_template
+    t = Template.new
+    assert_equal('from custom assigns', t.parse("{{ foo }}").render!('foo' => 'from custom assigns'))
+    assert_equal('', t.parse("{{ foo }}").render!)
+  end
+
   def test_resource_limits_render_length
     t = Template.parse("0123456789")
     t.resource_limits.render_length_limit = 9
