@@ -3,6 +3,22 @@
 require 'test_helper'
 
 class PartialCacheUnitTest < Minitest::Test
+  def test_uses_the_file_system_register_if_present
+    context = Liquid::Context.build(
+      registers: {
+        file_system: StubFileSystem.new('my_partial' => 'my partial body'),
+      },
+    )
+
+    partial = Liquid::PartialCache.load(
+      'my_partial',
+      context: context,
+      parse_context: Liquid::ParseContext.new,
+    )
+
+    assert_equal('my partial body', partial.render)
+  end
+
   def test_reads_from_the_file_system_only_once_per_file
     file_system = StubFileSystem.new('my_partial' => 'some partial body')
     context     = Liquid::Context.build(
