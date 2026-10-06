@@ -49,6 +49,18 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_nested_include_tag
+    partials = { "body" => "body {% include 'body_detail' %}", "body_detail" => "body_detail" }
+    assert_template_result("body body_detail", "{% include 'body' %}", partials: partials)
+
+    partials = partials.merge({
+      "nested_template" => "{% include 'header' %} {% include 'body' %} {% include 'footer' %}",
+      "header" => "header",
+      "footer" => "footer",
+    })
+    assert_template_result("header body body_detail footer", "{% include 'nested_template' %}", partials: partials)
+  end
+
   def test_recursively_included_template_does_not_produce_endless_loop
     infinite_file_system = Class.new do
       def read_template_file(_template_path)

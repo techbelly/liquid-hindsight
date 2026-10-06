@@ -71,6 +71,8 @@ module Liquid
         context.template_name = old_template_name
         context.partial       = old_partial
       end
+
+      output
     end
 
     alias_method :parse_context, :options
