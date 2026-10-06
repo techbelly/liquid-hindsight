@@ -249,6 +249,25 @@ class ErrorHandlingTest < Minitest::Test
     end
   end
 
+  def test_syntax_error_is_raised_with_template_name
+    file_system = StubFileSystem.new("snippet" => "1\n2\n{{ 1")
+
+    context = Liquid::Context.build(
+      registers: { file_system: file_system },
+    )
+
+    template = Template.parse(
+      '{% render "snippet" %}',
+      line_numbers: true,
+    )
+    template.name = "template/index"
+
+    assert_equal(
+      "Liquid syntax error (snippet line 3): Variable '{{' was not properly terminated with regexp: /\\}\\}/",
+      template.render(context),
+    )
+  end
+
   def test_syntax_error_is_raised_with_template_name_from_template_factory
     file_system = StubFileSystem.new("snippet" => "1\n2\n{{ 1")
 
