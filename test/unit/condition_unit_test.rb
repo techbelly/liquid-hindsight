@@ -204,6 +204,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_false(VariableLookup.new('whitespace'), '==', empty_literal)
   end
 
+  def test_empty_with_empty_array
+    # An array with no elements is empty.
+    # [].empty? => true
+    @context['empty_array'] = []
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_true(VariableLookup.new('empty_array'), '==', empty_literal)
+  end
+
   private
 
   def assert_evaluates_true(left, op, right)
