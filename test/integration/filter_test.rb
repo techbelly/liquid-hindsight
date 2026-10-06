@@ -42,6 +42,12 @@ class FiltersTest < Minitest::Test
 
     assert_equal(' 1000$ ', Template.parse("{{var | money}}").render(@context))
   end
+
+  def test_underscore_in_filter_name
+    @context['var'] = 1000
+    @context.add_filters(MoneyFilter)
+    assert_equal(' 1000$ ', Template.parse("{{var | money_with_underscore}}").render(@context))
+  end
 end
 
 class TestObject < Liquid::Drop
