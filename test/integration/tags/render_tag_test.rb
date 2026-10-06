@@ -104,6 +104,18 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_includes_will_not_render_inside_render_tag
+    assert_template_result(
+      'Liquid error (test_include line 1): include usage is not allowed in this context',
+      '{% render "test_include" %}',
+      render_errors: true,
+      partials: {
+        'foo' => 'bar',
+        'test_include' => '{% include "foo" %}',
+      },
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
