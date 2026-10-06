@@ -75,6 +75,20 @@ class IncludeTagTest < Minitest::Test
     end
   end
 
+  def test_render_raise_argument_error_when_template_is_undefined
+    assert_template_result(
+      "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
+      "{% include undefined_variable %}",
+      render_errors: true,
+    )
+
+    assert_template_result(
+      "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
+      "{% include nil %}",
+      render_errors: true,
+    )
+  end
+
   def test_include_template_with_invalid_expression
     template = "{% include foo=>bar %}"
 
