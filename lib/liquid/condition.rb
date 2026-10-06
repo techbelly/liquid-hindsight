@@ -35,12 +35,28 @@ module Liquid
       'empty' => MethodLiteral.new(:empty?, '').freeze,
     }
 
+    def self.operators
+      @@operators
+    end
+
     attr_reader :attachment, :child_condition
     attr_accessor :left, :operator, :right
+
+    def initialize(left = nil, operator = nil, right = nil)
+      @left     = left
+      @operator = operator
+      @right    = right
+
+      @child_relation  = nil
+      @child_condition = nil
+    end
 
     def evaluate(context = deprecated_default_context)
       condition = self
       result = nil
+      loop do
+        result = interpret_condition(condition.left, condition.right, condition.operator, context)
+      end
       result
     end
 
@@ -64,6 +80,18 @@ module Liquid
       end
 
       left == right
+    end
+
+    def interpret_condition(left, right, op, context)
+      # If the operator is empty this means that the decision statement is just
+      # a single variable. We can just poll this variable from the context and
+      # return this as the result.
+      return context.evaluate(left) if op.nil?
+
+      left  = Liquid::Utils.to_liquid_value(context.evaluate(left))
+      right = Liquid::Utils.to_liquid_value(context.evaluate(right))
+
+      operation = self.class.operators[op] || raise(Liquid::ArgumentError, "Unknown operator #{op}")
     end
   end
 
