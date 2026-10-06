@@ -10,6 +10,12 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('hello'), var.name)
   end
 
+  def test_filter_with_date_parameter
+    var = create_variable(%( '2006-06-06' | date: "%m/%d/%Y"))
+    assert_equal('2006-06-06', var.name)
+    assert_equal([['date', ['%m/%d/%Y']]], var.filters)
+  end
+
   def test_filters_without_whitespace
     var = create_variable('hello | textileze | paragraph')
     assert_equal(VariableLookup.new('hello'), var.name)
