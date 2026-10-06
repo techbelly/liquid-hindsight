@@ -214,6 +214,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new('empty_hash'), '==', blank_literal)
   end
 
+  def test_not_blank_with_true
+    # true is a definite value, not blank.
+    # Ensures {% if flag == blank %} works correctly for boolean flags.
+    @context['true_value'] = true
+    blank_literal = Condition.class_variable_get(:@@method_literals)['blank']
+
+    assert_evaluates_false(VariableLookup.new('true_value'), '==', blank_literal)
+  end
+
   def test_not_blank_with_number
     # Numbers (including zero) are never blank - they represent actual values.
     # 0 is a valid quantity, not the absence of a value.
