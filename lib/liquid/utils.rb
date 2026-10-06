@@ -169,6 +169,10 @@ module Liquid
       len = arr.length
 
       while cursor < len
+
+        item_str = inspect(arr[cursor], seen)
+        str << item_str
+        cursor += 1
       end
 
       str << "]"
