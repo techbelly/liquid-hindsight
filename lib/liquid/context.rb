@@ -58,6 +58,11 @@ module Liquid
       global_filter.nil? ? obj : global_filter.call(obj)
     end
 
+    # are there any not handled interrupts?
+    def interrupt?
+      !@interrupts.empty?
+    end
+
     protected
 
     attr_writer :base_scope_depth, :warnings, :errors, :strainer, :filters, :disabled_tags
