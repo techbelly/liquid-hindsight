@@ -102,6 +102,16 @@ class DocTagUnitTest < Minitest::Test
     assert_equal(exp_error, act_error)
   end
 
+  def test_doc_tag_ignores_nested_raw_tags
+    template = <<~LIQUID.chomp
+      {% doc %}
+        {% raw %}
+      {% enddoc %}
+    LIQUID
+
+    assert_template_result('', template)
+  end
+
   def test_doc_tag_captures_token_before_enddoc
     template_source = "{% doc %}{{ incomplete{% enddoc %}"
 
