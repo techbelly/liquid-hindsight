@@ -95,10 +95,22 @@ module Liquid
 
     def render(context)
       obj = context.evaluate(@name)
+
+      @filters.each do |filter_name, filter_args, filter_kwargs|
+        filter_args = evaluate_filter_expressions(context, filter_args, filter_kwargs)
+        obj = context.invoke(filter_name, obj, *filter_args)
+      end
+
+      context.apply_global_filter(obj)
     end
 
     def render_to_output_buffer(context, output)
       obj = render(context)
+      render_obj_to_output(obj, output)
+      output
+    end
+
+    def render_obj_to_output(obj, output)
     end
 
     private
