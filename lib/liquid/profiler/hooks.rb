@@ -6,6 +6,9 @@ module Liquid
   BlockBody.prepend(BlockBodyProfilingHook)
 
   module DocumentProfilingHook
+    def render_to_output_buffer(context, output)
+      return super unless context.profiler
+    end
   end
   Document.prepend(DocumentProfilingHook)
 

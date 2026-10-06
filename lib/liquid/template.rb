@@ -55,6 +55,68 @@ module Liquid
       self
     end
 
+    def registers
+      @registers ||= {}
+    end
+
+    def assigns
+      @assigns ||= {}
+    end
+
+    def instance_assigns
+      @instance_assigns ||= {}
+    end
+
+    # Render takes a hash with local variables.
+    #
+    # if you use the same filters over and over again consider registering them globally
+    # with <tt>Template.register_filter</tt>
+    #
+    # if profiling was enabled in <tt>Template#parse</tt> then the resulting profiling information
+    # will be available via <tt>Template#profiler</tt>
+    #
+    # Following options can be passed:
+    #
+    #  * <tt>filters</tt> : array with local filters
+    #  * <tt>registers</tt> : hash with register variables. Those can be accessed from
+    #    filters and tags and might be useful to integrate liquid more with its host application
+    #
+    def render(*args)
+      return '' if @root.nil?
+
+      context = case args.first
+      when Liquid::Context
+
+      when Liquid::Drop
+      when Hash
+      when nil
+        Context.new(assigns, instance_assigns, registers, @rethrow_errors, @resource_limits, {}, @environment)
+      else
+        raise ArgumentError, "Expected Hash or Liquid::Context as parameter"
+      end
+
+      output = nil
+
+      # Retrying a render resets resource usage
+      context.resource_limits.reset
+
+      if @profiling && context.profiler.nil?
+      end
+
+      context.template_name ||= name
+
+      previous_error_mode = context.registers.static[:template_error_mode]
+      context.registers.static[:template_error_mode] = @error_mode
+
+      begin
+        # render the nodelist.
+        @root.render_to_output_buffer(context, output || +'')
+      ensure
+        context.registers.static.delete(:template_error_mode)
+        @errors = context.errors
+      end
+    end
+
     private
 
     def configure_options(options)
