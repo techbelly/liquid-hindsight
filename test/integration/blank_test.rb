@@ -50,4 +50,8 @@ class BlankTest < Minitest::Test
   def test_comments_are_blank
     assert_template_result("", wrap(" {% comment %} whatever {% endcomment %} "))
   end
+
+  def test_captures_are_blank
+    assert_template_result("", wrap(" {% capture foo %} whatever {% endcapture %} "))
+  end
 end
