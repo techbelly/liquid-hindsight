@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+class StatementsTest < Minitest::Test
+  include Liquid
+
+  def test_true_eql_true
+    text = ' {% if true == true %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text)
+  end
+
+  # def test_is_nil
+  #  text = %| {% if var != nil %} true {% else %} false {% end %} |
+  #  @template.assigns = { 'var' => 'hello there!'}
+  #  expected = %|  true  |
+  #  assert_equal expected, @template.parse(text)
+  # end
+end # StatementsTest
