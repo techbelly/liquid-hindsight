@@ -54,6 +54,10 @@ module Liquid
       raise_tag_never_closed(block_name)
     end
 
+    def render_to_output_buffer(_context, output)
+      output
+    end
+
     def blank?
       @body.empty?
     end

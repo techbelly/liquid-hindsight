@@ -3,6 +3,23 @@
 require 'test_helper'
 
 class DocTagUnitTest < Minitest::Test
+  def test_doc_tag
+    template = <<~LIQUID.chomp
+      {% doc %}
+        Renders loading-spinner.
+
+        @param {string} foo - some foo
+        @param {string} [bar] - optional bar
+
+        @example
+        {% render 'loading-spinner', foo: 'foo' %}
+        {% render 'loading-spinner', foo: 'foo', bar: 'bar' %}
+      {% enddoc %}
+    LIQUID
+
+    assert_template_result('', template)
+  end
+
   def test_doc_tag_body_content
     doc_content = "  Documentation content\n  @param {string} foo - test\n"
     template_source = "{% doc %}#{doc_content}{% enddoc %}"
