@@ -607,6 +607,20 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, "{{ array | has: 'ok', true }}", { "array" => array })
   end
 
+  def test_has_when_does_not_have_it
+    array = [
+      { "handle" => "alpha", "ok" => false },
+      { "handle" => "beta", "ok" => false },
+      { "handle" => "gamma", "ok" => false },
+      { "handle" => "delta", "ok" => false },
+    ]
+
+    expected_output = "false"
+
+    assert_template_result(expected_output, "{{ array | has: 'ok' }}", { "array" => array })
+    assert_template_result(expected_output, "{{ array | has: 'ok', true }}", { "array" => array })
+  end
+
   def test_where_string_keys
     input = [
       "alpha", "beta", "gamma", "delta"
