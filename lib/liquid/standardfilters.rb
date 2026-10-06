@@ -113,6 +113,23 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Decodes any [percent-encoded](https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding) characters
+    #   in a string.
+    # @liquid_syntax string | url_decode
+    # @liquid_return [string]
+    def url_decode(input)
+      return if input.nil?
+
+      result = CGI.unescape(Utils.to_s(input))
+      raise Liquid::ArgumentError, "invalid byte sequence in #{result.encoding}" unless result.valid_encoding?
+
+      result
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Encodes a string to [Base64 format](https://developer.mozilla.org/en-US/docs/Glossary/Base64).
     # @liquid_syntax string | base64_encode
     # @liquid_return [string]
