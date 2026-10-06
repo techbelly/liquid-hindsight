@@ -84,6 +84,14 @@ class FiltersTest < Minitest::Test
   def test_strip_html
     assert_template_result("bla blub", "{{ var | strip_html }}", { "var" => "<b>bla blub</a>" })
   end
+
+  def test_strip_html_ignore_comments_with_html
+    assert_template_result(
+      "bla blub",
+      "{{ var | strip_html }}",
+      { "var" => "<!-- split and some <ul> tag --><b>bla blub</a>" },
+    )
+  end
 end
 
 class TestObject < Liquid::Drop
