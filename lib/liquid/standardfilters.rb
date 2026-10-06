@@ -696,6 +696,18 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Returns the absolute value of a number.
+    # @liquid_syntax number | abs
+    # @liquid_return [number]
+    def abs(input)
+      result = Utils.to_number(input).abs
+      result.is_a?(BigDecimal) ? result.to_f : result
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
     #   Returns the sum of all elements in an array.
