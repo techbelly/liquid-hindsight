@@ -5,6 +5,14 @@ require 'test_helper'
 class AssignTest < Minitest::Test
   include Liquid
 
+  def test_assign_with_hyphen_in_variable_name
+    template_source = <<~END_TEMPLATE
+      {% assign this-thing = 'Print this-thing' -%}
+      {{ this-thing -}}
+    END_TEMPLATE
+    assert_template_result("Print this-thing", template_source)
+  end
+
   def test_assign_syntax_error
     assert_match_syntax_error(/assign/, '{% assign foo not values %}.')
   end

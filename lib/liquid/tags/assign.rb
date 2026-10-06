@@ -59,11 +59,24 @@ module Liquid
       p.consume(:end_of_string)
     end
 
+    def render_to_output_buffer(context, output)
+      val = @from.render(context)
+      context.scopes.last[@to] = val
+      context.resource_limits.increment_assign_score(assign_score_of(val))
+      output
+    end
+
     def blank?
       true
     end
 
     private
+
+    def assign_score_of(val)
+      if val.instance_of?(String)
+        val.bytesize
+      end
+    end
 
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
       def children
