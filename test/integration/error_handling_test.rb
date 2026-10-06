@@ -54,6 +54,20 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal('Liquid syntax error (line 4): Unexpected character = in "1 =! 2"', err.message)
   end
 
+  def test_syntax_errors_in_nested_blocks_have_correct_line_number
+    source = <<~LIQUID
+      foobar
+
+      {% if 1 != 2 %}
+        {% foo %}
+      {% endif %}
+
+      bla
+    LIQUID
+
+    assert_match_syntax_error("Liquid syntax error (line 4): Unknown tag 'foo'", source)
+  end
+
   def test_strict_error_messages
     err = assert_raises(SyntaxError) do
       Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ', error_mode: :strict)

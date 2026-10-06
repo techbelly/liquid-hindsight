@@ -33,6 +33,8 @@ module Liquid
           block_name: block_name,
           block_delimiter: block_delimiter,
         )
+      else
+        raise SyntaxError, parse_context.locale.t("errors.syntax.unknown_tag", tag: tag)
       end
     end
 
