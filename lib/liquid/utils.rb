@@ -11,7 +11,13 @@ module Liquid
       collection, from, to, resource_limits, allow_endless: false, use_range_to_a: false
     )
       if collection.is_a?(Range)
-        slice_range_using_each(collection, from, to, resource_limits, allow_endless: allow_endless)
+        if use_range_to_a && range_method_overridden?(collection, :to_a)
+          # For historically honored custom Range#to_a. Charge the resulting
+          # selection before buffering it, just as for a custom #each.
+          slice_collection_for_iteration_using_each(collection.to_a, from, to, resource_limits)
+        else
+          slice_range_using_each(collection, from, to, resource_limits, allow_endless: allow_endless)
+        end
       end
     end
 
@@ -35,6 +41,25 @@ module Liquid
       end
     end
     private_class_method :slice_range_using_each
+
+    # Custom Range#each can make a nominally beginless range finite; standard
+    # beginless ranges were rejected before reaching this budgeted traversal.
+    def self.slice_collection_for_iteration_using_each(collection, from, to, resource_limits)
+      return [] if to && to <= from
+
+      segments = []
+      index = 0
+      collection.each do |item|
+        break if to && to <= index
+
+        # Charge preparation, including skipped offsets, before buffering; checking
+        # only while rendering the buffered values would leave this work unbudgeted.
+        resource_limits.increment_render_score(1)
+        segments << item if from <= index
+        index += 1
+      end
+    end
+    private_class_method :slice_collection_for_iteration_using_each
 
     def self.range_method_overridden?(collection, method_name)
       collection.method(method_name).owner != Range.instance_method(method_name).owner
