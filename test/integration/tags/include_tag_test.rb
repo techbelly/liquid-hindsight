@@ -83,6 +83,14 @@ class IncludeTagTest < Minitest::Test
     )
   end
 
+  def test_include_tag_with_multiple_local_variables
+    assert_template_result(
+      "Locale: test123 test321",
+      "{% include 'locale_variables' echo1: 'test123', echo2: 'test321' %}",
+      partials: { "locale_variables" => "Locale: {{echo1}} {{echo2}}" },
+    )
+  end
+
   def test_include_tag_with_multiple_local_variables_from_context
     assert_template_result(
       "Locale: test123 test321",
