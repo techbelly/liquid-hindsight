@@ -33,6 +33,13 @@ class LexerUnitTest < Minitest::Test
     )
   end
 
+  def test_comparison_with_negative_number
+    assert_equal(
+      [[:number, '1'], [:comparison, '>'], [:number, '-1'], [:end_of_string]],
+      tokenize('1>-1'),
+    )
+  end
+
   def test_specials
     assert_equal(
       [[:pipe, '|'], [:dot, '.'], [:colon, ':'], [:end_of_string]],
