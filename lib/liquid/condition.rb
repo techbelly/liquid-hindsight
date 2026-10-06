@@ -18,7 +18,12 @@ module Liquid
       '>=' => :>=,
       '<=' => :<=,
       'contains' => lambda do |_cond, left, right|
-        false
+        if left && right && left.respond_to?(:include?)
+          right = right.to_s if left.is_a?(String)
+          left.include?(right)
+        else
+          false
+        end
       rescue Encoding::CompatibilityError
         # "✅".b.include?("✅") raises Encoding::CompatibilityError despite being materially equal
         left.b.include?(right.b)
