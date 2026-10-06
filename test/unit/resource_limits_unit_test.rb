@@ -8,4 +8,10 @@ class ResourceLimitsUnitTest < Minitest::Test
     assert_equal(0, limits.cumulative_render_score)
     assert_equal(0, limits.cumulative_assign_score)
   end
+
+  def test_cumulative_limits_default_to_nil
+    limits = Liquid::ResourceLimits.new({})
+    assert_nil(limits.cumulative_render_score_limit)
+    assert_nil(limits.cumulative_assign_score_limit)
+  end
 end
