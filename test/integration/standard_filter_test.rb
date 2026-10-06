@@ -215,6 +215,13 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ a: 1, b: 2 }], @filters.sort(a: 1, b: 2))
   end
 
+  def test_numerical_vs_lexicographical_sort
+    assert_equal([2, 10], @filters.sort([10, 2]))
+    assert_equal([{ "a" => 2 }, { "a" => 10 }], @filters.sort([{ "a" => 10 }, { "a" => 2 }], "a"))
+    assert_equal(["10", "2"], @filters.sort(["10", "2"]))
+    assert_equal([{ "a" => "10" }, { "a" => "2" }], @filters.sort([{ "a" => "10" }, { "a" => "2" }], "a"))
+  end
+
   def test_uniq_empty_array
     assert_equal([], @filters.uniq([], "a"))
   end
