@@ -105,6 +105,16 @@ class IfElseTagTest < Minitest::Test
     assert_raises(SyntaxError) { assert_template_result('', '{% if %}') }
   end
 
+  def test_if_with_custom_condition
+    original_op = Condition.operators['contains']
+    Condition.operators['contains'] = :[]
+
+    assert_template_result('yes', %({% if 'bob' contains 'o' %}yes{% endif %}))
+    assert_template_result('no', %({% if 'bob' contains 'f' %}yes{% else %}no{% endif %}))
+  ensure
+    Condition.operators['contains'] = original_op
+  end
+
   def test_operators_are_ignored_unless_isolated
     original_op = Condition.operators['contains']
     Condition.operators['contains'] = :[]
