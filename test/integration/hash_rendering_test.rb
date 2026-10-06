@@ -7,6 +7,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_hash_with_escape_filter
+    assert_template_result("{&quot;Key&quot;=&gt;&quot;Value&quot;, &quot;AnotherKey&quot;=&gt;&quot;AnotherValue&quot;}", "{{ my_hash | escape }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
   def test_hash_with_url_encode_filter
     assert_template_result("%7B%22Key%22%3D%3E%22Value%22%2C+%22AnotherKey%22%3D%3E%22AnotherValue%22%7D", "{{ my_hash | url_encode }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
