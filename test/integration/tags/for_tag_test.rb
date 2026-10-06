@@ -122,6 +122,17 @@ class ForTagTest < Minitest::Test
     assert_raises(Liquid::MemoryError) { template.render! }
   end
 
+  def test_range_subclass_uses_its_custom_each
+    range = Class.new(Range) do
+      def each
+        yield 10
+        yield 20
+      end
+    end.new(nil, 3)
+
+    assert_template_result('1020', '{% for i in numbers %}{{ i }}{% endfor %}', { 'numbers' => range })
+  end
+
   def test_endless_range_remains_unsupported_with_a_limit
     template = Template.parse('{% for i in numbers limit:2 %}{{ i }}{% endfor %}')
 
