@@ -29,7 +29,17 @@ module Liquid
 
     attr_reader :collection_name, :variable_name, :limit, :from
 
+    def initialize(tag_name, markup, options)
+      super
+      @from = @limit = nil
+      parse_with_selected_parser(markup)
+    end
+
     protected
+
+    def strict_parse(markup)
+      p = @parse_context.new_parser(markup)
+    end
 
     private
   end

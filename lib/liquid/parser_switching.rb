@@ -27,6 +27,7 @@ module Liquid
     def parse_with_selected_parser(markup)
       case parse_context.error_mode
       when :strict2 then strict2_parse_with_error_context(markup)
+      when :strict  then strict_parse_with_error_context(markup)
       end
     end
 
