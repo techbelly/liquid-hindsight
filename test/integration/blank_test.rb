@@ -89,4 +89,10 @@ class BlankTest < Minitest::Test
   def test_raw_is_not_blank
     assert_template_result("  " * (N + 1), wrap(" {% raw %} {% endraw %}"))
   end
+
+  def test_case_is_blank
+    assert_template_result("", wrap(" {% assign foo = 'bar' %} {% case foo %} {% when 'bar' %} {% when 'whatever' %} {% else %} {% endcase %} "))
+    assert_template_result("", wrap(" {% assign foo = 'else' %} {% case foo %} {% when 'bar' %} {% when 'whatever' %} {% else %} {% endcase %} "))
+    assert_template_result("   x  " * (N + 1), wrap(" {% assign foo = 'else' %} {% case foo %} {% when 'bar' %} {% when 'whatever' %} {% else %} x {% endcase %} "))
+  end
 end
