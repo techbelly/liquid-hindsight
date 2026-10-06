@@ -184,6 +184,24 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "a" => "a" }, { "a" => "B" }, { "a" => "c" }, { "a" => "D" }], @filters.sort_natural([{ "a" => "D" }, { "a" => "c" }, { "a" => "a" }, { "a" => "B" }], "a"))
   end
 
+  def test_sort_natural_when_property_is_sometimes_missing_puts_nils_last
+    input       = [
+      { "price" => "4", "handle" => "alpha" },
+      { "handle" => "beta" },
+      { "price" => "1", "handle" => "gamma" },
+      { "handle" => "delta" },
+      { "price" => 2, "handle" => "epsilon" },
+    ]
+    expectation = [
+      { "price" => "1", "handle" => "gamma" },
+      { "price" => 2, "handle" => "epsilon" },
+      { "price" => "4", "handle" => "alpha" },
+      { "handle" => "beta" },
+      { "handle" => "delta" },
+    ]
+    assert_equal(expectation, @filters.sort_natural(input, "price"))
+  end
+
   def test_sort_natural_case_check
     input = [
       { "key" => "X" },
