@@ -104,6 +104,16 @@ class ForTagTest < Minitest::Test
     assert(loader.load_slice_called)
   end
 
+  def test_iterate_with_load_slice_when_limit_and_offset_applied
+    loader   = LoaderDrop.new([1, 2, 3, 4, 5])
+    assigns  = { 'items' => loader }
+    expected = '34'
+    template = '{% for item in items offset:2 limit:2 %}{{item}}{% endfor %}'
+    assert_template_result(expected, template, assigns)
+    assert(!loader.each_called)
+    assert(loader.load_slice_called)
+  end
+
   def test_for_cleans_up_registers
     context = Context.new(ErrorDrop.new)
 
