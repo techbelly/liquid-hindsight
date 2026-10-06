@@ -71,6 +71,18 @@ module Liquid
       end
     end
 
+    def render_to_output_buffer(context, output)
+      (collection = context.evaluate(@collection_name)) || (return '')
+
+      from = @attributes.key?('offset') ? to_integer(context.evaluate(@attributes['offset'])) : 0
+      to = @attributes.key?('limit') ? from + to_integer(context.evaluate(@attributes['limit'])) : nil
+
+      collection = Utils.slice_collection_for_iteration(collection, from, to, context.resource_limits, allow_endless: true)
+      length     = collection.length
+
+      cols = @attributes.key?('cols') ? to_integer(context.evaluate(@attributes['cols'])) : length
+    end
+
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
       def children
         super + @node.attributes.values + [@node.collection_name]
@@ -78,5 +90,11 @@ module Liquid
     end
 
     private
+
+    def to_integer(value)
+      value.to_i
+    rescue NoMethodError
+      raise Liquid::ArgumentError, "invalid integer"
+    end
   end
 end

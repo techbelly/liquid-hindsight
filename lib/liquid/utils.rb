@@ -10,7 +10,9 @@ module Liquid
     def self.slice_collection_for_iteration(
       collection, from, to, resource_limits, allow_endless: false, use_range_to_a: false
     )
-      if collection.is_a?(Range)
+      if integer_range?(collection)
+        RangeSlice.new(collection, from, to, resource_limits)
+      elsif collection.is_a?(Range)
         if use_range_to_a && range_method_overridden?(collection, :to_a)
           # For historically honored custom Range#to_a. Charge the resulting
           # selection before buffering it, just as for a custom #each.
