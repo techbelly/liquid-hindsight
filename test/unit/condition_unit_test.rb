@@ -96,6 +96,19 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new("one"), '==', VariableLookup.new("another"))
   end
 
+  def test_default_context_is_deprecated
+    if Gem::Version.new(Liquid::VERSION) >= Gem::Version.new('6.0.0')
+    end
+
+    _out, err = capture_io do
+      assert_equal(true, Condition.new(1, '==', 1).evaluate)
+    end
+
+    expected = "DEPRECATION WARNING: Condition#evaluate without a context argument is deprecated " \
+      "and will be removed from Liquid 6.0.0."
+    assert_includes(err.lines.map(&:strip), expected)
+  end
+
   # Tests for blank? comparison without ActiveSupport
   #
   # Ruby's standard library does not include blank? on String, Array, Hash, etc.

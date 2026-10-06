@@ -106,6 +106,12 @@ module Liquid
         end
       end
     end
+
+    def deprecated_default_context
+      warn("DEPRECATION WARNING: Condition#evaluate without a context argument is deprecated " \
+        "and will be removed from Liquid 6.0.0.")
+      Context.new
+    end
   end
 
   class ElseCondition < Condition
