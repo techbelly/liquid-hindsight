@@ -18,6 +18,9 @@ module Liquid
     attr_accessor :exception_renderer, :template_name, :partial, :global_filter, :strict_variables, :strict_filters, :environment
 
     # rubocop:disable Metrics/ParameterLists
+    def self.build(environment: Environment.default, environments: {}, outer_scope: {}, registers: {}, rethrow_errors: false, resource_limits: nil, static_environments: {}, &block)
+      new(environments, outer_scope, registers, rethrow_errors, resource_limits, static_environments, environment, &block)
+    end
 
     def initialize(environments = {}, outer_scope = {}, registers = {}, rethrow_errors = false, resource_limits = nil, static_environments = {}, environment = Environment.default)
       @environment = environment
@@ -180,9 +183,15 @@ module Liquid
     def try_variable_find_in_environments(key, raise_on_not_found:)
       @environments.each do |environment|
         found_variable = lookup_and_evaluate(environment, key, raise_on_not_found: raise_on_not_found)
+        if !found_variable.nil? || @strict_variables && raise_on_not_found
+          return found_variable
+        end
       end
       @static_environments.each do |environment|
         found_variable = lookup_and_evaluate(environment, key, raise_on_not_found: raise_on_not_found)
+        if !found_variable.nil? || @strict_variables && raise_on_not_found
+          return found_variable
+        end
       end
       nil
     end
