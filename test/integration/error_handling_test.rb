@@ -54,6 +54,18 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal('Liquid syntax error (line 4): Unexpected character = in "1 =! 2"', err.message)
   end
 
+  def test_strict_error_messages
+    err = assert_raises(SyntaxError) do
+      Liquid::Template.parse(' {% if 1 =! 2 %}ok{% endif %} ', error_mode: :strict)
+    end
+    assert_equal('Liquid syntax error: Unexpected character = in "1 =! 2"', err.message)
+
+    err = assert_raises(SyntaxError) do
+      Liquid::Template.parse('{{%%%}}', error_mode: :strict)
+    end
+    assert_equal('Liquid syntax error: Unexpected character % in "{{%%%}}"', err.message)
+  end
+
   class TestFileSystem
     def read_template_file(_template_path)
       "{{ errors.argument_error }}"
