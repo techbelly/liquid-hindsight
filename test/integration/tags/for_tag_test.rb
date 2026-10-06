@@ -63,6 +63,46 @@ class ForTagTest < Minitest::Test
     assert_equal("Liquid error: invalid integer", exception.message)
   end
 
+  def test_for_with_break
+    assigns = { 'array' => { 'items' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] } }
+
+    markup   = '{% for i in array.items %}{% break %}{% endfor %}'
+    expected = ""
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{{ i }}{% break %}{% endfor %}'
+    expected = "1"
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{% break %}{{ i }}{% endfor %}'
+    expected = ""
+    assert_template_result(expected, markup, assigns)
+
+    markup   = '{% for i in array.items %}{{ i }}{% if i > 3 %}{% break %}{% endif %}{% endfor %}'
+    expected = "1234"
+    assert_template_result(expected, markup, assigns)
+
+    # tests to ensure it only breaks out of the local for loop
+    # and not all of them.
+    assigns  = { 'array' => [[1, 2], [3, 4], [5, 6]] }
+    markup   = '{% for item in array %}' \
+               '{% for i in item %}' \
+                 '{% if i == 1 %}' \
+                   '{% break %}' \
+                 '{% endif %}' \
+                 '{{ i }}' \
+               '{% endfor %}' \
+             '{% endfor %}'
+    expected = '3456'
+    assert_template_result(expected, markup, assigns)
+
+    # test break does nothing when unreached
+    assigns  = { 'array' => { 'items' => [1, 2, 3, 4, 5] } }
+    markup   = '{% for i in array.items %}{% if i == 9999 %}{% break %}{% endif %}{{ i }}{% endfor %}'
+    expected = '12345'
+    assert_template_result(expected, markup, assigns)
+  end
+
   def test_for_with_break_after_nested_loop
     source = <<~LIQUID.chomp
       {% for i in (1..2) -%}
