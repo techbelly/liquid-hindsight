@@ -32,6 +32,10 @@ module Liquid
       raise_tag_never_closed(block_name)
     end
 
+    def nodelist
+      [@body]
+    end
+
     protected
 
     def ensure_valid_markup(tag_name, markup, parse_context)

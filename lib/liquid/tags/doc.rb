@@ -58,6 +58,10 @@ module Liquid
       @body.empty?
     end
 
+    def nodelist
+      [@body]
+    end
+
     private
 
     def ensure_valid_markup(tag_name, markup, parse_context)

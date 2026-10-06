@@ -28,6 +28,13 @@ module Liquid
 
     attr_reader :blocks, :left
 
+    def nodelist
+      @blocks.map(&:attachment)
+    end
+
     private
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

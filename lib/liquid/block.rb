@@ -20,6 +20,10 @@ module Liquid
       @blank
     end
 
+    def nodelist
+      @body.nodelist
+    end
+
     def unknown_tag(tag_name, _markup, _tokenizer)
       Block.raise_unknown_tag(tag_name, block_name, block_delimiter, parse_context)
     end

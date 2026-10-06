@@ -64,5 +64,8 @@ module Liquid
         @attributes[key] = parse_expression(value)
       end
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end

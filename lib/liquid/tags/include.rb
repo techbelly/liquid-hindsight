@@ -80,5 +80,8 @@ module Liquid
         end
       end
     end
+
+    class ParseTreeVisitor < Liquid::ParseTreeVisitor
+    end
   end
 end
