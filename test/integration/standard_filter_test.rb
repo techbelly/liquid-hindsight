@@ -657,6 +657,15 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, template, environment)
   end
 
+  def test_where_with_nil_is_a_no_op
+    environment = { "array" => ["alpha", "beta", "gamma"] }
+    template = "{{ array | where: nil | join: ' ' }}"
+
+    assert_raises(Liquid::ArgumentError) do
+      assert_template_result("alpha beta gamma", template, environment)
+    end
+  end
+
   def test_where_string_keys
     input = [
       "alpha", "beta", "gamma", "delta"
