@@ -15,6 +15,12 @@ class AssignTest < Minitest::Test
     end
   end
 
+  def test_assign_rejects_brackets_in_variable_name_in_strict2
+    assert_raises(Liquid::SyntaxError) do
+      Liquid::Template.parse("{% assign [x.y] = 'hello' %}", error_mode: :strict2)
+    end
+  end
+
   private
 
   class ObjectWrapperDrop < Liquid::Drop
