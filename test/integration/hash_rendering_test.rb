@@ -7,6 +7,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{}", "{{ my_hash }}", { "my_hash" => {} })
   end
 
+  def test_hash_with_downcase_filter
+    assert_template_result("{\"key\"=>\"value\", \"anotherkey\"=>\"anothervalue\"}", "{{ my_hash | downcase }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
+  end
+
   def test_hash_with_upcase_filter
     assert_template_result("{\"KEY\"=>\"VALUE\", \"ANOTHERKEY\"=>\"ANOTHERVALUE\"}", "{{ my_hash | upcase }}", { "my_hash" => { "Key" => "Value", "AnotherKey" => "AnotherValue" } })
   end
