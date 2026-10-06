@@ -144,7 +144,11 @@ module Liquid
       rescue Liquid::MemoryError => e
         context.handle_error(e)
       ensure
-        context.registers.static.delete(:template_error_mode)
+        if previous_error_mode
+          context.registers.static[:template_error_mode] = previous_error_mode
+        else
+          context.registers.static.delete(:template_error_mode)
+        end
         @errors = context.errors
       end
     end
@@ -152,6 +156,10 @@ module Liquid
     def render!(*args)
       @rethrow_errors = true
       render(*args)
+    end
+
+    def render_to_output_buffer(context, output)
+      render(context, output: output)
     end
 
     private

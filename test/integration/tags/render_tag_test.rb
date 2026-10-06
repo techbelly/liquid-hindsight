@@ -5,6 +5,16 @@ require 'test_helper'
 class RenderTagTest < Minitest::Test
   include Liquid
 
+  def test_recursively_rendered_template_does_not_produce_endless_loop
+    env = Liquid::Environment.build(
+      file_system: StubFileSystem.new('loop' => '{% render "loop" %}'),
+    )
+
+    assert_raises(Liquid::StackLevelError) do
+      Template.parse('{% render "loop" %}', environment: env).render!
+    end
+  end
+
   def test_dynamically_choosen_templates_are_not_allowed
     assert_syntax_error("{% assign name = 'snippet' %}{% render name %}")
   end

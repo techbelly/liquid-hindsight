@@ -52,6 +52,24 @@ module Liquid
         context: context,
         parse_context: parse_context,
       )
+
+      context_variable_name = @alias_name || template_name.split('/').last
+
+      render_partial_func = ->(var, forloop) {
+        inner_context               = context.new_isolated_subcontext
+        inner_context.template_name = partial.name
+        inner_context.partial       = true
+        inner_context['forloop']    = forloop if forloop
+
+        @attributes.each do |key, value|
+          inner_context[key] = context.evaluate(value)
+        end
+        inner_context[context_variable_name] = var unless var.nil?
+        partial.render_to_output_buffer(inner_context, output)
+      }
+
+      variable = @variable_name_expr ? context.evaluate(@variable_name_expr) : nil
+      render_partial_func.call(variable, nil)
     end
 
     # render (string) (with|for expression)? (as id)? (key: value)*
