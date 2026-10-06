@@ -40,4 +40,10 @@ class VariableTest < Minitest::Test
     assert_template_result("false", "{{ foo }}", { 'foo' => false })
     assert_template_result("false", "{{ false }}")
   end
+
+  def test_preset_assigns
+    template                 = Template.parse(%({{ test }}))
+    template.assigns['test'] = 'worked'
+    assert_equal('worked', template.render!)
+  end
 end
