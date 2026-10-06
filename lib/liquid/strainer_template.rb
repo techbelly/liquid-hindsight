@@ -18,6 +18,9 @@ module Liquid
         return if include?(filter)
 
         invokable_non_public_methods = (filter.private_instance_methods + filter.protected_instance_methods).select { |m| invokable?(m) }
+        if invokable_non_public_methods.any?
+          raise MethodOverrideError, "Filter overrides registered public methods as non public: #{invokable_non_public_methods.join(', ')}"
+        end
 
         include(filter)
 
