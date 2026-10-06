@@ -60,6 +60,19 @@ module Liquid
 
     protected
 
+    def lax_parse(markup)
+      if markup =~ Syntax
+        @variable_name   = Regexp.last_match(1)
+        collection_name  = Regexp.last_match(2)
+        @reversed        = !!Regexp.last_match(3)
+        @name            = "#{@variable_name}-#{collection_name}"
+        @collection_name = parse_expression(collection_name)
+        markup.scan(TagAttributes) do |key, value|
+          set_attribute(key, value)
+        end
+      end
+    end
+
     def strict_parse(markup)
       p = @parse_context.new_parser(markup)
       @variable_name = p.consume(:id)
@@ -82,6 +95,10 @@ module Liquid
     end
 
     private
+
+    def strict2_parse(markup)
+      strict_parse(markup)
+    end
 
     def set_attribute(key, expr, safe: false)
       case key
