@@ -16,6 +16,22 @@ class InlineCommentTest < Minitest::Test
     assert_template_result('', '{%#this is an inline comment%}')
   end
 
+  def test_liquid_inline_comment_returns_nothing
+    assert_template_result('Hey there, how are you doing today?', <<~LIQUID)
+      {%- liquid
+        # This is how you'd write a block comment in a liquid tag.
+        # It looks a lot like what you'd have in ruby.
+
+        # You can use it as inline documentation in your
+        # liquid blocks to explain why you're doing something.
+        echo "Hey there, "
+
+        # It won't affect the output.
+        echo "how are you doing today?"
+      -%}
+    LIQUID
+  end
+
   def test_inline_comment_can_be_written_on_multiple_lines
     assert_template_result('', <<~LIQUID)
       {%-

@@ -26,6 +26,10 @@ module Liquid
       @variable = Variable.new(markup, parse_context)
     end
 
+    def render(context)
+      @variable.render_to_output_buffer(context, +'')
+    end
+
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
       def children
         [@node.variable]
