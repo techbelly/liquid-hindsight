@@ -112,6 +112,16 @@ class RenderTagTest < Minitest::Test
     assert_template_result('hello value1 value2', '{% render "snippet"  arg1: "value1"  arg2: "value2" %}', partials: partials)
   end
 
+  def test_render_tag_caches_second_read_of_same_partial
+    file_system = StubFileSystem.new('snippet' => 'echo')
+    assert_equal(
+      'echoecho',
+      Template.parse('{% render "snippet" %}{% render "snippet" %}')
+      .render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(1, file_system.file_read_count)
+  end
+
   def test_render_tag_within_if_statement
     assert_template_result(
       'my message',
