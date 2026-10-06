@@ -378,6 +378,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(expectation, @filters.where(input, "be"))
   end
 
+  def test_where_non_array_map_input
+    assert_equal([{ "a" => "ok" }], @filters.where({ "a" => "ok" }, "a", "ok"))
+    assert_equal([], @filters.where({ "a" => "not ok" }, "a", "ok"))
+  end
+
   def test_where_non_boolean_value
     input = [
       { "message" => "Bonjour!", "language" => "French" },
