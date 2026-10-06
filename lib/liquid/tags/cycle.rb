@@ -52,6 +52,12 @@ module Liquid
     # cycle [name:] expression(, expression)*
     def strict2_parse(markup)
       p = @parse_context.new_parser(markup)
+
+      @variables = []
+
+      raise SyntaxError, options[:locale].t("errors.syntax.cycle") if p.look(:end_of_string)
+
+      first_expression = safe_parse_expression(p)
     end
 
     def strict_parse(markup)
