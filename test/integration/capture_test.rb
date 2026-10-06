@@ -11,6 +11,12 @@ class CaptureTest < Minitest::Test
     end
   end
 
+  def test_capture_rejects_dot_in_variable_name_in_strict2
+    assert_raises(Liquid::SyntaxError) do
+      Liquid::Template.parse("{% capture a.b %}hello{% endcapture %}", error_mode: :strict2)
+    end
+  end
+
   def test_capture_rejects_numeric_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% capture 1abc %}hello{% endcapture %}", error_mode: :strict2)
