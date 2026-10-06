@@ -212,6 +212,14 @@ class ContextTest < Minitest::Test
     assert_equal(3, @context['counter.count'])
   end
 
+  def test_drop_with_key_called_only_once
+    @context['counter'] = CounterDrop.new
+
+    assert_equal(1, @context['counter["count"]'])
+    assert_equal(2, @context['counter["count"]'])
+    assert_equal(3, @context['counter["count"]'])
+  end
+
   def test_proc_as_variable
     @context['dynamic'] = proc { 'Hello' }
 
