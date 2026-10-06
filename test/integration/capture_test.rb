@@ -35,6 +35,19 @@ class CaptureTest < Minitest::Test
     assert_template_result("test-string", template_source)
   end
 
+  def test_assigning_from_capture
+    template_source = <<~END_TEMPLATE
+      {% assign first = '' -%}
+      {% assign second = '' -%}
+      {% for number in (1..3) -%}
+        {% capture first %}{{number}}{% endcapture -%}
+        {% assign second = first -%}
+      {% endfor -%}
+      {{ first }}-{{ second -}}
+    END_TEMPLATE
+    assert_template_result("3-3", template_source)
+  end
+
   def test_increment_assign_score_by_bytes_not_characters
     t = Template.parse("{% capture foo %}すごい{% endcapture %}")
     t.render!
