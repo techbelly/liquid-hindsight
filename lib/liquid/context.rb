@@ -65,6 +65,16 @@ module Liquid
       @strainer ||= @environment.create_strainer(self, @filters)
     end
 
+    # Adds filters to this context.
+    #
+    # Note that this does not register the filters with the main Template object. see <tt>Template.register_filter</tt>
+    # for that
+    def add_filters(filters)
+      filters = [filters].flatten.compact
+      @filters += filters
+      @strainer = nil
+    end
+
     def apply_global_filter(obj)
       global_filter.nil? ? obj : global_filter.call(obj)
     end
@@ -80,6 +90,10 @@ module Liquid
       e.line_number   ||= line_number
       errors.push(e)
       exception_renderer.call(e).to_s
+    end
+
+    def invoke(method, *args)
+      strainer.invoke(method, *args).to_liquid
     end
 
     # Push new local scope on the stack. use <tt>Context#stack</tt> instead

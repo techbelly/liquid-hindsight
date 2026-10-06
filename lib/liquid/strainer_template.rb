@@ -39,5 +39,13 @@ module Liquid
         @filter_methods ||= Set.new
       end
     end
+
+    def invoke(method, *args)
+      if self.class.invokable?(method)
+        send(method, *args)
+      else
+        args.first
+      end
+    end
   end
 end
