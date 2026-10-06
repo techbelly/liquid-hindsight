@@ -46,7 +46,32 @@ module Liquid
 
     def expression
       token = @tokens[@p]
-      raise SyntaxError, "#{token} is not a valid expression"
+      case token[0]
+      when :id
+        str = consume
+        str << variable_lookups
+      when :string, :number
+        consume
+      else
+        raise SyntaxError, "#{token} is not a valid expression"
+      end
+    end
+
+    def variable_lookups
+      str = +""
+      loop do
+        if look(:open_square)
+          str << consume
+          str << expression
+          str << consume(:close_square)
+        elsif look(:dot)
+          str << consume
+          str << consume(:id)
+        else
+          break
+        end
+      end
+      str
     end
   end
 end
