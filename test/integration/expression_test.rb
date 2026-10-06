@@ -4,6 +4,11 @@ require 'test_helper'
 require 'lru_redux'
 
 class ExpressionTest < Minitest::Test
+  def test_keyword_literals
+    assert_template_result("true", "{{ true }}")
+    assert_expression_result(true, "true")
+  end
+
   def test_quirky_negative_sign_expression_markup
     result = Expression.parse("-", nil)
     assert(result.is_a?(VariableLookup))
