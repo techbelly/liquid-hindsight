@@ -15,6 +15,10 @@ module Liquid
   #   {% endcomment %}
   # @liquid_syntax_keyword content The content of the comment.
   class Comment < Block
+    def render_to_output_buffer(_context, output)
+      output
+    end
+
     def unknown_tag(_tag, _markup, _tokens)
     end
 
