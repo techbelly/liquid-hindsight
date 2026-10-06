@@ -20,6 +20,11 @@ class ForTagTest < Minitest::Test
     assert_template_result(' 1  2  3 ', '{%for item in (1..foobar.value) %} {{item}} {%endfor%}', { "foobar" => foobar })
   end
 
+  def test_for_with_drop_value_range
+    foobar = ThingWithValue.new
+    assert_template_result(' 1  2  3 ', '{%for item in (1..foobar.value) %} {{item}} {%endfor%}', { "foobar" => foobar })
+  end
+
   def test_limiting_with_invalid_limit
     assigns  = { 'array' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] }
     template = <<-MKUP
