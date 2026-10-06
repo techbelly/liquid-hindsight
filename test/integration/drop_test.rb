@@ -115,6 +115,10 @@ class DropsTest < Minitest::Test
     assert_equal(' text1 ', output)
   end
 
+  def test_enumerable_drop_size
+    assert_equal('3', Liquid::Template.parse('{{collection.size}}').render!('collection' => EnumerableDrop.new))
+  end
+
   def test_invokable_methods
     assert_equal(%w(to_liquid catchall context texts).to_set, ProductDrop.invokable_methods)
     assert_equal(%w(to_liquid scopes_as_array loop_pos scopes).to_set, ContextDrop.invokable_methods)
