@@ -83,6 +83,12 @@ module Liquid
         unless markup =~ WhenSyntax
           raise SyntaxError, options[:locale].t("errors.syntax.case_invalid_when")
         end
+
+        markup = Regexp.last_match(2)
+
+        block = Condition.new(@left, '==', Condition.parse_expression(parse_context, Regexp.last_match(1)))
+        block.attach(body)
+        @blocks << block
       end
     end
 
