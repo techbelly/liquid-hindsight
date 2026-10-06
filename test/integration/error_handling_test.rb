@@ -36,6 +36,24 @@ class ErrorHandlingTest < Minitest::Test
     assert_match_syntax_error(/Liquid syntax error \(line 3\)/, source)
   end
 
+  def test_parsing_strict_with_line_numbers_adds_numbers_to_lexer_errors
+    err = assert_raises(SyntaxError) do
+      Liquid::Template.parse(
+        '
+          foobar
+
+          {% if 1 =! 2 %}ok{% endif %}
+
+          bla
+                ',
+        error_mode: :strict,
+        line_numbers: true,
+      )
+    end
+
+    assert_equal('Liquid syntax error (line 4): Unexpected character = in "1 =! 2"', err.message)
+  end
+
   class TestFileSystem
     def read_template_file(_template_path)
       "{{ errors.argument_error }}"
