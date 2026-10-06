@@ -40,4 +40,12 @@ class OutputTest < Minitest::Test
   def test_variable
     assert_template_result(" bmw ", " {{best_cars}} ", { "best_cars" => "bmw" })
   end
+
+  def test_variable_traversing_with_two_brackets
+    source = "{{ site.data.menu[include.menu][include.locale] }}"
+    assert_template_result("it works!", source, {
+      "site" => { "data" => { "menu" => { "foo" => { "bar" => "it works!" } } } },
+      "include" => { "menu" => "foo", "locale" => "bar" },
+    })
+  end
 end # OutputTest
