@@ -76,6 +76,17 @@ class ForTagTest < Minitest::Test
     assert(context.registers[:for_stack].empty?)
   end
 
+  def test_integer_range_is_not_materialized_and_charges_empty_iterations
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse('{% for i in numbers %}{% endfor %}')
+    template.resource_limits.render_score_limit = 3
+
+    assert_raises(Liquid::MemoryError) { template.render!('numbers' => range) }
+
+    assert(template.resource_limits.reached?)
+    assert_equal(4, template.resource_limits.render_score)
+  end
+
   def test_endless_range_remains_unsupported_with_a_limit
     template = Template.parse('{% for i in numbers limit:2 %}{{ i }}{% endfor %}')
 
