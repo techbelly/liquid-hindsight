@@ -49,6 +49,30 @@ module Liquid
       input.respond_to?(:size) ? input.size : 0
     end
 
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
+    #   Returns the first item in an array.
+    # @liquid_syntax array | first
+    # @liquid_return [untyped]
+    def first(array)
+      # ActiveSupport returns "" for empty strings, not nil
+      return array[0] || "" if array.is_a?(String)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
+    #   Returns the last item in an array.
+    # @liquid_syntax array | last
+    # @liquid_return [untyped]
+    def last(array)
+      # ActiveSupport returns "" for empty strings, not nil
+      return array[-1] || "" if array.is_a?(String)
+    end
+
     private
 
     attr_reader :context

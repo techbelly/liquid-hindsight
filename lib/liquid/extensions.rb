@@ -3,6 +3,9 @@
 require 'time'
 require 'date'
 
+class String # :nodoc:
+end
+
 class Array # :nodoc:
 end
 

@@ -80,6 +80,22 @@ class StandardFiltersTest < Minitest::Test
     assert_equal(0, @filters.size(nil))
   end
 
+  def test_first_last_on_strings
+    # Ruby's String class does not have first/last methods by default.
+    # ActiveSupport adds String#first and String#last to return the first/last character.
+    # Liquid must work without ActiveSupport, so the first/last filters handle strings specially.
+    #
+    # This enables template patterns like:
+    #   {{ product.title | first }}  => "S" (for "Snowboard")
+    #   {{ customer.name | last }}   => "h" (for "Smith")
+    #
+    # Note: ActiveSupport returns "" for empty strings, not nil.
+    assert_equal('f', @filters.first('foo'))
+    assert_equal('o', @filters.last('foo'))
+    assert_equal('', @filters.first(''))
+    assert_equal('', @filters.last(''))
+  end
+
   private
 
   def with_timezone(tz)
