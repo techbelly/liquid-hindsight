@@ -48,6 +48,14 @@ class FiltersTest < Minitest::Test
     @context.add_filters(MoneyFilter)
     assert_equal(' 1000$ ', Template.parse("{{var | money_with_underscore}}").render(@context))
   end
+
+  def test_second_filter_overwrites_first
+    @context['var'] = 1000
+    @context.add_filters(MoneyFilter)
+    @context.add_filters(CanadianMoneyFilter)
+
+    assert_equal(' 1000$ CAD ', Template.parse("{{var | money}}").render(@context))
+  end
 end
 
 class TestObject < Liquid::Drop
