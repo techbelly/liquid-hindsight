@@ -49,6 +49,14 @@ end
 class IncludeTagTest < Minitest::Test
   include Liquid
 
+  def test_included_templates_assigns_variables
+    assert_template_result(
+      "bar",
+      "{% include 'assignments' %}{{ foo }}",
+      partials: { 'assignments' => "{% assign foo = 'bar' %}" },
+    )
+  end
+
   def test_nested_include_tag
     partials = { "body" => "body {% include 'body_detail' %}", "body_detail" => "body_detail" }
     assert_template_result("body body_detail", "{% include 'body' %}", partials: partials)
