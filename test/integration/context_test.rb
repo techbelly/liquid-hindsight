@@ -295,6 +295,17 @@ class ContextTest < Minitest::Test
     assert_template_result("element151cm", '{{ product["variants"].last["title"] }}', assigns)
   end
 
+  def test_access_hashes_with_hash_access_variables
+    assigns = {
+      'var' => 'tags',
+      'nested' => { 'var' => 'tags' },
+      'products' => { 'count' => 5, 'tags' => ['deepsnow', 'freestyle'] },
+    }
+
+    assert_template_result('deepsnow', '{{ products[var].first }}', assigns)
+    assert_template_result('freestyle', '{{ products[nested.var].last }}', assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
