@@ -272,6 +272,20 @@ class ContextTest < Minitest::Test
     assert_equal('1', @context['callcount.lambda'])
   end
 
+  def test_lambda_in_array_is_called_once
+    @global = 0
+
+    p = proc {
+      @global += 1
+      @global.to_s
+    }
+    @context['callcount'] = [1, 2, p, 4, 5]
+
+    assert_equal('1', @context['callcount[2]'])
+    assert_equal('1', @context['callcount[2]'])
+    assert_equal('1', @context['callcount[2]'])
+  end
+
   def test_access_to_context_from_proc
     @context.registers[:magic] = 345392
 
