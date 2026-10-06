@@ -93,6 +93,10 @@ module Liquid
       @child_condition = condition
     end
 
+    def attach(attachment)
+      @attachment = attachment
+    end
+
     def inspect
       "#<Condition #{[@left, @operator, @right].compact.join(' ')}>"
     end

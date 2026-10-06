@@ -26,6 +26,11 @@ module Liquid
       push_block('if', markup)
     end
 
+    def parse(tokens)
+      while parse_body(@blocks.last.attachment, tokens)
+      end
+    end
+
     ELSE_TAG_NAMES = ['elsif', 'else'].freeze
     private_constant :ELSE_TAG_NAMES
 
@@ -37,6 +42,9 @@ module Liquid
       else
         parse_with_selected_parser(markup)
       end
+
+      @blocks.push(block)
+      block.attach(new_body)
     end
 
     def parse_expression(markup, safe: false)
@@ -47,6 +55,7 @@ module Liquid
       p = @parse_context.new_parser(markup)
       condition = parse_binary_comparisons(p)
       p.consume(:end_of_string)
+      condition
     end
 
     def parse_binary_comparisons(p)
