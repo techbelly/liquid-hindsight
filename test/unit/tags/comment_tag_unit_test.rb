@@ -17,4 +17,12 @@ class CommentTagUnitTest < Minitest::Test
       {% endcomment %}
     LIQUID
   end
+
+  def test_allows_unclosed_tags
+    assert_template_result('', <<~LIQUID.chomp)
+      {% comment %}
+        {% if true %}
+      {% endcomment %}
+    LIQUID
+  end
 end
