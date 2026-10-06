@@ -179,6 +179,11 @@ module Liquid
       p.look(:pipe) || p.look(:end_of_string)
     end
 
+    def evaluate_filter_expressions(context, filter_args, filter_kwargs)
+      parsed_args = filter_args.map { |expr| context.evaluate(expr) }
+      parsed_args
+    end
+
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
       def children
         [@node.name] + @node.filters.flatten

@@ -560,6 +560,20 @@ class ContextTest < Minitest::Test
     assert_equal(:my_value, super_context.registers[:my_register])
   end
 
+  def test_new_isolated_subcontext_inherits_filters
+    my_filter = Module.new do
+      def my_filter(*)
+        'my filter result'
+      end
+    end
+
+    super_context = Context.new
+    super_context.add_filters([my_filter])
+    subcontext    = super_context.new_isolated_subcontext
+    template      = Template.parse('{{ 123 | my_filter }}')
+    assert_equal('my filter result', template.render(subcontext))
+  end
+
   def test_disables_tag_specified
     context = Context.new
     context.with_disabled_tags(%w(foo bar)) do
