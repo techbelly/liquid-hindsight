@@ -213,6 +213,15 @@ class ConditionUnitTest < Minitest::Test
     assert_evaluates_true(VariableLookup.new('empty_array'), '==', empty_literal)
   end
 
+  def test_empty_with_empty_hash
+    # A hash with no key-value pairs is empty.
+    # {}.empty? => true
+    @context['empty_hash'] = {}
+    empty_literal = Condition.class_variable_get(:@@method_literals)['empty']
+
+    assert_evaluates_true(VariableLookup.new('empty_hash'), '==', empty_literal)
+  end
+
   private
 
   def assert_evaluates_true(left, op, right)
