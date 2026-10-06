@@ -226,6 +226,11 @@ class ContextTest < Minitest::Test
     assert_template_result("pass", "{% if 100.00 == expect %}pass{% endif %}", { "expect" => 100.00 })
   end
 
+  def test_strings
+    assert_template_result("hello!", '{{ "hello!" }}')
+    assert_template_result("hello!", "{{ 'hello!' }}")
+  end
+
   def test_merge
     @context.merge("test" => "test")
     assert_equal('test', @context['test'])
