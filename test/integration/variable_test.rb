@@ -150,6 +150,19 @@ class VariableTest < Minitest::Test
     )
   end
 
+  def test_filter_with_single_trailing_comma
+    template = '{{ "hello" | append: "world", }}'
+
+    with_error_modes(:strict) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/is not a valid expression/, error.message)
+    end
+
+    with_error_modes(:strict2) do
+      assert_template_result('helloworld', template)
+    end
+  end
+
   def test_filter_with_colon_but_no_arguments
     template = '{{ "test" | upcase: }}'
 
