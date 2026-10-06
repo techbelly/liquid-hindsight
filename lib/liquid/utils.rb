@@ -81,6 +81,8 @@ module Liquid
 
     def self.to_number(obj)
       case obj
+      when Float
+        BigDecimal(obj.to_s)
       when Numeric
         obj
       when String
