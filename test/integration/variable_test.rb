@@ -57,6 +57,10 @@ class VariableTest < Minitest::Test
     assert_template_result("", "{% assign foo = blank %}{{ foo }}")
   end
 
+  def test_using_empty_as_variable_name
+    assert_template_result("", "{% assign foo = empty %}{{ foo }}")
+  end
+
   def test_hash_scoping
     assert_template_result('worked', "{{ test.test }}", { 'test' => { 'test' => 'worked' } })
     assert_template_result('worked', "{{ test . test }}", { 'test' => { 'test' => 'worked' } })
