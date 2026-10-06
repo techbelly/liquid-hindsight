@@ -18,6 +18,16 @@ class ParserUnitTest < Minitest::Test
     assert_equal('7', p.consume(:number))
   end
 
+  def test_look
+    p = new_parser("wat 6 Peter Hegemon")
+    assert_equal(true, p.look(:id))
+    assert_equal('wat', p.consume(:id))
+    assert_equal(false, p.look(:comparison))
+    assert_equal(true, p.look(:number))
+    assert_equal(true, p.look(:id, 1))
+    assert_equal(false, p.look(:number, 1))
+  end
+
   def test_invalid_expression
     assert_raises(SyntaxError) do
       p = new_parser("==")
