@@ -217,6 +217,19 @@ class ProfilerTest < Minitest::Test
     assert_equal(2, t.profiler[0].children.length)
   end
 
+  def test_profiling_supports_self_time
+    t = Template.parse("{% for item in collection %} {{ item }} {% endfor %}", profile: true)
+    collection = [
+      TestDrop.new("one"),
+      TestDrop.new("two"),
+    ]
+    output = t.render!("collection" => collection)
+    assert_equal(" one  two ", output)
+
+    leaf = t.profiler[0].children[0]
+    assert_operator(leaf.self_time, :>, 0.0)
+  end
+
   def test_profiling_supports_total_time
     t = Template.parse("{% if true %} {{ test }} {% endif %}", profile: true)
     output = t.render!("test" => TestDrop.new("one"))
