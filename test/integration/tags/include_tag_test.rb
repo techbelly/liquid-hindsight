@@ -87,4 +87,13 @@ class IncludeTagTest < Minitest::Test
       assert_match(/Unexpected character =/, error.message)
     end
   end
+
+  def test_include_for_loop_true_with_for_keyword
+    with_error_modes(:lax, :strict, :strict2) do
+      template = Template.parse("{% include 'product' for products %}")
+      include_node = template.root.nodelist.first
+
+      assert(include_node.for_loop?, "Expected for_loop? to be true for 'for' keyword")
+    end
+  end
 end # IncludeTagTest
