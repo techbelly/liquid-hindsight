@@ -109,6 +109,21 @@ class IncludeTagTest < Minitest::Test
     assert_equal(1, file_system.count)
   end
 
+  def test_include_tag_doesnt_cache_partials_across_renders
+    file_system = CountingFileSystem.new
+    assert_equal(
+      'from CountingFileSystem',
+      Template.parse("{% include 'pick_a_source' %}").render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(1, file_system.count)
+
+    assert_equal(
+      'from CountingFileSystem',
+      Template.parse("{% include 'pick_a_source' %}").render!({}, registers: { file_system: file_system }),
+    )
+    assert_equal(2, file_system.count)
+  end
+
   def test_custom_include_tag
     original_tag = Liquid::Template.tags['include']
     Liquid::Template.tags['include'] = CustomInclude
