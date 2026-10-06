@@ -5,6 +5,13 @@ require 'test_helper'
 class LexerUnitTest < Minitest::Test
   include Liquid
 
+  def test_strings
+    assert_equal(
+      [[:string, %('this is a test""')], [:string, %("wat 'lol'")], [:end_of_string]],
+      tokenize(%( 'this is a test""' "wat 'lol'")),
+    )
+  end
+
   def test_integer
     assert_equal(
       [[:id, 'hi'], [:number, '50'], [:end_of_string]],
