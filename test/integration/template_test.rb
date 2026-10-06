@@ -168,6 +168,20 @@ class TemplateTest < Minitest::Test
     assert_equal('ruby error in drop', e.message)
   end
 
+  def test_source_string_subclass
+    string_subclass = Class.new(String) do
+      # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
+      def to_s
+        self
+      end
+    end
+    source = string_subclass.new("{% assign x = 2 -%} x= {{- x }}")
+    assert_instance_of(string_subclass, source)
+    output = Template.parse(source).render!
+    assert_equal("x=2", output)
+    assert_instance_of(String, output)
+  end
+
   def test_raises_error_with_invalid_utf8
     e = assert_raises(TemplateEncodingError) do
       Template.parse(<<~LIQUID)
