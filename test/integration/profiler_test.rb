@@ -188,6 +188,18 @@ class ProfilerTest < Minitest::Test
     end
   end
 
+  def test_can_iterate_over_each_profiling_entry
+    t = Template.parse("{{ 'a string' | upcase }}\n{% increment test %}", profile: true)
+    t.render!
+
+    timing_count = 0
+    t.profiler.each do |_timing|
+      timing_count += 1
+    end
+
+    assert_equal(2, timing_count)
+  end
+
   def test_profiling_marks_children_of_if_blocks
     t = Template.parse("{% if true %} {% increment test %} {{ test }} {% endif %}", profile: true)
     t.render!
