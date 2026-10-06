@@ -5,6 +5,10 @@ require 'test_helper'
 class CaptureTest < Minitest::Test
   include Liquid
 
+  def test_captures_block_content_in_variable
+    assert_template_result("test string", "{% capture var %}test string{% endcapture %}{{var}}", {})
+  end
+
   def test_capture_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% capture (x[y %}hello{% endcapture %}", error_mode: :strict2)

@@ -49,6 +49,14 @@ module Liquid
       p.consume(:end_of_string)
     end
 
+    def render_to_output_buffer(context, output)
+      context.resource_limits.with_capture do
+        capture_output = render(context)
+        context.scopes.last[@to] = capture_output
+      end
+      output
+    end
+
     def blank?
       true
     end
