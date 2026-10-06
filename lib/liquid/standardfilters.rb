@@ -249,6 +249,21 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Removes any duplicate items in an array.
+    # @liquid_syntax array | uniq
+    # @liquid_return [array[untyped]]
+    def uniq(input, property = nil)
+      ary = InputIterator.new(input, context)
+
+      if ary.empty? # The next two cases assume a non-empty array.
+        []
+      end
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Returns the first item in an array.
     # @liquid_syntax array | first
     # @liquid_return [untyped]
