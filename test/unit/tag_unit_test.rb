@@ -25,6 +25,11 @@ class TagUnitTest < Minitest::Test
     def render(_context); end
   end
 
+  def test_tag_render_to_output_buffer_nil_value
+    custom_tag = CustomTag.parse("some_tag", "", new_tokenizer, ParseContext.new)
+    assert_equal('some string', custom_tag.render_to_output_buffer(Context.new, "some string"))
+  end
+
   private
 
   def new_tokenizer

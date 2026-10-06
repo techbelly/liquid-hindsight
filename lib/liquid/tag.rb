@@ -53,6 +53,15 @@ module Liquid
       ''
     end
 
+    # For backwards compatibility with custom tags. In a future release, the semantics
+    # of the `render_to_output_buffer` method will become the default and the `render`
+    # method will be removed.
+    def render_to_output_buffer(context, output)
+      render_result = render(context)
+      output << render_result if render_result
+      output
+    end
+
     private
   end
 end
