@@ -88,6 +88,10 @@ module Liquid
       when Liquid::Context
         c = args.shift
 
+        if @rethrow_errors
+          c.exception_renderer = Liquid::RAISE_EXCEPTION_LAMBDA
+        end
+
         c
       when Liquid::Drop
       when Hash
