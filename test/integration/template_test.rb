@@ -232,6 +232,15 @@ class TemplateTest < Minitest::Test
     assert_instance_of(Liquid::UndefinedDropMethod, t.errors[0])
   end
 
+  def test_undefined_drop_methods_raise
+    d = DropWithUndefinedMethod.new
+    t = Template.new.parse('{{ foo }} {{ woot }}')
+
+    assert_raises(UndefinedDropMethod) do
+      t.render!(d, strict_variables: true)
+    end
+  end
+
   def test_source_string_subclass
     string_subclass = Class.new(String) do
       # E.g. ActiveSupport::SafeBuffer does this, so don't just rely on to_s to return a String
