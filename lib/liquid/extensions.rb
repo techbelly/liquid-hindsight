@@ -11,3 +11,9 @@ class Hash # :nodoc:
     self
   end
 end
+
+class Range # :nodoc:
+  def to_liquid
+    self
+  end
+end
