@@ -54,6 +54,18 @@ class TemplateTest < Minitest::Test
     assert_equal('', t.parse("{{ foo }}").render!)
   end
 
+  def test_lambda_is_called_once_from_persistent_assigns_over_multiple_parses_and_renders
+    t = Template.new
+    t.assigns['number'] = -> {
+      @global ||= 0
+      @global  += 1
+    }
+    assert_equal('1', t.parse("{{number}}").render!)
+    assert_equal('1', t.parse("{{number}}").render!)
+    assert_equal('1', t.render!)
+    @global = nil
+  end
+
   def test_resource_limits_render_length
     t = Template.parse("0123456789")
     t.resource_limits.render_length_limit = 9
