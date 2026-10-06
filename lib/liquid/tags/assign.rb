@@ -35,7 +35,12 @@ module Liquid
     end
 
     def lax_parse(markup)
-      self.class.raise_syntax_error(parse_context)
+      if markup =~ Syntax
+        @to   = Regexp.last_match(1)
+        @from = Variable.new(Regexp.last_match(2), parse_context)
+      else
+        self.class.raise_syntax_error(parse_context)
+      end
     end
 
     def strict_parse(markup)
@@ -52,6 +57,10 @@ module Liquid
       p = @parse_context.new_parser(lhs)
       @to = p.consume(:id)
       p.consume(:end_of_string)
+    end
+
+    def blank?
+      true
     end
 
     private

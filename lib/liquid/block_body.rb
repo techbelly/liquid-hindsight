@@ -74,6 +74,8 @@ module Liquid
             return yield tag_name, markup
           end
           new_tag = tag.parse(tag_name, markup, tokenizer, parse_context)
+          @blank &&= new_tag.blank?
+          @nodelist << new_tag
         when token.start_with?(VARSTART)
           whitespace_handler(token, parse_context)
           @nodelist << create_variable(token, parse_context)

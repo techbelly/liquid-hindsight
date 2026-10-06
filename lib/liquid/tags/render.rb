@@ -32,5 +32,18 @@ module Liquid
     disable_tags "include"
 
     attr_reader :template_name_expr, :variable_name_expr, :attributes, :alias_name
+
+    def initialize(tag_name, markup, options)
+      super
+      parse_with_selected_parser(markup)
+    end
+
+    def strict_parse(markup)
+      lax_parse(markup)
+    end
+
+    def lax_parse(markup)
+      raise SyntaxError, options[:locale].t("errors.syntax.render") unless markup =~ SYNTAX
+    end
   end
 end
