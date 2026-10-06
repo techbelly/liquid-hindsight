@@ -158,6 +158,14 @@ class IncludeTagTest < Minitest::Test
     end
   end
 
+  def test_does_not_add_error_in_strict_mode_for_missing_variable
+    env = Liquid::Environment.build(file_system: TestFileSystem.new)
+
+    a = Liquid::Template.parse(' {% include "nested_template" %}', environment: env)
+    a.render!
+    assert_empty(a.errors)
+  end
+
   def test_render_raise_argument_error_when_template_is_undefined
     assert_template_result(
       "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
