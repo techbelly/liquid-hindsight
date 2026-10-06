@@ -412,6 +412,11 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "message" => "Hello!", "language" => "English" }], @filters.where(input, "language", "English"))
   end
 
+  def test_where_array_of_only_unindexable_values
+    assert_nil(@filters.where([nil], "ok", true))
+    assert_nil(@filters.where([nil], "ok"))
+  end
+
   def test_where_no_target_value
     input = [
       { "foo" => false },
