@@ -13,6 +13,14 @@ class CaptureTest < Minitest::Test
     assert_template_result("test string", "{% capture 'var' %}test string{% endcapture %}{{var}}", {}, error_mode: :lax)
   end
 
+  def test_capture_with_hyphen_in_variable_name
+    template_source = <<~END_TEMPLATE
+      {% capture this-thing %}Print this-thing{% endcapture -%}
+      {{ this-thing -}}
+    END_TEMPLATE
+    assert_template_result("Print this-thing", template_source)
+  end
+
   def test_capture_rejects_parentheses_in_variable_name_in_strict2
     assert_raises(Liquid::SyntaxError) do
       Liquid::Template.parse("{% capture (x[y %}hello{% endcapture %}", error_mode: :strict2)
