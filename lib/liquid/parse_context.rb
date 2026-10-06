@@ -28,6 +28,10 @@ module Liquid
       @options[option_key]
     end
 
+    def new_block_body
+      Liquid::BlockBody.new
+    end
+
     def new_parser(input)
       @string_scanner.string = input
       Parser.new(@string_scanner, reject_bare_brackets: @error_mode == :strict2 || @error_mode == :rigid)

@@ -49,6 +49,9 @@ module Liquid
       unless source.valid_encoding?
         raise TemplateEncodingError, parse_context.locale.t("errors.syntax.invalid_template_encoding")
       end
+
+      tokenizer     = parse_context.new_tokenizer(source, start_line_number: @line_numbers && 1)
+      @root         = Document.parse(tokenizer, parse_context)
     end
 
     private

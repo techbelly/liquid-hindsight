@@ -14,6 +14,50 @@ module Liquid
 
     attr_reader :nodelist
 
+    def initialize
+      @nodelist = []
+      @blank    = true
+    end
+
+    def parse(tokenizer, parse_context, &block)
+      raise FrozenError, "can't modify frozen Liquid::BlockBody" if frozen?
+
+      parse_context.line_number = tokenizer.line_number
+
+      parse_for_document(tokenizer, parse_context, &block)
+    end
+
+    # @api private
+    def self.raise_missing_variable_terminator(token, parse_context)
+      raise SyntaxError, parse_context.locale.t("errors.syntax.variable_termination", token: token, tag_end: VariableEnd.inspect)
+    end
+
+    private def parse_for_document(tokenizer, parse_context, &block)
+      while (token = tokenizer.shift)
+        next if token.empty?
+        case
+        when token.start_with?(VARSTART)
+          whitespace_handler(token, parse_context)
+          @nodelist << create_variable(token, parse_context)
+        else
+          if parse_context.trim_whitespace
+          end
+          parse_context.trim_whitespace = false
+          @nodelist << token
+          @blank &&= token.match?(WhitespaceOrNothing)
+        end
+        parse_context.line_number = tokenizer.line_number
+      end
+    end
+
+    def whitespace_handler(token, parse_context)
+      parse_context.trim_whitespace = (token[-3] == WhitespaceControl)
+    end
+
     private
+
+    def create_variable(token, parse_context)
+      BlockBody.raise_missing_variable_terminator(token, parse_context)
+    end
   end
 end
