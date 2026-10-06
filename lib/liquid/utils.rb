@@ -39,6 +39,8 @@ module Liquid
       if collection.begin.nil? && !range_method_overridden?(collection, :each)
         raise TypeError, "can't iterate from NilClass"
       end
+
+      slice_collection_for_iteration_using_each(collection, from, to, resource_limits)
     end
     private_class_method :slice_range_using_each
 
@@ -58,6 +60,7 @@ module Liquid
         segments << item if from <= index
         index += 1
       end
+      segments
     end
     private_class_method :slice_collection_for_iteration_using_each
 

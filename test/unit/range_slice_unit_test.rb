@@ -3,6 +3,15 @@
 require 'test_helper'
 
 class RangeSliceUnitTest < Minitest::Test
+  def test_non_integer_range_empty_windows_do_not_visit_a_sentinel_value
+    limits = Liquid::ResourceLimits.new({})
+
+    assert_equal([], Liquid::Utils.slice_collection_for_iteration('a'..'z', 2, 2, limits))
+    assert_equal(0, limits.render_score)
+    assert_equal(['a', 'b'], Liquid::Utils.slice_collection_for_iteration('a'..'z', 0, 2, limits))
+    assert_equal(2, limits.render_score)
+  end
+
   def test_standard_beginless_range_raises_for_empty_windows
     [[0, 0], [1, 0]].each do |from, to|
       assert_raises(TypeError) do
