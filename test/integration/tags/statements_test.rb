@@ -15,6 +15,11 @@ class StatementsTest < Minitest::Test
     assert_template_result('  true  ', text)
   end
 
+  def test_zero_lq_one
+    text = ' {% if 0 < 1 %} true {% else %} false {% endif %} '
+    assert_template_result('  true  ', text)
+  end
+
   # def test_is_nil
   #  text = %| {% if var != nil %} true {% else %} false {% end %} |
   #  @template.assigns = { 'var' => 'hello there!'}
