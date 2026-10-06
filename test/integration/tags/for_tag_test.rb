@@ -61,4 +61,10 @@ class ForTagTest < Minitest::Test
       @data[(from..to - 1)]
     end
   end
+
+  def test_endless_range_remains_unsupported_with_a_limit
+    template = Template.parse('{% for i in numbers limit:2 %}{{ i }}{% endfor %}')
+
+    assert_raises(RangeError) { template.render!('numbers' => (1..)) }
+  end
 end

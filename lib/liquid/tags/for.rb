@@ -111,7 +111,11 @@ module Liquid
         offsets[@name].to_i
       else
         from_value = context.evaluate(@from)
-        Utils.to_integer(from_value)
+        if from_value.nil?
+          0
+        else
+          Utils.to_integer(from_value)
+        end
       end
 
       collection = context.evaluate(@collection_name)
@@ -122,6 +126,10 @@ module Liquid
       else
         Utils.to_integer(limit_value) + from
       end
+
+      segment = Utils.slice_collection_for_iteration(
+        collection, from, to, context.resource_limits, use_range_to_a: true
+      )
     end
 
     def set_attribute(key, expr, safe: false)

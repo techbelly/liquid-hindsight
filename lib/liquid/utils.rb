@@ -35,6 +35,7 @@ module Liquid
       # TableRow historically accepted an endless subclass when its custom #each
       # was finite, while For historically raised through Range#to_a.
       if collection.end.nil? && !(allow_endless && (!to.nil? || range_method_overridden?(collection, :each)))
+        raise RangeError, "cannot convert endless range to an array"
       end
       if collection.begin.nil? && !range_method_overridden?(collection, :each)
         raise TypeError, "can't iterate from NilClass"
