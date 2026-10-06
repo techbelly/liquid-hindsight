@@ -103,6 +103,28 @@ class VariableTest < Minitest::Test
     assert_template_result('bar', '{{ self[key] }}', { 'key' => 'foo', 'foo' => 'bar' })
   end
 
+  def test_dynamic_find_var_with_drop
+    assert_template_result(
+      'bar',
+      '{{ self[list[settings.zero]] }}',
+      {
+        'list' => ['foo'],
+        'settings' => SettingsDrop.new("zero" => 0),
+        'foo' => 'bar',
+      },
+    )
+
+    assert_template_result(
+      'foo',
+      '{{ self[list[settings.zero]["foo"]] }}',
+      {
+        'list' => [{ 'foo' => 'bar' }],
+        'settings' => SettingsDrop.new("zero" => 0),
+        'bar' => 'foo',
+      },
+    )
+  end
+
   def test_double_nested_variable_lookup
     assert_template_result(
       'bar',
