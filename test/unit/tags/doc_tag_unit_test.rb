@@ -145,6 +145,22 @@ class DocTagUnitTest < Minitest::Test
     assert_equal("{{ incomplete", doc_tag.nodelist.first.to_s)
   end
 
+  def test_doc_tag_preserves_error_line_numbers
+    template = Liquid::Template.parse(<<~LIQUID.chomp, line_numbers: true)
+      {% doc %}
+        {% if true %}
+      {% enddoc %}
+      {{ errors.standard_error }}
+    LIQUID
+
+    expected = <<~TEXT.chomp
+
+      Liquid error (line 4): standard error
+    TEXT
+
+    assert_equal(expected, template.render('errors' => ErrorDrop.new))
+  end
+
   def test_doc_tag_whitespace_control
     # Basic whitespace control
     assert_template_result("Hello!", "      {%- doc -%}123{%- enddoc -%}Hello!")
