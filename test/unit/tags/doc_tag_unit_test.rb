@@ -145,6 +145,17 @@ class DocTagUnitTest < Minitest::Test
     assert_equal("{{ incomplete", doc_tag.nodelist.first.to_s)
   end
 
+  def test_doc_tag_whitespace_control
+    # Basic whitespace control
+    assert_template_result("Hello!", "      {%- doc -%}123{%- enddoc -%}Hello!")
+    assert_template_result("Hello!", "{%- doc -%}123{%- enddoc -%}     Hello!")
+    assert_template_result("Hello!", "      {%- doc -%}123{%- enddoc -%}     Hello!")
+    assert_template_result("Hello!", <<~LIQUID.chomp)
+      {%- doc %}Whitespace control!{% enddoc -%}
+      Hello!
+    LIQUID
+  end
+
   def test_doc_tag_visitor
     template_source = '{% doc %}{% enddoc %}'
 
