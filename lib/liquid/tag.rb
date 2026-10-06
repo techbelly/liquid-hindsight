@@ -62,6 +62,10 @@ module Liquid
       output
     end
 
+    def blank?
+      false
+    end
+
     private
 
     def parse_expression(markup, safe: false)
