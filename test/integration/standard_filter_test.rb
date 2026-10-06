@@ -565,6 +565,10 @@ class StandardFiltersTest < Minitest::Test
     end
   end
 
+  def test_sort_works_on_enumerables
+    assert_template_result("213", '{{ foo | sort: "bar" | map: "foo" }}', { "foo" => TestEnumerable.new })
+  end
+
   def test_first_and_last_call_to_liquid
     assert_template_result('foobar', '{{ foo | first }}', { 'foo' => [ThingWithToLiquid.new] })
     assert_template_result('foobar', '{{ foo | last }}', { 'foo' => [ThingWithToLiquid.new] })
