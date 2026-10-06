@@ -64,8 +64,15 @@ module Liquid
             context[key] = context.evaluate(value)
           end
 
-          context[context_variable_name] = variable
-          partial.render_to_output_buffer(context, output)
+          if variable.is_a?(Array)
+            variable.each do |var|
+              context[context_variable_name] = var
+              partial.render_to_output_buffer(context, output)
+            end
+          else
+            context[context_variable_name] = variable
+            partial.render_to_output_buffer(context, output)
+          end
         end
       ensure
         context.template_name = old_template_name
