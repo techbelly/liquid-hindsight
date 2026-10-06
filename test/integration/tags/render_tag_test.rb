@@ -38,6 +38,14 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_accepts_multiple_named_arguments
+    assert_template_result(
+      '1 2',
+      '{% render "snippet", one: 1, two: 2 %}',
+      partials: { 'snippet' => '{{ one }} {{ two }}' },
+    )
+  end
+
   def test_render_does_not_inherit_parent_scope_variables
     assert_template_result(
       '',
