@@ -977,6 +977,18 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result(expected_output, template, { "array" => array })
   end
 
+  def test_find_with_empty_arrays
+    template = <<~LIQUID
+      {%- assign product = products | find: 'title.content', 'Not found' -%}
+      {%- unless product -%}
+        Product not found.
+      {%- endunless -%}
+    LIQUID
+    expected_output = "Product not found."
+
+    assert_template_result(expected_output, template, { "products" => [] })
+  end
+
   def test_find_index_with_value
     products = [
       { "title" => "Pro goggles",    "price" => 1299 },
