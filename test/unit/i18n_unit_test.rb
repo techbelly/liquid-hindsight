@@ -9,6 +9,10 @@ class I18nUnitTest < Minitest::Test
     @i18n = I18n.new(fixture("en_locale.yml"))
   end
 
+  def test_nested_translate_string
+    assert_equal("something wasn't right", @i18n.translate("errors.syntax.oops"))
+  end
+
   # def test_raises_translation_error_on_undefined_interpolation_key
   #   assert_raises I18n::TranslationError do
   #     @i18n.translate("whatever", :oopstypos => "yes")
