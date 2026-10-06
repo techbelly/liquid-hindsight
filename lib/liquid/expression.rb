@@ -70,6 +70,8 @@ module Liquid
         case markup
         when INTEGER_REGEX
           return Integer(markup, 10)
+        when FLOAT_REGEX
+          return markup.to_f
         end
 
         ss.string = markup
