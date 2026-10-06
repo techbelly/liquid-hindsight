@@ -254,6 +254,20 @@ class ContextTest < Minitest::Test
     assert_template_result("worked", "{{ test[0].test }}", assigns)
   end
 
+  def test_hash_to_array_transition
+    assigns = {
+      'colors' => {
+        'Blue' => ['003366', '336699', '6699CC', '99CCFF'],
+        'Green' => ['003300', '336633', '669966', '99CC99'],
+        'Yellow' => ['CC9900', 'FFCC00', 'FFFF99', 'FFFFCC'],
+        'Red' => ['660000', '993333', 'CC6666', 'FF9999'],
+      },
+    }
+
+    assert_template_result("003366", "{{ colors.Blue[0] }}", assigns)
+    assert_template_result("FF9999", "{{ colors.Red[3] }}", assigns)
+  end
+
   def test_cents
     @context.merge("cents" => HundredCentes.new)
     assert_equal(100, @context['cents'])
