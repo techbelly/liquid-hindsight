@@ -175,6 +175,17 @@ class ConditionUnitTest < Minitest::Test
     assert_equal(['title'], result.lookups)
   end
 
+  def test_parse_expression_in_strict2_mode_raises_internal_error
+    environment = Environment.build(error_mode: :strict2)
+    parse_context = ParseContext.new(environment: environment)
+
+    error = assert_raises(Liquid::InternalError) do
+      Condition.parse_expression(parse_context, 'product.title')
+    end
+
+    assert_match(/unsafe parse_expression cannot be used in strict2 mode/, error.message)
+  end
+
   # Tests for blank? comparison without ActiveSupport
   #
   # Ruby's standard library does not include blank? on String, Array, Hash, etc.
