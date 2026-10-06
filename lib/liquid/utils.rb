@@ -44,6 +44,10 @@ module Liquid
       return [] unless collection.respond_to?(:each)
 
       collection.each do |item|
+        if to && to <= index
+          break
+        end
+
         if from <= index
           segments << item
         end
