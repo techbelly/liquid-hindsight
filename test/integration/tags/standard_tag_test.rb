@@ -56,6 +56,11 @@ class StandardTagTest < Minitest::Test
                                      {%endcomment%}bar')
   end
 
+  def test_hyphenated_assign
+    assigns = { 'a-b' => '1' }
+    assert_template_result('a-b:1 a-b:2', 'a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}', assigns)
+  end
+
   def test_assign_with_colon_and_spaces
     assigns = { 'var' => { 'a:b c' => { 'paged' => '1' } } }
     assert_template_result('var2: 1', '{%assign var2 = var["a:b c"].paged %}var2: {{var2}}', assigns)
