@@ -334,4 +334,8 @@ class TrimModeTest < Minitest::Test
     END_EXPECTED
     assert_template_result(expected, text)
   end
+
+  def test_trim_blank
+    assert_template_result('foobar', 'foo {{-}} bar')
+  end
 end # TrimModeTest
