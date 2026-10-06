@@ -14,4 +14,14 @@ class StandardTagTest < Minitest::Test
       )
     end
   end
+
+  def test_case_detects_bad_syntax
+    assert_raises(SyntaxError) do
+      assert_template_result('',  '{% case false %}{% when %}true{% endcase %}', {})
+    end
+
+    assert_raises(SyntaxError) do
+      assert_template_result('',  '{% case false %}{% huh %}true{% endcase %}', {})
+    end
+  end
 end # StandardTagTest

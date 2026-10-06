@@ -51,6 +51,15 @@ module Liquid
       @blocks.map(&:attachment)
     end
 
+    def unknown_tag(tag, markup, tokens)
+      case tag
+      when 'when'
+        record_when_condition(markup)
+      else
+        super
+      end
+    end
+
     private
 
     def strict_parse(markup)
@@ -60,6 +69,20 @@ module Liquid
     def lax_parse(markup)
       if markup =~ Syntax
         @left = parse_expression(Regexp.last_match(1))
+      end
+    end
+
+    def record_when_condition(markup)
+      body = new_body
+
+      parse_lax_when(markup, body)
+    end
+
+    def parse_lax_when(markup, body)
+      while markup
+        unless markup =~ WhenSyntax
+          raise SyntaxError, options[:locale].t("errors.syntax.case_invalid_when")
+        end
       end
     end
 
