@@ -30,6 +30,14 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_accepts_literals_as_arguments
+    assert_template_result(
+      '123',
+      '{% render "snippet", price: 123 %}',
+      partials: { 'snippet' => '{{ price }}' },
+    )
+  end
+
   def test_render_does_not_inherit_parent_scope_variables
     assert_template_result(
       '',
