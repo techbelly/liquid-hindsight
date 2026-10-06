@@ -40,6 +40,12 @@ module Liquid
     def parse(tokens)
       if parse_body(@for_block, tokens)
       end
+      @else_block&.freeze
+      @for_block.freeze
+    end
+
+    def nodelist
+      @else_block ? [@for_block, @else_block] : [@for_block]
     end
 
     protected
