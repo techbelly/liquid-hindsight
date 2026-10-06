@@ -296,6 +296,15 @@ class StandardFiltersTest < Minitest::Test
     assert_equal([{ "a" => "10" }, { "a" => "2" }], @filters.sort([{ "a" => "10" }, { "a" => "2" }], "a"))
   end
 
+  def test_uniq
+    assert_equal(["foo"], @filters.uniq("foo"))
+    assert_equal([1, 3, 2, 4], @filters.uniq([1, 1, 3, 2, 3, 1, 4, 3, 2, 1]))
+    assert_equal([{ "a" => 1 }, { "a" => 3 }, { "a" => 2 }], @filters.uniq([{ "a" => 1 }, { "a" => 3 }, { "a" => 1 }, { "a" => 2 }], "a"))
+    test_drop = TestDrop.new(value: "test")
+    test_drop_alternate = TestDrop.new(value: "test")
+    assert_equal([test_drop], @filters.uniq([test_drop, test_drop_alternate], 'value'))
+  end
+
   def test_uniq_empty_array
     assert_equal([], @filters.uniq([], "a"))
   end
