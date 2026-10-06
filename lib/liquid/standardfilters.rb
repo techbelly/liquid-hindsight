@@ -795,6 +795,19 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Rounds a number down to the nearest integer.
+    # @liquid_syntax number | floor
+    # @liquid_return [number]
+    def floor(input)
+      Utils.to_number(input).floor.to_i
+    rescue ::FloatDomainError => e
+      raise Liquid::FloatDomainError, e.message
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
     # @liquid_category default
     # @liquid_summary
     #   Sets a default value for any variable whose value is one of the following:
