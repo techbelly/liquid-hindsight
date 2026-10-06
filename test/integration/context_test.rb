@@ -188,6 +188,21 @@ class ContextTest < Minitest::Test
     assert_equal('1', @context['callcount'])
   end
 
+  def test_nested_lambda_is_called_once
+    @global = 0
+
+    @context['callcount'] = {
+      "lambda" => proc {
+                    @global += 1
+                    @global.to_s
+                  },
+    }
+
+    assert_equal('1', @context['callcount.lambda'])
+    assert_equal('1', @context['callcount.lambda'])
+    assert_equal('1', @context['callcount.lambda'])
+  end
+
   def test_access_to_context_from_proc
     @context.registers[:magic] = 345392
 
