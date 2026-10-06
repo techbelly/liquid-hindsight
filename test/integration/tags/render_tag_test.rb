@@ -5,6 +5,14 @@ require 'test_helper'
 class RenderTagTest < Minitest::Test
   include Liquid
 
+  def test_render_does_not_inherit_parent_scope_variables
+    assert_template_result(
+      '',
+      '{% assign outer_variable = "should not be visible" %}{% render "snippet" %}',
+      partials: { 'snippet' => '{{ outer_variable }}' },
+    )
+  end
+
   def test_render_does_not_inherit_variable_with_same_name_as_snippet
     assert_template_result(
       '',
