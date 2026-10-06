@@ -12,14 +12,27 @@ module Liquid
       str << super()
 
       if markup_context
-        str << " "
-        str << markup_context
       end
 
       str
     end
 
     private
+
+    def message_prefix
+      str = +""
+      str << if is_a?(SyntaxError)
+        "Liquid syntax error"
+      else
+        "Liquid error"
+      end
+
+      if line_number
+      end
+
+      str << ": "
+      str
+    end
   end
 
   ArgumentError         = Class.new(Error)
