@@ -342,4 +342,8 @@ class StandardTagTest < Minitest::Test
     assert_template_result('', '{% if empty == true %}?{% endif %}', {})
     assert_template_result('', '{% if null == true %}?{% endif %}', {})
   end
+
+  def test_multiline_tag
+    assert_template_result('0 1 2 3', "0{%\nfor i in (1..3)\n%} {{\ni\n}}{%\nendfor\n%}")
+  end
 end # StandardTagTest
