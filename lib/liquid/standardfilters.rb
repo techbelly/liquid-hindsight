@@ -624,6 +624,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Adds a given string to the beginning of a string.
+    # @liquid_syntax string | prepend: string
+    # @liquid_return [string]
+    def prepend(input, string)
+      input = Utils.to_s(input)
+      string = Utils.to_s(string)
+      string + input
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Converts newlines (`\n`) in a string to HTML line breaks (`<br>`).
     # @liquid_syntax string | newline_to_br
     # @liquid_return [string]
