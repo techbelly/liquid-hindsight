@@ -52,4 +52,26 @@ class PartialCacheUnitTest < Minitest::Test
 
     assert_equal(2, shared_file_system.file_read_count)
   end
+
+  def test_cache_is_not_broken_when_a_different_parse_context_is_used
+    file_system = StubFileSystem.new('my_partial' => 'some partial body')
+    context     = Liquid::Context.build(
+      registers: { file_system: file_system },
+    )
+
+    Liquid::PartialCache.load(
+      'my_partial',
+      context: context,
+      parse_context: Liquid::ParseContext.new(my_key: 'value one'),
+    )
+    Liquid::PartialCache.load(
+      'my_partial',
+      context: context,
+      parse_context: Liquid::ParseContext.new(my_key: 'value two'),
+    )
+
+    # Technically what we care about is that the file was parsed twice,
+    # but measuring file reads is an OK proxy for this.
+    assert_equal(1, file_system.file_read_count)
+  end
 end
