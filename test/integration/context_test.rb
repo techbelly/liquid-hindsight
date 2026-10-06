@@ -186,6 +186,11 @@ class ContextTest < Minitest::Test
     assert_nil(@context['test'])
   end
 
+  def test_keywords
+    assert_template_result("pass", "{% if true == expect %}pass{% endif %}", { "expect" => true })
+    assert_template_result("pass", "{% if false == expect %}pass{% endif %}", { "expect" => false })
+  end
+
   def test_merge
     @context.merge("test" => "test")
     assert_equal('test', @context['test'])
