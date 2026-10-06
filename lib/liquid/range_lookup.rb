@@ -35,6 +35,15 @@ module Liquid
 
     private
 
+    def to_integer(input)
+      case input
+      when Integer
+        input
+      when NilClass, String
+        input.to_i
+      end
+    end
+
     class ParseTreeVisitor < Liquid::ParseTreeVisitor
       def children
         [@node.start_obj, @node.end_obj]
