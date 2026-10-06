@@ -19,6 +19,10 @@ class HashRenderingTest < Minitest::Test
     assert_template_result("{\"outer\"=>{\"inner\"=>\"value\"}}", "{{ my_hash }}", { "my_hash" => { "outer" => { "inner" => "value" } } })
   end
 
+  def test_render_hash_with_array_values
+    assert_template_result("{\"numbers\"=>[1, 2, 3]}", "{{ my_hash }}", { "my_hash" => { "numbers" => [1, 2, 3] } })
+  end
+
   def test_render_recursive_hash
     recursive_hash = { "self" => {} }
     recursive_hash["self"]["self"] = recursive_hash
