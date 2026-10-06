@@ -223,6 +223,19 @@ module Liquid
     # @liquid_type filter
     # @liquid_category array
     # @liquid_summary
+    #   Returns the first item in an array with a specific property value.
+    # @liquid_description
+    #   This requires you to provide both the property name and the associated value.
+    # @liquid_syntax array | find: string, string
+    # @liquid_return [untyped]
+    def find(input, property, target_value = nil)
+      filter_array(input, property, target_value, nil) { |ary, &block| ary.find(&block) }
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category array
+    # @liquid_summary
     #   Returns the index of the first item in an array with a specific property value.
     # @liquid_description
     #   This requires you to provide both the property name and the associated value.
