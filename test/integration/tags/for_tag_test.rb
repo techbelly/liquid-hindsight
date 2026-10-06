@@ -119,6 +119,16 @@ class ForTagTest < Minitest::Test
     )
   end
 
+  def test_for_parentloop_nil_when_not_present
+    assert_template_result(
+      '.1 .2 ',
+      '{% for inner in outer %}' \
+      '{{ forloop.parentloop.index }}.{{ forloop.index }} ' \
+      '{% endfor %}',
+      { 'outer' => [[1, 1, 1], [1, 1, 1]] },
+    )
+  end
+
   def test_inner_for_over_empty_input
     assert_template_result('oo', '{% for a in (1..2) %}o{% for b in empty %}{% endfor %}{% endfor %}')
   end
