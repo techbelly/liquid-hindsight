@@ -21,6 +21,15 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_passes_named_arguments_into_inner_scope
+    assert_template_result(
+      'My Product',
+      '{% render "product", inner_product: outer_product %}',
+      { 'outer_product' => { 'title' => 'My Product' } },
+      partials: { 'product' => '{{ inner_product.title }}' },
+    )
+  end
+
   def test_render_does_not_inherit_parent_scope_variables
     assert_template_result(
       '',
