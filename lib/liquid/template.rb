@@ -112,6 +112,8 @@ module Liquid
       begin
         # render the nodelist.
         @root.render_to_output_buffer(context, output || +'')
+      rescue Liquid::MemoryError => e
+        context.handle_error(e)
       ensure
         context.registers.static.delete(:template_error_mode)
         @errors = context.errors

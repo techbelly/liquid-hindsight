@@ -39,8 +39,8 @@ module Liquid
 
     # update either render_length or assign_score based on whether or not the writes are captured
     def increment_write_score(output)
-      if (last_captured = @last_capture_length)
-      elsif @render_length_limit && output.bytesize > @render_length_limit
+      if @render_length_limit && output.bytesize > @render_length_limit
+        raise_limits_reached
       end
     end
 
