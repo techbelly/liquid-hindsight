@@ -164,6 +164,8 @@ module Liquid
 
             # Handle any interrupts if they exist.
             next unless context.interrupt?
+            interrupt = context.pop_interrupt
+            break if interrupt.is_a?(BreakInterrupt)
           end
         ensure
           for_stack.pop

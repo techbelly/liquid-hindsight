@@ -92,6 +92,11 @@ module Liquid
       @interrupts.push(e)
     end
 
+    # pop an interrupt from the stack
+    def pop_interrupt
+      @interrupts.pop
+    end
+
     def handle_error(e, line_number = nil)
       e = internal_error unless e.is_a?(Liquid::Error)
       e.template_name ||= template_name

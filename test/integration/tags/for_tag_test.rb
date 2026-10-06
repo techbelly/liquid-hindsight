@@ -152,6 +152,17 @@ class ForTagTest < Minitest::Test
     assert_raises(Liquid::MemoryError) { template.render! }
   end
 
+  def test_range_break_charges_only_visited_items_and_preserves_full_metadata
+    range = bounded_integer_range_with_tripwires
+    template = Template.parse(
+      '{% for i in numbers reversed %}{{ forloop.length }}:{{ i }}{% break %}{% endfor %}',
+    )
+    template.resource_limits.render_score_limit = 10
+
+    assert_equal('1000:1000', template.render!('numbers' => range))
+    assert_operator(template.resource_limits.render_score, :<=, 10)
+  end
+
   def test_range_subclass_uses_its_custom_each
     range = Class.new(Range) do
       def each
