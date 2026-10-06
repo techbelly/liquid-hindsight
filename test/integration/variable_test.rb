@@ -86,6 +86,10 @@ class VariableTest < Minitest::Test
     assert_template_result('bar', '{{ foo }}', { 'foo' => :bar })
   end
 
+  def test_nested_array
+    assert_template_result('', '{{ foo }}', { 'foo' => [[nil]] })
+  end
+
   def test_double_nested_variable_lookup
     assert_template_result(
       'bar',

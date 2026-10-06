@@ -111,7 +111,14 @@ module Liquid
     end
 
     def render_obj_to_output(obj, output)
-      output << Liquid::Utils.to_s(obj)
+      case obj
+      when Array
+        obj.each do |o|
+          render_obj_to_output(o, output)
+        end
+      else
+        output << Liquid::Utils.to_s(obj)
+      end
     end
 
     private
