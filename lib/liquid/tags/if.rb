@@ -41,6 +41,15 @@ module Liquid
 
     def strict_parse(markup)
       p = @parse_context.new_parser(markup)
+      condition = parse_binary_comparisons(p)
+    end
+
+    def parse_binary_comparisons(p)
+      condition = parse_comparison(p)
+    end
+
+    def parse_comparison(p)
+      a = parse_expression(p.expression, safe: true)
     end
   end
 end
