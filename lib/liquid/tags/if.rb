@@ -26,6 +26,10 @@ module Liquid
       push_block('if', markup)
     end
 
+    def nodelist
+      @blocks.map(&:attachment)
+    end
+
     def parse(tokens)
       while parse_body(@blocks.last.attachment, tokens)
       end
