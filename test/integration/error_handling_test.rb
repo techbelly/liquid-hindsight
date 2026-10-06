@@ -112,6 +112,14 @@ class ErrorHandlingTest < Minitest::Test
     assert_equal([1, 2, 3], template.warnings.map(&:line_number))
   end
 
+  # Liquid should not catch Exceptions that are not subclasses of StandardError, like Interrupt and NoMemoryError
+  def test_exceptions_propagate
+    assert_raises(Exception) do
+      template = Liquid::Template.parse('{{ errors.exception }}')
+      template.render('errors' => ErrorDrop.new)
+    end
+  end
+
   class TestFileSystem
     def read_template_file(_template_path)
       "{{ errors.argument_error }}"

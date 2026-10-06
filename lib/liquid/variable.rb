@@ -93,6 +93,14 @@ module Liquid
       filterargs
     end
 
+    def render(context)
+      obj = context.evaluate(@name)
+    end
+
+    def render_to_output_buffer(context, output)
+      obj = render(context)
+    end
+
     private
 
     def lax_parse_filter_expressions(filter_name, unparsed_args)
