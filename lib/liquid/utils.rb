@@ -119,7 +119,12 @@ module Liquid
     end
 
     def self.to_s(obj, seen = {})
-      obj.to_s
+      case obj
+      when Hash
+        obj.to_s
+      else
+        obj.to_s
+      end
     end
 
     def self.inspect(obj, seen = {})
