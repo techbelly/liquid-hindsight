@@ -52,6 +52,10 @@ module Liquid
 
     private
 
+    def strict2_parse(markup)
+      strict_parse(markup)
+    end
+
     def push_block(tag, markup)
       block = if tag == 'else'
         ElseCondition.new
@@ -65,6 +69,18 @@ module Liquid
 
     def parse_expression(markup, safe: false)
       Condition.parse_expression(parse_context, markup, safe: safe)
+    end
+
+    def lax_parse(markup)
+      expressions = markup.scan(ExpressionsAndOperators)
+      raise SyntaxError, options[:locale].t("errors.syntax.if") unless expressions.pop =~ Syntax
+
+      condition = Condition.new(parse_expression(Regexp.last_match(1)), Regexp.last_match(2), parse_expression(Regexp.last_match(3)))
+
+      until expressions.empty?
+      end
+
+      condition
     end
 
     def strict_parse(markup)

@@ -29,6 +29,13 @@ module Liquid
       when :strict2 then strict2_parse_with_error_context(markup)
       when :strict  then strict_parse_with_error_context(markup)
       when :lax     then lax_parse(markup)
+      when :warn
+        begin
+          strict2_parse_with_error_context(markup)
+        rescue SyntaxError => e
+          parse_context.warnings << e
+          lax_parse(markup)
+        end
       end
     end
 
