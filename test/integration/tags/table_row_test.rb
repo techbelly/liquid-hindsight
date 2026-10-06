@@ -118,6 +118,21 @@ class TableRowTest < Minitest::Test
     )
   end
 
+  def test_tablerow_with_limit_attribute_in_strict2_mode
+    template = <<~LIQUID.chomp
+      {% tablerow i in (1..10) limit: 3 %}{{ i }}{% endtablerow %}
+    LIQUID
+
+    expected = <<~OUTPUT
+      <tr class="row1">
+      <td class="col1">1</td><td class="col2">2</td><td class="col3">3</td></tr>
+    OUTPUT
+
+    with_error_modes(:strict2) do
+      assert_template_result(expected, template)
+    end
+  end
+
   def test_tablerow_with_offset_attribute_in_strict2_mode
     template = <<~LIQUID.chomp
       {% tablerow i in (1..5) offset: 2 %}{{ i }}{% endtablerow %}
