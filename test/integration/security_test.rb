@@ -36,6 +36,13 @@ class SecurityTest < Minitest::Test
     assert_equal(expected, Template.parse(text).render!(@assigns))
   end
 
+  def test_no_instance_eval_later_in_chain
+    text     = %( {{ '1+1' | add_one | instance_eval }} )
+    expected = %( 1+1 + 1 )
+
+    assert_equal(expected, Template.parse(text).render!(@assigns, filters: SecurityFilter))
+  end
+
   def test_does_not_permanently_add_filters_to_symbol_table
     assert_no_new_symbols do
       # MRI imprecisely marks objects found on the C stack, which can result
