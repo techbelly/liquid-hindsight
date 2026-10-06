@@ -33,6 +33,10 @@ module Liquid
       strict_parse_with_error_mode_fallback(markup)
     end
 
+    def raw
+      @markup
+    end
+
     def markup_context(markup)
       "in \"{{#{markup}}}\""
     end
@@ -45,10 +49,29 @@ module Liquid
 
       @name = parse_context.safe_parse_expression(p)
       while p.consume?(:pipe)
+        filtername = p.consume(:id)
+        filterargs = p.consume?(:colon) ? parse_filterargs(p) : Const::EMPTY_ARRAY
+        @filters << lax_parse_filter_expressions(filtername, filterargs)
       end
       p.consume(:end_of_string)
     end
 
     private
+
+    def lax_parse_filter_expressions(filter_name, unparsed_args)
+      filter_args  = []
+      keyword_args = nil
+      unparsed_args.each do |a|
+        if (matches = a.match(JustTagAttributes))
+          keyword_args           ||= {}
+          keyword_args[matches[1]] = parse_context.parse_expression(matches[2])
+        else
+          filter_args << parse_context.parse_expression(a)
+        end
+      end
+      result = [filter_name, filter_args]
+      result << keyword_args if keyword_args
+      result
+    end
   end
 end
