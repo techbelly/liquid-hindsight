@@ -133,6 +133,14 @@ module Liquid
       strainer_template.new(context)
     end
 
+    # Returns the tag class for the given tag name.
+    #
+    # @param name [String] The name of the tag.
+    # @return [Liquid::Tag] The tag class.
+    def tag_for_name(name)
+      @tags[name]
+    end
+
     def freeze
       @tags.freeze
       # TODO: freeze the tags, currently this is not possible because of liquid-c

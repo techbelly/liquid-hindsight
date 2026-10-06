@@ -54,7 +54,20 @@ module Liquid
           unless token =~ FullToken
             return handle_invalid_tag_token(token, parse_context, &block)
           end
+          tag_name = Regexp.last_match(2)
+          markup   = Regexp.last_match(4)
 
+          if parse_context.line_number
+            # newlines inside the tag should increase the line number,
+            # particularly important for multiline {% liquid %} tags
+            parse_context.line_number += Regexp.last_match(1).count("\n") + Regexp.last_match(3).count("\n")
+          end
+
+          unless (tag = parse_context.environment.tag_for_name(tag_name))
+            # end parsing if we reach an unknown tag and let the caller decide
+            # determine how to proceed
+            return yield tag_name, markup
+          end
         when token.start_with?(VARSTART)
           whitespace_handler(token, parse_context)
           @nodelist << create_variable(token, parse_context)
