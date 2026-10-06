@@ -147,7 +147,11 @@ module Liquid
 
       value = obj[key]
 
-      value
+      if value.is_a?(Proc) && obj.respond_to?(:[]=)
+        obj[key] = value.arity == 0 ? value.call : value.call(self)
+      else
+        value
+      end
     end
 
     def with_disabled_tags(tag_names)
