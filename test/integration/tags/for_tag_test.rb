@@ -133,6 +133,18 @@ class ForTagTest < Minitest::Test
     assert_template_result('1020', '{% for i in numbers %}{{ i }}{% endfor %}', { 'numbers' => range })
   end
 
+  def test_range_subclass_custom_to_a_is_honored_for_finite_and_open_bounds
+    range_class = Class.new(Range) do
+      def to_a
+        [42]
+      end
+    end
+
+    [range_class.new(1, 3), range_class.new(nil, 3), range_class.new(1, nil)].each do |range|
+      assert_template_result('42', '{% for i in numbers %}{{ i }}{% endfor %}', { 'numbers' => range })
+    end
+  end
+
   def test_endless_range_remains_unsupported_with_a_limit
     template = Template.parse('{% for i in numbers limit:2 %}{{ i }}{% endfor %}')
 
