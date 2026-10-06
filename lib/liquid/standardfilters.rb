@@ -593,6 +593,20 @@ module Liquid
     # @liquid_type filter
     # @liquid_category string
     # @liquid_summary
+    #   Replaces any instance of a substring inside a string with a given string.
+    # @liquid_syntax string | replace: string, string
+    # @liquid_return [string]
+    def replace(input, string, replacement = '')
+      string = Utils.to_s(string)
+      replacement = Utils.to_s(replacement)
+      input = Utils.to_s(input)
+      input.gsub(string, replacement)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category string
+    # @liquid_summary
     #   Adds a given string to the end of a string.
     # @liquid_syntax string | append: string
     # @liquid_return [string]
@@ -752,6 +766,17 @@ module Liquid
     # @liquid_return [number]
     def minus(input, operand)
       apply_operation(input, operand, :-)
+    end
+
+    # @liquid_public_docs
+    # @liquid_type filter
+    # @liquid_category math
+    # @liquid_summary
+    #   Multiplies a number by a given number.
+    # @liquid_syntax number | times: number
+    # @liquid_return [number]
+    def times(input, operand)
+      apply_operation(input, operand, :*)
     end
 
     # @liquid_public_docs
