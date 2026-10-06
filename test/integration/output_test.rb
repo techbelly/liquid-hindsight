@@ -102,4 +102,12 @@ class OutputTest < Minitest::Test
 
     assert_equal(expected, Template.parse(text).render!(@assigns, filters: [FunnyFilter]))
   end
+
+  def test_multiple_pipings
+    assigns = { 'best_cars' => 'bmw' }
+    text     = %( {{ best_cars | cite_funny | paragraph }} )
+    expected = %( <p>LOL: bmw</p> )
+
+    assert_equal(expected, Template.parse(text).render!(assigns, filters: [FunnyFilter]))
+  end
 end # OutputTest
