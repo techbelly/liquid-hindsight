@@ -138,6 +138,8 @@ module Liquid
         else
           obj.to_s
         end
+      when Array
+        array_inspect(obj, seen)
       else
         obj.to_s
       end
