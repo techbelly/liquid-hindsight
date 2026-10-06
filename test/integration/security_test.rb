@@ -29,6 +29,13 @@ class SecurityTest < Minitest::Test
     assert_equal(expected, Template.parse(text).render!(@assigns))
   end
 
+  def test_no_instance_eval_after_mixing_in_new_filter
+    text     = %( {{ '1+1' | instance_eval }} )
+    expected = %( 1+1 )
+
+    assert_equal(expected, Template.parse(text).render!(@assigns))
+  end
+
   def test_does_not_add_drop_methods_to_symbol_table
     assigns = { 'drop' => Drop.new }
     method_names = Array.new(3) { |index| "untrusted_drop_method_#{object_id}_#{index}" }
