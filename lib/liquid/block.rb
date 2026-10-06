@@ -9,6 +9,14 @@ module Liquid
       @blank = true
     end
 
+    def block_name
+      @tag_name
+    end
+
+    def block_delimiter
+      @block_delimiter ||= "end#{block_name}"
+    end
+
     private
   end
 end
