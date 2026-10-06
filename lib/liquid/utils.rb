@@ -142,7 +142,17 @@ module Liquid
     end
 
     def self.inspect(obj, seen = {})
-      obj.inspect
+      case obj
+      when Hash
+        # If the custom hash implementation overrides `#inspect`, use their
+        # custom implementation. Otherwise we use Liquid's default
+        # implementation.
+        if obj.class.instance_method(:inspect) == HASH_INSPECT_METHOD
+          hash_inspect(obj, seen)
+        end
+      else
+        obj.inspect
+      end
     end
 
     def self.hash_inspect(hash, seen = {})
