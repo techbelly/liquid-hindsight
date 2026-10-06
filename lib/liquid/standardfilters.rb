@@ -365,6 +365,10 @@ module Liquid
 
       if result
         result
+      elsif a.nil?
+        1
+      elsif b.nil?
+        -1
       end
     end
 
