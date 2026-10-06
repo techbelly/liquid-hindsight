@@ -51,6 +51,14 @@ class VariableUnitTest < Minitest::Test
     assert_equal(VariableLookup.new('test.test'), var.name)
   end
 
+  def test_strict_filter_argument_parsing
+    with_error_modes(:strict) do
+      assert_raises(SyntaxError) do
+        create_variable(%( number_of_comments | pluralize: 'comment': 'comments' ))
+      end
+    end
+  end
+
   def test_output_raw_source_of_variable
     var = create_variable(%( name_of_variable | upcase ))
     assert_equal(" name_of_variable | upcase ", var.raw)

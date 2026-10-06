@@ -56,18 +56,21 @@ module Liquid
       p.consume(:end_of_string)
     end
 
+    def parse_filterargs(p)
+      # first argument
+      filterargs = [p.argument]
+      # followed by comma separated others
+      filterargs << p.argument while p.consume?(:comma)
+      filterargs
+    end
+
     private
 
     def lax_parse_filter_expressions(filter_name, unparsed_args)
       filter_args  = []
       keyword_args = nil
       unparsed_args.each do |a|
-        if (matches = a.match(JustTagAttributes))
-          keyword_args           ||= {}
-          keyword_args[matches[1]] = parse_context.parse_expression(matches[2])
-        else
-          filter_args << parse_context.parse_expression(a)
-        end
+        filter_args << parse_context.parse_expression(a)
       end
       result = [filter_name, filter_args]
       result << keyword_args if keyword_args

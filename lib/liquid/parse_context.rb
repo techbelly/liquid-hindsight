@@ -42,6 +42,10 @@ module Liquid
       Expression.safe_parse(parser, @string_scanner, @expression_cache)
     end
 
+    def parse_expression(markup, safe: false)
+      Expression.parse(markup, @string_scanner, @expression_cache)
+    end
+
     def partial=(value)
       @partial = value
       @options = value ? partial_options : @template_options
