@@ -1,0 +1,29 @@
+# frozen_string_literal: true
+
+module Liquid
+  # @liquid_public_docs
+  # @liquid_type tag
+  # @liquid_category variable
+  # @liquid_name capture
+  # @liquid_summary
+  #   Creates a new variable with a string value.
+  # @liquid_description
+  #   You can create complex strings with Liquid logic and variables.
+  #
+  #   > Caution:
+  #   > Predefined Liquid objects can be overridden by variables with the same name.
+  #   > To make sure that you can access all Liquid objects, make sure that your variable name doesn't match a predefined object's name.
+  # @liquid_syntax
+  #   {% capture variable %}
+  #     value
+  #   {% endcapture %}
+  # @liquid_syntax_keyword variable The name of the variable being created.
+  # @liquid_syntax_keyword value The value you want to assign to the variable.
+  class Capture < Block
+    include ParserSwitching
+
+    Syntax = /(#{VariableSignature}+)/o
+
+    attr_reader :to
+  end
+end

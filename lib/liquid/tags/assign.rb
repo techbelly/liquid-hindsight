@@ -1,0 +1,29 @@
+# frozen_string_literal: true
+
+module Liquid
+  # @liquid_public_docs
+  # @liquid_type tag
+  # @liquid_category variable
+  # @liquid_name assign
+  # @liquid_summary
+  #   Creates a new variable.
+  # @liquid_description
+  #   You can create variables of any [basic type](/docs/api/liquid/basics#types), [object](/docs/api/liquid/objects), or object property.
+  #
+  #   > Caution:
+  #   > Predefined Liquid objects can be overridden by variables with the same name.
+  #   > To make sure that you can access all Liquid objects, make sure that your variable name doesn't match a predefined object's name.
+  # @liquid_syntax
+  #   {% assign variable_name = value %}
+  # @liquid_syntax_keyword variable_name The name of the variable being created.
+  # @liquid_syntax_keyword value The value you want to assign to the variable.
+  class Assign < Tag
+    include ParserSwitching
+
+    Syntax = /(#{VariableSignature}+)\s*=\s*(.*)\s*/om
+
+    attr_reader :to, :from
+
+    private
+  end
+end
