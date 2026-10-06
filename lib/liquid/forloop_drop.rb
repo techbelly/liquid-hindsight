@@ -34,6 +34,14 @@ module Liquid
 
     # @liquid_public_docs
     # @liquid_summary
+    #   The 1-based index of the current iteration.
+    # @liquid_return [number]
+    def index
+      @index + 1
+    end
+
+    # @liquid_public_docs
+    # @liquid_summary
     #   Returns `true` if the current iteration is the first. Returns `false` if not.
     # @liquid_return [boolean]
     def first

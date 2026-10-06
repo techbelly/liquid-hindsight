@@ -220,6 +220,17 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_forloop
+    assert_template_result(
+      "Product: Draft 151cm first  index:1 Product: Element 155cm  last index:2 ",
+      "{% render 'product' for products %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: {
+        'product' => "Product: {{ product.title }} {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %} index:{{ forloop.index }} ",
+      },
+    )
+  end
+
   def test_render_tag_for_drop
     assert_template_result(
       "123",
