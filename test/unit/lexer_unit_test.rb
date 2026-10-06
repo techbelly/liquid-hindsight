@@ -51,6 +51,13 @@ class LexerUnitTest < Minitest::Test
     assert_equal([[:number, '2'], [:id, 'foo'], [:end_of_string]], tokenize('2foo'))
   end
 
+  def test_greater_than_two_digits
+    assert_equal(
+      [[:id, 'foo'], [:comparison, '>'], [:number, '12'], [:end_of_string]],
+      tokenize("foo > 12"),
+    )
+  end
+
   def test_contains_as_attribute_name
     assert_equal(
       [[:id, "a"], [:dot, "."], [:id, "contains"], [:dot, "."], [:id, "b"], [:end_of_string]],
