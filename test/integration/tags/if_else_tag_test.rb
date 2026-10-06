@@ -14,6 +14,12 @@ class IfElseTagTest < Minitest::Test
     assert_template_result('  you rock ?', '{% if false %} you suck {% endif %} {% if true %} you rock {% endif %}?')
   end
 
+  def test_if_else
+    assert_template_result(' YES ', '{% if false %} NO {% else %} YES {% endif %}')
+    assert_template_result(' YES ', '{% if true %} YES {% else %} NO {% endif %}')
+    assert_template_result(' YES ', '{% if "foo" %} YES {% else %} NO {% endif %}')
+  end
+
   def test_if_boolean
     assert_template_result(' YES ', '{% if var %} YES {% endif %}', { 'var' => true })
   end
