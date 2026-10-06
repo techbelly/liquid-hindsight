@@ -36,6 +36,10 @@ class SelfDropContextTest < Minitest::Test
     assert_template_result('T', '{% assign s = self %}{% if s == s %}T{% else %}F{% endif %}')
   end
 
+  def test_distinct_self_assignments_compare_equal_for_same_context
+    assert_template_result('T', '{% assign a = self %}{% assign b = self %}{% if a == b %}T{% else %}F{% endif %}')
+  end
+
   def test_bare_self_compares_equal_to_bare_self
     assert_template_result('T', '{% if self == self %}T{% else %}F{% endif %}')
   end
