@@ -210,6 +210,12 @@ class ContextTest < Minitest::Test
     assert_nil(@context['test'])
   end
 
+  def test_hierachical_data
+    assigns = { 'hash' => { "name" => 'tobi' } }
+    assert_template_result("tobi", "{{ hash.name }}", assigns)
+    assert_template_result("tobi", '{{ hash["name"] }}', assigns)
+  end
+
   def test_keywords
     assert_template_result("pass", "{% if true == expect %}pass{% endif %}", { "expect" => true })
     assert_template_result("pass", "{% if false == expect %}pass{% endif %}", { "expect" => false })
