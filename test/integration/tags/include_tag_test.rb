@@ -199,6 +199,15 @@ class IncludeTagTest < Minitest::Test
     assert_equal([], template.errors)
   end
 
+  def test_break_through_include
+    assert_template_result("1", "{% for i in (1..3) %}{{ i }}{% break %}{{ i }}{% endfor %}")
+    assert_template_result(
+      "1",
+      "{% for i in (1..3) %}{{ i }}{% include 'break' %}{{ i }}{% endfor %}",
+      partials: { 'break' => "{% break %}" },
+    )
+  end
+
   def test_include_template_with_invalid_expression
     template = "{% include foo=>bar %}"
 
