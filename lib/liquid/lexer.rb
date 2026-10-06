@@ -114,6 +114,9 @@ module Liquid
           if (special = SPECIAL_TABLE[peeked])
             ss.scan_byte
             output << special
+          elsif (sub_table = COMPARISON_JUMP_TABLE[peeked])
+            ss.scan_byte
+            output << SINGLE_COMPARISON_TOKENS[peeked]
           else
             type, pattern = NEXT_MATCHER_JUMP_TABLE[peeked]
 
