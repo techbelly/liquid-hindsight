@@ -21,4 +21,17 @@ class RenderTagTest < Minitest::Test
       assert_match(/Unexpected character =/, error.message)
     end
   end
+
+  def test_render_attribute_with_invalid_expression
+    template = '{% render "snippet", key: foo=>bar %}'
+
+    with_error_modes(:lax, :strict) do
+      refute_nil(Template.parse(template))
+    end
+
+    with_error_modes(:strict2) do
+      error = assert_raises(Liquid::SyntaxError) { Template.parse(template) }
+      assert_match(/Unexpected character =/, error.message)
+    end
+  end
 end
