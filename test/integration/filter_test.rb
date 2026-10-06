@@ -81,6 +81,26 @@ class FiltersTest < Minitest::Test
     )
   end
 
+  def test_sort_natural
+    # Test strings
+    assert_template_result(
+      "Assert case Insensitive",
+      "{{words | sort_natural | join}}",
+      { "words" => ["case", "Assert", "Insensitive"] },
+    )
+
+    # Test hashes
+    assert_template_result(
+      "A b C",
+      "{{hashes | sort_natural: 'a' | map: 'a' | join}}",
+      { "hashes" => [{ "a" => "A" }, { "a" => "b" }, { "a" => "C" }] },
+    )
+
+    # Test objects
+    @context['objects'] = [TestObject.new('A'), TestObject.new('b'), TestObject.new('C')]
+    assert_equal('A b C', Template.parse("{{objects | sort_natural: 'a' | map: 'a' | join}}").render(@context))
+  end
+
   def test_strip_html
     assert_template_result("bla blub", "{{ var | strip_html }}", { "var" => "<b>bla blub</a>" })
   end
