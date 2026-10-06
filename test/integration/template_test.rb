@@ -156,6 +156,21 @@ class TemplateTest < Minitest::Test
     assert_equal("すごい", t.render)
   end
 
+  def test_cumulative_render_score_limit_raises_on_render_bang
+    file_system = StubFileSystem.new(
+      'loop' => '{% for a in (1..10) %} foo {% endfor %}',
+    )
+    environment = Liquid::Environment.build(file_system: file_system)
+    t = Template.parse(
+      '{% render "loop" %}{% render "loop" %}{% render "loop" %}{% render "loop" %}{% render "loop" %}',
+      environment: environment,
+    )
+    t.resource_limits.cumulative_render_score_limit = 20
+    assert_raises(Liquid::MemoryError) do
+      t.render!
+    end
+  end
+
   def test_can_use_drop_as_context
     t = Template.new
     t.registers['lulz'] = 'haha'
