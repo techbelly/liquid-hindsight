@@ -258,6 +258,23 @@ class IncludeTagTest < Minitest::Test
     assert_empty(a.errors)
   end
 
+  def test_passing_options_to_included_templates
+    env = Liquid::Environment.build(file_system: TestFileSystem.new)
+
+    assert_raises(Liquid::SyntaxError) do
+      Template.parse("{% include template %}", error_mode: :strict, environment: env).render!("template" => '{{ "X" || downcase }}')
+    end
+    with_error_modes(:lax) do
+      assert_equal('x', Template.parse("{% include template %}", error_mode: :strict, include_options_blacklist: true, environment: env).render!("template" => '{{ "X" || downcase }}'))
+    end
+    assert_raises(Liquid::SyntaxError) do
+      Template.parse("{% include template %}", error_mode: :strict, include_options_blacklist: [:locale], environment: env).render!("template" => '{{ "X" || downcase }}')
+    end
+    with_error_modes(:lax) do
+      assert_equal('x', Template.parse("{% include template %}", error_mode: :strict, include_options_blacklist: [:error_mode], environment: env).render!("template" => '{{ "X" || downcase }}'))
+    end
+  end
+
   def test_render_raise_argument_error_when_template_is_undefined
     assert_template_result(
       "Liquid error (line 1): Argument error in tag 'include' - Illegal template name",
