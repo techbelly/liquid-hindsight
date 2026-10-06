@@ -497,6 +497,14 @@ class StandardFiltersTest < Minitest::Test
     assert_template_result("{:test=>1234}", template.render!)
   end
 
+  def test_map_on_hashes
+    assert_template_result(
+      "4217",
+      '{{ thing | map: "foo" | map: "bar" }}',
+      { "thing" => { "foo" => [{ "bar" => 42 }, { "bar" => 17 }] } },
+    )
+  end
+
   def test_sort_calls_to_liquid
     t = TestThing.new
     Liquid::Template.parse('{{ foo | sort: "whatever" }}').render("foo" => [t])
