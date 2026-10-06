@@ -44,6 +44,10 @@ module Liquid
       [@body]
     end
 
+    def blank?
+      @body.empty?
+    end
+
     protected
 
     def ensure_valid_markup(tag_name, markup, parse_context)
