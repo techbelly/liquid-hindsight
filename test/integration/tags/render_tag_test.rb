@@ -142,6 +142,18 @@ class RenderTagTest < Minitest::Test
     )
   end
 
+  def test_render_tag_with_alias
+    assert_template_result(
+      "Product: Draft 151cm ",
+      "{% render 'product_alias' with products[0] as product %}",
+      { "products" => [{ 'title' => 'Draft 151cm' }, { 'title' => 'Element 155cm' }] },
+      partials: {
+        'product' => "Product: {{ product.title }} ",
+        'product_alias' => "Product: {{ product.title }} ",
+      },
+    )
+  end
+
   def test_render_with_invalid_expression
     template = '{% render "snippet" with foo=>bar %}'
 
